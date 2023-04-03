@@ -1,4 +1,4 @@
-import { BankOutlined, BranchesOutlined, HomeOutlined, RadarChartOutlined, FileDoneOutlined, SubnodeOutlined } from "@ant-design/icons"
+import { BankOutlined, BranchesOutlined, HomeOutlined, RadarChartOutlined, FileDoneOutlined, SubnodeOutlined, AppstoreOutlined } from "@ant-design/icons"
 import { ReactNode } from "react"
 import Area from "../components/Neighborhood"
 import Command from "../components/Command"
@@ -16,6 +16,11 @@ import School from "../components/School"
 import Wisdom from "../components/Plus"
 import WisdomUnit from "../components/WisdomUnit"
 import StormThinking from "../components/StormThinking"
+import SystemManagement from "../components/SystemManagement"
+import UserManage from "../components/UserManage"
+import RoleManage from "../components/RoleManage"
+import MenuMange from "../components/MenuMange"
+import Logs from "../components/Logs"
 
 export interface RouteChild {
     name: string
@@ -131,6 +136,34 @@ const routes: Route[] = [
         path: "stormthinking",
         component: <StormThinking />,
         icon: <BranchesOutlined />
+    },
+    {
+        name: "系统管理",
+        path: "systemManagement",
+        component: <SystemManagement />,
+        icon: <AppstoreOutlined />,
+        children: [
+            {
+                name: "用户管理",
+                path: "userManagement",
+                component: <UserManage />
+            },
+            {
+                name: "角色管理",
+                path: "roleManag",
+                component: <RoleManage />
+            },
+            {
+                name: "菜单管理",
+                path: "menuManage",
+                component: <MenuMange />
+            },
+            {
+                name: "日志",
+                path: "logs",
+                component: <Logs />
+            }
+        ]
     }
 ]
 
