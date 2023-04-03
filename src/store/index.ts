@@ -2,7 +2,7 @@ import createStorage from "../utils/storage"
 
 export const useLocal = createStorage<Local>(
     {
-        themeColor: "#fff"
+        themeColor: "#2a58ad"
     },
     "theme",
     "local"
