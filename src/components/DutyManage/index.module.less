@@ -1,0 +1,31 @@
+.form-item-input {
+    width: 320px !important;
+}
+
+.header {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    .query {
+        margin-left: auto;
+        & > * {
+            &:not(:first-child) {
+                margin-left: 10px;
+            }
+        }
+    }
+}
+
+.operate {
+    & > * {
+        &:not(:first-child) {
+            margin-left: 10px;
+        }
+    }
+}
+
+:global {
+    .ant-input {
+        width: 150px;
+    }
+}

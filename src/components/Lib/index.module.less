@@ -1,0 +1,32 @@
+.eye{
+    cursor: pointer;
+}
+
+.header {
+    display: flex;
+    margin: 10px 0;
+    .button-group {
+        display: flex;
+        & > * {
+            &:not(:first-child) {
+                margin-left: 10px;
+            }
+        }
+    }
+    .query {
+        margin-left: auto;
+        display: flex;
+        & > * {
+            &:not(:first-child) {
+                margin-left: 10px;
+            }
+        }
+        .box {
+            display: flex;
+            align-items: center;
+            .titleSp {
+                width: 130px;
+            }
+        }
+    }
+}

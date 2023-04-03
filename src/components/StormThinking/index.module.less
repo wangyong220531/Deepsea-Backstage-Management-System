@@ -1,0 +1,42 @@
+.form-item-input {
+    width: 320px !important;
+}
+
+.header {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    .query {
+        margin-left: auto;
+        & > * {
+            &:not(:first-child) {
+                margin-left: 10px;
+            }
+        }
+    }
+}
+
+.operate {
+    & > * {
+        &:not(:first-child) {
+            margin-left: 10px;
+        }
+    }
+}
+
+.eye {
+    cursor: pointer;
+}
+
+.test {
+    height: 800px;
+}
+
+:global {
+    .ant-modal-content {
+        margin-top: 60px;
+        .ant-modal-header {
+            margin-bottom: 50px;
+        }
+    }
+}
