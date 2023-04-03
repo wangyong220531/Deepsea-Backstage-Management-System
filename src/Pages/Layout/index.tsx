@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { SettingOutlined } from "@ant-design/icons"
 import { Dropdown, Layout, Menu, MenuProps } from "antd"
 import styles from "./index.module.less"
@@ -16,29 +16,9 @@ type MenuChange = {
     keyPath: string[]
 }
 
-// const Time: React.FC = () => {
-//     const [time, setTime] = useState(dayjs())
-
-//     useEffect(() => {
-//         const timer = setTimeout(() => {
-//             setTime(dayjs())
-//         }, 1000)
-//         return () => {
-//             clearTimeout(timer)
-//         }
-//     }, [time])
-
-//     return (
-//         <>
-//             <div className={styles["time"]}>{dayjs(time).format("YYYY年MM月DD日 HH:mm:ss")}</div>
-//         </>
-//     )
-// }
-
 const LayoutFC: React.FC = () => {
     const [collapsed, setCollapsed] = useState(false)
     const [showTitle, setShowTitle] = useState(true)
-    // const [breaks, setBreaks] = useState<RouteChild[] | null>(null)
     const local = useLocal()
     const session = useSession()
     const navigate = useNavigate()
@@ -122,7 +102,7 @@ const LayoutFC: React.FC = () => {
 
     const logout = () => {
         session.setState({ token: undefined })
-        navigate(`/login?from=${location.pathname + location.search}`, { replace: true })
+        navigate(`/login?${encodeURIComponent('from='+location.pathname + location.search)}`, { replace: true })
     }
 
     const items: MenuProps["items"] = [
