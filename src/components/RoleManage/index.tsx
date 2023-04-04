@@ -2,6 +2,10 @@ import { Button, Input, Modal, Popconfirm, Switch, Table } from "antd"
 import Styles from "./index.module.less"
 import type { ColumnsType } from "antd/es/table"
 import { ReactNode, useEffect, useState } from "react"
+import { Drawer } from "antd"
+import { Tree } from "antd"
+import type { DataNode } from "antd/es/tree"
+import { CloseOutlined } from "@ant-design/icons"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -63,14 +67,26 @@ const RoleManage: React.FC = () => {
                             <div className={c("item")} onClick={userClick}>
                                 用户
                             </div>
-                            <div className={c("item")}>授权</div>
-                            <div className={c("item")}>编辑</div>
+                            <div className={c("item")} onClick={authorize}>
+                                授权
+                            </div>
+                            <div className={c("item")} onClick={() => edit(e)}>
+                                编辑
+                            </div>
                         </div>
                     </>
                 )
             }
         }
     ]
+
+    const authorize = () => {
+        setDrawShow(true)
+    }
+
+    const edit = (e: TableHead) => {
+        console.log(e)
+    }
 
     const modalColumns: ColumnsType<ModalTableHead> = [
         {
@@ -189,6 +205,155 @@ const RoleManage: React.FC = () => {
         )
     }
 
+    const [drawShow, setDrawShow] = useState(false)
+
+    const treeData: DataNode[] = [
+        {
+            title: "首页",
+            key: "0"
+        },
+        {
+            title: "指挥",
+            key: "1",
+            children: [
+                {
+                    title: "警情处置",
+                    key: "1-0",
+                    children: [
+                        {
+                            title: "跟进处置",
+                            key: "1-0-0"
+                        },
+                        {
+                            title: "警情处置",
+                            key: "1-0-1"
+                        },
+                        {
+                            title: "派警分析",
+                            key: "1-0-2"
+                        }
+                    ]
+                },
+                {
+                    title: "铁拳勤务",
+                    key: "1-1",
+                    children: [
+                        {
+                            title: "勤务管理",
+                            key: "1-1-0",
+                            children: [
+                                {
+                                    title: "新增",
+                                    key: "1-1-0-0"
+                                }
+                            ]
+                        },
+                        {
+                            title: "勤务分析",
+                            key: "1-1-1"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            title: "请求服务",
+            key: "2",
+            children: [
+                {
+                    title: "新增",
+                    key: "2-0"
+                }
+            ]
+        },
+        {
+            title: "智慧+",
+            key: "3"
+        },
+        {
+            title: "智慧单元",
+            key: "4",
+            children: [
+                {
+                    title: "智慧应用",
+                    key: "4-0",
+                    children: [
+                        {
+                            title: "新增",
+                            key: "4-0-0"
+                        }
+                    ]
+                },
+                {
+                    title: "智慧安防小区",
+                    key: "4-1",
+                    children: [
+                        {
+                            title: "新增",
+                            key: "4-1-0"
+                        }
+                    ]
+                },
+                {
+                    title: "智慧安防校园",
+                    key: "4-2"
+                }
+            ]
+        },
+        {
+            title: "风暴思维",
+            key: "5",
+            children: [
+                {
+                    title: "新增",
+                    key: "5-0"
+                }
+            ]
+        },
+        {
+            title: "系统管理",
+            key: "6",
+            children: [
+                {
+                    title: "用户管理",
+                    key: "6-0",
+                    children: [
+                        {
+                            title: "新增",
+                            key: "6-0-0"
+                        },
+                        {
+                            title: "下载模板",
+                            key: "6-0-1"
+                        },
+                        {
+                            title: "导入",
+                            key: "6-0-2"
+                        },
+                        {
+                            title: "导出",
+                            key: "6-0-3"
+                        }
+                    ]
+                },
+                {
+                    title: "角色管理",
+                    key: "6-1",
+                    children: [
+                        {
+                            title: "新增",
+                            key: "6-1-0"
+                        }
+                    ]
+                },
+                {
+                    title: "日志管理",
+                    key: "6-2"
+                }
+            ]
+        }
+    ]
+
     return (
         <>
             <div className={c("header")}>
@@ -209,6 +374,28 @@ const RoleManage: React.FC = () => {
                 </div>
             </div>
             <Table columns={columns} dataSource={tableData} pagination={{ onChange: changePage, total, pageSize }} />
+            <Drawer
+                placement="right"
+                title="菜单授权"
+                open={drawShow}
+                onClose={() => setDrawShow(false)}
+                closable={false}
+                extra={
+                    <>
+                        <CloseOutlined onClick={() => setDrawShow(false)} />
+                    </>
+                }
+                footer={
+                    <>
+                        <div className={c("drawer-footer")}>
+                            <Button>取消</Button>
+                            <Button className={c("right")}>保存</Button>
+                        </div>
+                    </>
+                }
+            >
+                <Tree treeData={treeData} checkable />
+            </Drawer>
             <User />
         </>
     )
