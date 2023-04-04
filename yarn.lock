@@ -1096,10 +1096,10 @@ graceful-fs@^4.1.2, graceful-fs@^4.2.4, graceful-fs@^4.2.9:
   resolved "https://registry.npmmirror.com/graceful-fs/-/graceful-fs-4.2.10.tgz#147d3a006da4ca3ce14728c7aefc287c367d7a6c"
   integrity sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==
 
-gskj-components@^1.1.9:
-  version "1.1.9"
-  resolved "https://registry.npmmirror.com/gskj-components/-/gskj-components-1.1.9.tgz#745994ff0d231bf0b4c01bdfe40d839d54573ef0"
-  integrity sha512-ad+KKnjXWRgt5fklpLYEcQpVMDm9QSgJze6ZsJ3T3NKjHVt9vPtlRmvI52BbhvAxrqX4T/O+grEcRhovia4Xxw==
+gskj-components@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npmmirror.com/gskj-components/-/gskj-components-1.1.0.tgz#a20acaf237ef97c29f7ec9309d9205d6a7f59586"
+  integrity sha512-lw7HR4FqKbLx1E3lti3wMlqq7qfX1MYJBYk7FB34fzThDXRdgtG06Z16GTn/aXn1HPiuOcQBEBrsGEVRq7rE5g==
   dependencies:
     react-simple-echarts "^1.0.0"
     xlsx "https://cdn.sheetjs.com/xlsx-0.19.2/xlsx-0.19.2.tgz"

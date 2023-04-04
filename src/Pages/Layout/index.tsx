@@ -126,7 +126,7 @@ const LayoutFC: React.FC = () => {
     ]
 
     return (
-        <Layout>
+        <Layout className={c("layout")}>
             <Header style={{ background: "#2a58ad", height: "64px" }} className={styles["header"]}>
                 <Title></Title>
                 <Dropdown menu={{ items }} trigger={["click"]}>

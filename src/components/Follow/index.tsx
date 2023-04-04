@@ -19,14 +19,14 @@ interface CaseType extends Situation {
 const Follow: React.FC = () => {
     const ForceColumn: ColumnsType<ForceType> = [
         {
-            key: "team",
-            dataIndex: "team",
+            key: "teamNo",
+            dataIndex: "teamNo",
             title: "警组",
             align: "center"
         },
         {
-            key: "status",
-            dataIndex: "status",
+            key: "teamStatus",
+            dataIndex: "teamStatus",
             title: "状态",
             align: "center"
         },
@@ -40,17 +40,35 @@ const Follow: React.FC = () => {
             key: "mPolice",
             dataIndex: "mPolice",
             title: "民警",
-            align: "center"
+            align: "center",
+            render: (_, e) => {
+                return (
+                    <>
+                        {e.mPolice.map(m => {
+                            return <>{m.userName}</>
+                        })}
+                    </>
+                )
+            }
         },
         {
             key: "fPolice",
             dataIndex: "fPolice",
             title: "辅警",
-            align: "center"
+            align: "center",
+            render: (_, e) => {
+                return (
+                    <>
+                        {e.fPolice.map(m => {
+                            return <>{m.userName}</>
+                        })}
+                    </>
+                )
+            }
         },
         {
-            key: "sheet",
-            dataIndex: "sheet",
+            key: "psNo",
+            dataIndex: "psNo",
             title: "警单",
             align: "center"
         },
@@ -140,6 +158,7 @@ const Follow: React.FC = () => {
     const [total, setTotal] = useState(0)
 
     const foreSearch = () => {
+        // setForceData([{ teamNo: "警组001", teamStatus: "出警", car: ["苏H71254"], mPolice: [{ userIdCode: "32012332", userName: "卜元浩", userType: "" }], fPolice: [{ userIdCode: "213", userName: "徐腾", userType: "" }], psNo: "xxx" }])
         forceFollowList({
             pageNum,
             pageSize,
@@ -213,12 +232,12 @@ const Follow: React.FC = () => {
                     </Button>
                 </div>
                 <div className={Styles["query"]}>
-                    <RangePicker value={[startTime, endTime]} onCalendarChange={rangeChange}/>
+                    <RangePicker value={[startTime, endTime]} onCalendarChange={rangeChange} />
                     <Button type="primary">查询</Button>
                     <Button onClick={reset}>重置</Button>
                 </div>
             </div>
-            {table === 0 ? <Table columns={ForceColumn} pagination={{ onChange: changeForcePg, total, pageSize }} /> : <Table columns={CaseColumn} pagination={{ onChange: changeCasePg, total, pageSize }} />}
+            {table === 0 ? <Table rowKey={e => e.psNo} columns={ForceColumn} dataSource={forceData} pagination={{ onChange: changeForcePg, total, pageSize }} /> : <Table columns={CaseColumn} pagination={{ onChange: changeCasePg, total, pageSize }} />}
         </>
     )
 }

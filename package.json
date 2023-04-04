@@ -14,7 +14,7 @@
     "axios": "^1.3.2",
     "dayjs": "^1.11.7",
     "easy-zustand": "^3.0.0",
-    "gskj-components": "^1.1.9",
+    "gskj-components": "1.1.0",
     "less": "^4.1.3",
     "less-loader": "^11.1.0",
     "react": "^18.2.0",

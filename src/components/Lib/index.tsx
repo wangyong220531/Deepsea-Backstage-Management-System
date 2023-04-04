@@ -1,7 +1,7 @@
 import { Table, Button, Input, DatePicker, Select, Modal, Tooltip } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import { getAllPS } from "../../api/command"
-import { useEffect, useState,useRef } from "react"
+import { useEffect, useState, useRef } from "react"
 import dayjs from "dayjs"
 import Styles from "./index.module.less"
 
@@ -195,7 +195,7 @@ const Lib: React.FC = () => {
     const [startTime, setStartTime] = useState<dayjs.Dayjs | null>(null)
     const [endTime, setEndTime] = useState<dayjs.Dayjs | null>(null)
     const [status, setStatus] = useState("")
-    const [queryType, setQueryType] = useState<"NEW" | "HISTORY" | "">("")   
+    const [queryType, setQueryType] = useState<"NEW" | "HISTORY" | "">("")
 
     useEffect(() => {
         search()
@@ -243,10 +243,9 @@ const Lib: React.FC = () => {
             queryType
         })
         if (res) {
-            console.log(3);
-            
             setTableData(res.data.list)
         }
+        setTableData([{ appointTeamVos: [{ ptPresentTime: "2023-03-06", ptTeamNo: "00001" }], psStatus: "待处置", psNo: "02131", psType: "最新警情", psDiscription: "xxx", psPlace: "淮海路601号", psFirstDispatchTime: "2023-02-05", psSecondDispatchTime: "2023-02-06", psEndTime: "2023-03-06" }])
     }
 
     return (

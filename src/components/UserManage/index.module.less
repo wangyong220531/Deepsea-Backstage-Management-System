@@ -1,7 +1,7 @@
 .userManage {
     .header {
         display: flex;
-        margin-bottom: 10px;
+        margin-bottom: 18px;
         .query {
             display: flex;
             .inputs {
@@ -35,6 +35,18 @@
     .operate {
         display: flex;
         column-gap: 10px;
-        
+        justify-content: center;
+        .item {
+            cursor: pointer;
+        }
+        .item:hover {
+            color: #169bd5;
+        }
+    }
+}
+
+:global {
+    .ant-switch-checked {
+        background-color: #169bd5 !important;
     }
 }

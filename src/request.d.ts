@@ -237,7 +237,7 @@ interface ForceFollowListResult {
 
 interface mfuatv {
     teamNo: string
-    teamStatus: number
+    teamStatus: string
     car: string[]
     mPolice: police[]
     fPolice: police[]

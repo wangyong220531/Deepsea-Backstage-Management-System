@@ -1,6 +1,6 @@
 import { FC, ReactNode, useEffect, useState } from "react"
 import Styles from "./index.module.less"
-import { Button, Input, Table } from "antd"
+import { Button, Input, Switch, Table } from "antd"
 import type { ColumnsType } from "antd/es/table"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
@@ -67,7 +67,14 @@ const UserManage: FC = () => {
             key: "status",
             dataIndex: "status",
             title: "状态",
-            align: "center"
+            align: "center",
+            render: (_, e) => {
+                return (
+                    <>
+                        <Switch defaultChecked checkedChildren="启用" unCheckedChildren="禁用" onChange={onChange} />
+                    </>
+                )
+            }
         },
         {
             key: "operate",
@@ -78,15 +85,19 @@ const UserManage: FC = () => {
                 return (
                     <>
                         <div className={c("operate")}>
-                            <Button>编辑</Button>
-                            <Button>密码修改</Button>
-                            <Button>删除</Button>
+                            <div className={c("item")}>编辑</div>
+                            <div className={c("item")}>密码修改</div>
+                            <div className={c("item")}>删除</div>
                         </div>
                     </>
                 )
             }
         }
     ]
+
+    const onChange = (checked: boolean) => {
+        console.log(`switch to ${checked}`)
+    }
 
     const [tableData, setTableData] = useState<TableHead[]>([])
 
@@ -108,6 +119,14 @@ const UserManage: FC = () => {
             }
         ])
     }
+
+    const [total, setTotal] = useState(100)
+    const [pageSize, setPageSize] = useState(10)
+
+    const changePage = () => {
+    }
+
+
 
     return (
         <div className={c("userManage")}>
@@ -135,7 +154,7 @@ const UserManage: FC = () => {
                     <Button>导出</Button>
                 </div>
             </div>
-            <Table columns={columns} dataSource={tableData} />
+            <Table columns={columns} dataSource={tableData} pagination={{ onChange: changePage, total, pageSize }} />
         </div>
     )
 }

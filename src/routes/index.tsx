@@ -19,7 +19,6 @@ import StormThinking from "../components/StormThinking"
 import SystemManagement from "../components/SystemManagement"
 import UserManage from "../components/UserManage"
 import RoleManage from "../components/RoleManage"
-import MenuMange from "../components/MenuMange"
 import Logs from "../components/Logs"
 
 export interface RouteChild {
@@ -152,11 +151,6 @@ const routes: Route[] = [
                 name: "角色管理",
                 path: "roleManag",
                 component: <RoleManage />
-            },
-            {
-                name: "菜单管理",
-                path: "menuManage",
-                component: <MenuMange />
             },
             {
                 name: "日志",
