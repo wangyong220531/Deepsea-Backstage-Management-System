@@ -1,12 +1,17 @@
-import { Button, DatePicker, Input, Select, Table } from "antd"
+import { Button, DatePicker, Table, Tabs } from "antd"
 import React, { useEffect, useState } from "react"
 import type { ColumnsType } from "antd/es/table"
+import type { TabsProps } from "antd"
 import { ReactNode } from "react"
 import { forceFollowList, caseFollowList } from "../../api/command"
 import Styles from "./index.module.less"
 import dayjs from "dayjs"
 
 const { RangePicker } = DatePicker
+
+function c(...classNameList: (string | undefined | null | boolean)[]) {
+    return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
+}
 
 interface ForceType extends mfuatv {
     operate?: ReactNode
@@ -153,12 +158,26 @@ const Follow: React.FC = () => {
         }
     ]
 
+    const onChange = (key: string) => {
+        console.log(key)
+    }
+
+    const items: TabsProps["items"] = [
+        {
+            key: "1",
+            label: `警力跟进`
+        },
+        {
+            key: "2",
+            label: `警情跟进`
+        }
+    ]
+
     const [pageNum, setPageNum] = useState(0)
     const [pageSize, setPageSize] = useState(0)
     const [total, setTotal] = useState(0)
 
     const foreSearch = () => {
-        // setForceData([{ teamNo: "警组001", teamStatus: "出警", car: ["苏H71254"], mPolice: [{ userIdCode: "32012332", userName: "卜元浩", userType: "" }], fPolice: [{ userIdCode: "213", userName: "徐腾", userType: "" }], psNo: "xxx" }])
         forceFollowList({
             pageNum,
             pageSize,
@@ -222,19 +241,20 @@ const Follow: React.FC = () => {
 
     return (
         <>
-            <div className={Styles["header"]}>
-                <div className={Styles["left"]}>
-                    <Button type="primary" onClick={forceClick}>
-                        警力跟进
-                    </Button>
-                    <Button type="primary" onClick={caseClick}>
-                        警情跟进
-                    </Button>
+            <div className={c("header")}>
+                <div className={Styles["tab"]}>
+                    <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
                 </div>
-                <div className={Styles["query"]}>
-                    <RangePicker value={[startTime, endTime]} onCalendarChange={rangeChange} />
-                    <Button type="primary">查询</Button>
-                    <Button onClick={reset}>重置</Button>
+                <div className={c("query")}>
+                    <div className={c("rangePicker")}>
+                        <RangePicker value={[startTime, endTime]} onCalendarChange={rangeChange} />
+                    </div>
+                    <div className={c("query-reset")}>
+                        <Button className={c("query-btn")}>查询</Button>
+                        <Button className={c("reset-btn")} onClick={reset}>
+                            重置
+                        </Button>
+                    </div>
                 </div>
             </div>
             {table === 0 ? <Table rowKey={e => e.psNo} columns={ForceColumn} dataSource={forceData} pagination={{ onChange: changeForcePg, total, pageSize }} /> : <Table columns={CaseColumn} pagination={{ onChange: changeCasePg, total, pageSize }} />}

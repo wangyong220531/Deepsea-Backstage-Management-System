@@ -1,19 +1,16 @@
 .header {
-    margin-bottom: 10px;
     display: flex;
-    align-items: center;
-    .left {
-        & > * {
-            &:not(:first-child) {
-                margin-left: 10px;
-            }
-        }
-    }
+    margin-bottom: 18px;
     .query {
         margin-left: auto;
-        & > * {
-            &:not(:first-child) {
-                margin-left: 10px;
+        display: flex;
+        .query-reset {
+            display: flex;
+            column-gap: 10px;
+            margin-left: 20px;
+            .query-btn {
+                background-color: #2a58ad;
+                color: white;
             }
         }
     }

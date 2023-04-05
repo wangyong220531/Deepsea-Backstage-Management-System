@@ -390,8 +390,8 @@ const DutyManage: React.FC = () => {
                     </Button>
                 </div>
                 <div className={Styles["query"]}>
-                    <Input placeholder="请输入编号" value={searchCode} onChange={inputCodeChange} />
-                    <Input placeholder="请输入地点" value={searchPosition} onChange={inputPositionChange} />
+                    {/* <Input placeholder="请输入编号" value={searchCode} onChange={inputCodeChange} />
+                    <Input placeholder="请输入地点" value={searchPosition} onChange={inputPositionChange} /> */}
                     <RangePicker showTime value={[startTime, endTime]} onCalendarChange={rangeChange} />
                     <Button type="primary" onClick={search}>
                         查询

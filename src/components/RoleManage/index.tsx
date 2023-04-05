@@ -1,9 +1,7 @@
-import { Button, Input, Modal, Popconfirm, Switch, Table } from "antd"
+import { Button, Input, Modal, Switch, Table, Drawer, Tree } from "antd"
 import Styles from "./index.module.less"
 import type { ColumnsType } from "antd/es/table"
 import { ReactNode, useEffect, useState } from "react"
-import { Drawer } from "antd"
-import { Tree } from "antd"
 import type { DataNode } from "antd/es/tree"
 import { CloseOutlined } from "@ant-design/icons"
 
@@ -80,12 +78,18 @@ const RoleManage: React.FC = () => {
         }
     ]
 
+    const userClick = () => {
+        setUserShow(true)
+        setmodalContent("用户授权")
+    }
+
     const authorize = () => {
         setDrawShow(true)
     }
 
     const edit = (e: TableHead) => {
-        console.log(e)
+        setUserShow(true)
+        setmodalContent("角色编辑")
     }
 
     const modalColumns: ColumnsType<ModalTableHead> = [
@@ -149,10 +153,6 @@ const RoleManage: React.FC = () => {
         query()
     }, [])
 
-    const userClick = () => {
-        setUserShow(true)
-    }
-
     const onChange = (checked: boolean) => {
         console.log(`switch to ${checked}`)
     }
@@ -167,39 +167,52 @@ const RoleManage: React.FC = () => {
     const [modalTotal, setModalTotal] = useState(100)
     const [modalPagesize, setModalPagesize] = useState(10)
 
+    const [modalContent, setmodalContent] = useState<"用户授权" | "角色编辑">("用户授权")
+
     const User: React.FC = () => {
         return (
             <>
                 <Modal
-                    title="用户授权"
+                    title={modalContent}
                     open={userShow}
                     onCancel={() => setUserShow(false)}
                     onOk={() => setUserShow(false)}
                     footer={
                         <>
-                            <Button className={c("cancel")}>取消</Button>
-                            <Button className={c("save")}>保存</Button>
+                            <Button className={c("cancel")} onClick={() => setUserShow(false)}>取消</Button>
+                            <Button className={c("save")} onClick={() => setUserShow(false)}>保存</Button>
                         </>
                     }
                     width={800}
                 >
-                    <div className={c("modal-header")}>
-                        <div className={c("inputs")}>
-                            <div className={c("query-item")}>
-                                <div className={c("title")}>账号：</div>
-                                <Input placeholder="请输入账号" />
+                    {modalContent === "用户授权" ? (
+                        <>
+                            <div className={c("modal-header")}>
+                                <div className={c("inputs")}>
+                                    <div className={c("query-item")}>
+                                        <div className={c("title")}>账号：</div>
+                                        <Input placeholder="请输入账号" />
+                                    </div>
+                                    <div className={c("query-item")}>
+                                        <div className={c("title")}>单位：</div>
+                                        <Input placeholder="请输入单位" />
+                                    </div>
+                                </div>
+                                <div className={c("query-reset")}>
+                                    <Button className={c("query-btn")}>查询</Button>
+                                    <Button className={c("reset-btn")}>重置</Button>
+                                </div>
                             </div>
-                            <div className={c("query-item")}>
-                                <div className={c("title")}>单位：</div>
-                                <Input placeholder="请输入单位" />
+                            <Table columns={modalColumns} pagination={{ onChange: changePage, total: modalTotal, pageSize: modalPagesize, size: "small" }} />
+                        </>
+                    ) : (
+                        <>
+                            <div className={c("roleName-edit")}>
+                                <div className={c("label")}>角色名称：</div>
+                                <Input placeholder="请输入角色名称"/>
                             </div>
-                        </div>
-                        <div className={c("query-reset")}>
-                            <Button className={c("query-btn")}>查询</Button>
-                            <Button className={c("reset-btn")}>重置</Button>
-                        </div>
-                    </div>
-                    <Table columns={modalColumns} pagination={{ onChange: changePage, total: modalTotal, pageSize: modalPagesize, size: "small" }} />
+                        </>
+                    )}
                 </Modal>
             </>
         )
@@ -361,7 +374,7 @@ const RoleManage: React.FC = () => {
                     <div className={c("inputs")}>
                         <div className={c("query-item")}>
                             <div className={c("label")}>角色名称：</div>
-                            <Input placeholder="亲输入角色名称" />
+                            <Input placeholder="请输入角色名称" />
                         </div>
                     </div>
                     <div className={c("query-reset")}>

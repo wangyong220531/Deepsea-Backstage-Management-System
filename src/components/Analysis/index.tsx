@@ -1,11 +1,16 @@
-import { Table, Button, DatePicker, Select, Input } from "antd"
+import { Table, Button, DatePicker, Tabs } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import { useEffect, useState } from "react"
 import dayjs from "dayjs"
 import { getDuty } from "../../api/command"
 import Styles from "./index.module.less"
+import type { TabsProps } from "antd"
 
 const { RangePicker } = DatePicker
+
+function c(...classNameList: (string | undefined | null | boolean)[]) {
+    return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
+}
 
 interface Duty {
     key: string
@@ -43,6 +48,21 @@ const columns: ColumnsType<Duty> = [
 ]
 
 const Analysis: React.FC = () => {
+    const items: TabsProps["items"] = [
+        {
+            key: "1",
+            label: `全部勤务统计`
+        },
+        {
+            key: "2",
+            label: `一级派警统计`
+        },
+        {
+            key: "3",
+            label: "二级派警统计"
+        }
+    ]
+
     const [table, setTable] = useState<"duty" | "first" | "second">("duty")
     const [pageNum, setPageNum] = useState(1)
     const [startTime, setStartTime] = useState<dayjs.Dayjs | null>(null)
@@ -60,9 +80,7 @@ const Analysis: React.FC = () => {
             totalEndTime: Date.now().toString(),
             totalStartTime: (Date.now() - 60 * 60 * 24 * 30 * 1000).toString(),
             type: 0
-        }).then(res => {
-            
-        })
+        }).then(res => {})
     }
     useEffect(() => {
         search()
@@ -95,28 +113,27 @@ const Analysis: React.FC = () => {
         setPageNum(pageNum)
         setPageSize(pageSize)
     }
+
+    const onChange = (key: string) => {
+        console.log(key)
+    }
+
     return (
         <>
             <div className={Styles["header"]}>
-                <div className={Styles["button-group"]}>
-                    <Button type="primary" onClick={duty}>
-                        全部勤务统计
-                    </Button>
-                    <Button type="primary" onClick={first}>
-                        一级派警统计
-                    </Button>
-                    <Button type="primary" onClick={second}>
-                        二级派警统计
-                    </Button>
+                <div className={Styles["tab"]}>
+                    <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
                 </div>
-                <div className={Styles["query"]}>
-                    <div className={Styles["box"]}>
+                <div className={c("query")}>
+                    <div className={c("rangePicker")}>
                         <RangePicker value={[startTime, endTime]} onCalendarChange={rangeChange} />
                     </div>
-                    <Button type="primary" onClick={query}>
-                        查询
-                    </Button>
-                    <Button onClick={reset}>重置</Button>
+                    <div className={c("query-reset")}>
+                        <Button className={c("query-btn")}>查询</Button>
+                        <Button className={c("reset-btn")} onClick={reset}>
+                            重置
+                        </Button>
+                    </div>
                 </div>
             </div>
             <Table columns={columns} dataSource={data} pagination={{ onChange: changePg, total, pageSize }} />

@@ -1,11 +1,15 @@
-import { Table, Button, Input, DatePicker, Select, Modal, Tooltip } from "antd"
+import { Table, Button, DatePicker, Select, Tooltip, Tabs, TabsProps } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import { getAllPS } from "../../api/command"
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState } from "react"
 import dayjs from "dayjs"
 import Styles from "./index.module.less"
 
 const { RangePicker } = DatePicker
+
+function c(...classNameList: (string | undefined | null | boolean)[]) {
+    return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
+}
 
 const Lib: React.FC = () => {
     const columns: ColumnsType<APSRListItem> = [
@@ -187,6 +191,21 @@ const Lib: React.FC = () => {
         }
     ]
 
+    const items: TabsProps["items"] = [
+        {
+            key: "1",
+            label: `全部警情`
+        },
+        {
+            key: "2",
+            label: `最新警情`
+        },
+        {
+            key: "3",
+            label: "历史警情"
+        }
+    ]
+
     const [activedBtn, setActivedBtn] = useState<"all" | "latest" | "history">("all")
     const [pageNum, setPageNum] = useState(1)
     const [pageSize, setPageSize] = useState(10)
@@ -248,35 +267,35 @@ const Lib: React.FC = () => {
         setTableData([{ appointTeamVos: [{ ptPresentTime: "2023-03-06", ptTeamNo: "00001" }], psStatus: "待处置", psNo: "02131", psType: "最新警情", psDiscription: "xxx", psPlace: "淮海路601号", psFirstDispatchTime: "2023-02-05", psSecondDispatchTime: "2023-02-06", psEndTime: "2023-03-06" }])
     }
 
+    const onChange = (key: string) => {
+        console.log(key)
+    }
+
     return (
         <>
-            <div className={Styles["header"]}>
-                <div className={Styles["button-group"]}>
-                    <Button type="primary" onClick={showAll}>
-                        全部警情
-                    </Button>
-                    <Button type="primary" onClick={showLatest}>
-                        最新警情
-                    </Button>
-                    <Button type="primary" onClick={showHistory}>
-                        历史警情
-                    </Button>
+            <div className={c("header")}>
+                <div className={Styles["tab"]}>
+                    <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
                 </div>
-                <div className={Styles["query"]}>
+                <div className={c("query")}>
                     {(activedBtn === "all" || activedBtn === "history") && (
                         <>
-                            <div className={Styles["box"]}>
+                            <div className={c("selector")}>
                                 <Select style={{ width: "120px" }} options={statusOpt} defaultValue={statusOpt[0]} onSelect={statusSelect} />
                             </div>
                         </>
                     )}
-                    <div className={Styles["box"]}>
+                    <div className={c("rangePicker")}>
                         <RangePicker value={[startTime, endTime]} onCalendarChange={rangeChange} />
                     </div>
-                    <Button type="primary" onClick={search}>
-                        查询
-                    </Button>
-                    <Button onClick={reset}>重置</Button>
+                    <div className={c("query-reset")}>
+                        <Button onClick={search} className={c("query-btn")}>
+                            查询
+                        </Button>
+                        <Button onClick={reset} className={c("reset-btn")}>
+                            重置
+                        </Button>
+                    </div>
                 </div>
             </div>
             <Table columns={columns} dataSource={tableData} pagination={{ onChange: changePg, total, pageSize }} />

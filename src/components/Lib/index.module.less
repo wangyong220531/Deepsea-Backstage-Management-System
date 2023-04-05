@@ -1,31 +1,19 @@
-.eye{
-    cursor: pointer;
-}
-
 .header {
     display: flex;
-    margin: 10px 0;
-    .button-group {
-        display: flex;
-        & > * {
-            &:not(:first-child) {
-                margin-left: 10px;
-            }
-        }
-    }
+    margin-bottom: 18px;
     .query {
         margin-left: auto;
         display: flex;
-        & > * {
-            &:not(:first-child) {
-                margin-left: 10px;
-            }
+        .rangePicker {
+            margin-left: 20px;
         }
-        .box {
+        .query-reset {
             display: flex;
-            align-items: center;
-            .titleSp {
-                width: 130px;
+            column-gap: 10px;
+            margin-left: 20px;
+            .query-btn {
+                background-color: #2a58ad;
+                color: white;
             }
         }
     }
