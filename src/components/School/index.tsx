@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react"
 import { AddSchool, SearchCampus } from "../../api/smartSchool"
 import Styles from "./index.module.less"
 
+const { RangePicker } = DatePicker
+
 interface DataType {
     key?: string
     name: string
@@ -16,6 +18,10 @@ interface DataType {
     carCard: number
     ETC: number
     ballMachine: number
+}
+
+function c(...classNameList: (string | undefined | null | boolean)[]) {
+    return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
 }
 
 const School: React.FC = () => {
@@ -291,19 +297,19 @@ const School: React.FC = () => {
     return (
         <>
             <AddForm />
-            <div className={Styles["header"]}>
-                <div className={Styles["add"]}>
-                    <Button type="primary" onClick={() => setAddOpen(true)}>
-                        新增
-                    </Button>
+            <div className={c("header")}>
+                <div className={c("query")}>
+                    <div className={c("inputs")}>
+                        <Input placeholder="请输入学校名称" onChange={nameInput} />
+                        <Select placeholder="请选择类型" options={schoolType} onSelect={typeSelect} />
+                    </div>
+                    <div className={c("query-reset")}>
+                        <Button className={c("query-btn")}>查询</Button>
+                        <Button className={c("reset-btn")}>重置</Button>
+                    </div>
                 </div>
-                <div className={Styles["query"]}>
-                    <Input placeholder="请输入学校名称" onChange={nameInput} />
-                    <Select placeholder="请选择类型" options={schoolType} onSelect={typeSelect} />
-                    <Button type="primary" onClick={search}>
-                        查询
-                    </Button>
-                    <Button>重置</Button>
+                <div className={c("btn-group")}>
+                    <Button className={c("add")}>新增</Button>
                 </div>
             </div>
             <Table columns={column} dataSource={tableData} pagination={{ onChange: changePg, total, pageSize }} />

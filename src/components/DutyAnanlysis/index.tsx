@@ -7,6 +7,10 @@ import Styles from "./index.module.less"
 
 const { RangePicker } = DatePicker
 
+function c(...classNameList: (string | undefined | null | boolean)[]) {
+    return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
+}
+
 interface DataType {
     teamName: string
     unitName: string
@@ -23,7 +27,7 @@ const DutyAnalysis: React.FC = () => {
     useEffect(() => {
         getAllDutyClock({
             endDate: Date.now().toString(),
-            startDate: (Date.now() - 60*60*24*30*1000).toString(),
+            startDate: (Date.now() - 60 * 60 * 24 * 30 * 1000).toString(),
             unitNo: "",
             pageNum: 1,
             pageSize: 10
@@ -126,13 +130,17 @@ const DutyAnalysis: React.FC = () => {
 
     return (
         <>
-            <div className={Styles["header"]}>
+            <div className={c("header")}>
                 <div className={Styles["query"]}>
                     <RangePicker showTime value={[startTime, endTime]} onCalendarChange={rangeChange} />
-                    <Button type="primary" onClick={search}>
-                        查询
-                    </Button>
-                    <Button onClick={reset}>重置</Button>
+                    <div className={c("query-reset")}>
+                        <Button onClick={search} className={c("query-btn")}>
+                            查询
+                        </Button>
+                        <Button onClick={reset} className={c("reset-btn")}>
+                            重置
+                        </Button>
+                    </div>
                 </div>
             </div>
             <Table columns={column} dataSource={tableData} pagination={{ onChange: changePg, total, pageSize }} />

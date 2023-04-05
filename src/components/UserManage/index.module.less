@@ -1,47 +1,45 @@
-.userManage {
-    .header {
+.header {
+    display: flex;
+    margin-bottom: 18px;
+    .query {
         display: flex;
-        margin-bottom: 18px;
-        .query {
+        .inputs {
             display: flex;
-            .inputs {
+            column-gap: 20px;
+            .query-item {
                 display: flex;
-                column-gap: 20px;
-                .query-item {
-                    display: flex;
-                    align-items: center;
-                }
-            }
-            .query-reset {
-                margin-left: 20px;
-                display: flex;
-                column-gap: 10px;
-                .query-btn {
-                    background-color: #2a58ad;
-                    color: white;
-                }
+                align-items: center;
             }
         }
-        .btn-group {
-            margin-left: auto;
+        .query-reset {
+            margin-left: 20px;
             display: flex;
             column-gap: 10px;
-            .add {
+            .query-btn {
                 background-color: #2a58ad;
                 color: white;
             }
         }
     }
-    .operate {
+    .btn-group {
+        margin-left: auto;
         display: flex;
         column-gap: 10px;
-        justify-content: center;
-        .item {
-            cursor: pointer;
+        .add {
+            background-color: #2a58ad;
+            color: white;
         }
-        .item:hover {
-            color: #169bd5;
-        }
+    }
+}
+.operate {
+    display: flex;
+    column-gap: 10px;
+    justify-content: center;
+    .item {
+        cursor: pointer;
+    }
+    .item:hover {
+        color: #169bd5;
     }
 }
 

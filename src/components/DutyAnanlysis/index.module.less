@@ -3,15 +3,35 @@
 }
 
 .header {
-    margin-bottom: 10px;
     display: flex;
-    align-items: center;
+    margin-bottom: 18px;
     .query {
-        margin-left: auto;
-        & > * {
-            &:not(:first-child) {
-                margin-left: 10px;
+        display: flex;
+        .inputs {
+            display: flex;
+            column-gap: 20px;
+            .query-item {
+                display: flex;
+                align-items: center;
             }
+        }
+        .query-reset {
+            margin-left: 20px;
+            display: flex;
+            column-gap: 10px;
+            .query-btn {
+                background-color: #2a58ad;
+                color: white;
+            }
+        }
+    }
+    .btn-group {
+        margin-left: auto;
+        display: flex;
+        column-gap: 10px;
+        .add {
+            background-color: #2a58ad;
+            color: white;
         }
     }
 }

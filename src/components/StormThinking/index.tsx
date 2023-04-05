@@ -6,6 +6,10 @@ import Styles from "./index.module.less"
 
 const { RangePicker } = DatePicker
 
+function c(...classNameList: (string | undefined | null | boolean)[]) {
+    return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
+}
+
 interface DataType {
     key: string
     code: string
@@ -372,7 +376,7 @@ const StormThinking: React.FC = () => {
             </>
         )
     }
-    
+
     const EditForm: React.FC = () => {
         return (
             <>
@@ -399,19 +403,19 @@ const StormThinking: React.FC = () => {
             <SolutionForm />
             <EvalForm />
             <EditForm />
-            <div className={Styles["header"]}>
-                <div className={Styles["add"]}>
-                    <Button type="primary" onClick={() => setaddopen(true)}>
-                        新增
-                    </Button>
+            <div className={c("header")}>
+                <div className={c("query")}>
+                    <div className={c("inputs")}>
+                        <Select placeholder="请选择类型" />
+                        <RangePicker />
+                    </div>
+                    <div className={c("query-reset")}>
+                        <Button className={c("query-btn")}>查询</Button>
+                        <Button className={c("reset-btn")}>重置</Button>
+                    </div>
                 </div>
-                <div className={Styles["query"]}>
-                    <Input placeholder="请输入编号" />
-                    <Input placeholder="请输入名称" />
-                    <Select placeholder="请选择类型" />
-                    <RangePicker />
-                    <Button type="primary">查询</Button>
-                    <Button>重置</Button>
+                <div className={c("btn-group")}>
+                    <Button className={c("add")}>新增</Button>
                 </div>
             </div>
             <Table columns={column} dataSource={tabeData} pagination={{ onChange: changePg, total, pageSize }} />

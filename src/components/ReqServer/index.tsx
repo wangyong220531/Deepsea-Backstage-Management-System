@@ -1,4 +1,4 @@
-import { Table, Button, Input, Upload, DatePicker, Modal, Form, Select, Tooltip } from "antd"
+import { Table, Button, Input, Upload, DatePicker, Modal, Form, Select, Tooltip, Tabs } from "antd"
 import { ReactNode, useEffect, useState } from "react"
 import type { ColumnsType } from "antd/es/table"
 import { FileTextOutlined, UploadOutlined } from "@ant-design/icons"
@@ -258,19 +258,18 @@ const ReqServer: React.FC = () => {
     return (
         <>
             <AddForm />
-            <div className={Styles["header"]}>
-                <div className={Styles["add"]}>
-                    <Button type="primary" onClick={() => setAddOpen(true)}>
-                        新增
-                    </Button>
+            <div className={c("header")}>
+                <div className={c("query")}>
+                    <div className={c("inputs")}>
+                        <RangePicker />
+                    </div>
+                    <div className={c("query-reset")}>
+                        <Button className={c("query-btn")}>查询</Button>
+                        <Button className={c("reset-btn")}>重置</Button>
+                    </div>
                 </div>
-                <div className={Styles["query"]}>
-                    {/* <Input placeholder="请输入编码" />
-                    <Input placeholder="请输入请求人" />
-                    <Input placeholder="请输入回复人" /> */}
-                    <RangePicker />
-                    <Button type="primary">查询</Button>
-                    <Button>重置</Button>
+                <div className={c("btn-group")}>
+                    <Button className={c("add")}>新增</Button>
                 </div>
             </div>
             <Table rowKey={e => e.askTime} columns={column} dataSource={tableData} pagination={{ onChange: changePg, total, pageSize }} />

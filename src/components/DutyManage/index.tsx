@@ -7,6 +7,10 @@ import dayjs from "dayjs"
 
 const { RangePicker } = DatePicker
 
+function c(...classNameList: (string | undefined | null | boolean)[]) {
+    return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
+}
+
 interface DataType {
     key?: string
     id: string
@@ -186,15 +190,6 @@ const DutyManage: React.FC = () => {
                         <Button type="primary" onClick={() => launch(e)}>
                             启动
                         </Button>
-                        {/* {launchCode !== e.code ? (
-                            <Button type="primary" onClick={() => launch(e)}>
-                                启动
-                            </Button>
-                        ) : (
-                            <Button type="primary" ghost>
-                                已启动
-                            </Button>
-                        )} */}
                         <Popconfirm title="确定要删除吗？" onConfirm={() => condirmDel(e)}>
                             <Button type="primary">删除</Button>
                         </Popconfirm>
@@ -383,20 +378,20 @@ const DutyManage: React.FC = () => {
     return (
         <>
             <AddForm />
-            <div className={Styles["header"]}>
-                <div className={Styles["add"]}>
-                    <Button type="primary" onClick={add}>
-                        新增
-                    </Button>
-                </div>
+            <div className={c("header")}>
                 <div className={Styles["query"]}>
-                    {/* <Input placeholder="请输入编号" value={searchCode} onChange={inputCodeChange} />
-                    <Input placeholder="请输入地点" value={searchPosition} onChange={inputPositionChange} /> */}
                     <RangePicker showTime value={[startTime, endTime]} onCalendarChange={rangeChange} />
-                    <Button type="primary" onClick={search}>
-                        查询
-                    </Button>
-                    <Button onClick={reset}>重置</Button>
+                    <div className={c("query-reset")}>
+                        <Button onClick={search} className={c("query-btn")}>
+                            查询
+                        </Button>
+                        <Button onClick={reset} className={c("reset-btn")}>
+                            重置
+                        </Button>
+                    </div>
+                </div>
+                <div className={c("btn-group")}>
+                    <Button className={c("add")} onClick={add}>新增</Button>
                 </div>
             </div>
             <Table columns={column} rowKey={e => e.code} dataSource={tableData} pagination={{ onChange: changePg, total, pageSize }} />

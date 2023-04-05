@@ -120,7 +120,7 @@ const Analysis: React.FC = () => {
 
     return (
         <>
-            <div className={Styles["header"]}>
+            <div className={c("header")}>
                 <div className={Styles["tab"]}>
                     <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
                 </div>
@@ -130,7 +130,7 @@ const Analysis: React.FC = () => {
                     </div>
                     <div className={c("query-reset")}>
                         <Button className={c("query-btn")}>查询</Button>
-                        <Button className={c("reset-btn")} onClick={reset}>
+                        <Button onClick={reset}>
                             重置
                         </Button>
                     </div>

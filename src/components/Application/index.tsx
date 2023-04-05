@@ -2,9 +2,12 @@ import { Button, Input, DatePicker, Table, Select, Modal, Form, Tooltip } from "
 import { ReactNode, useState } from "react"
 import type { ColumnsType } from "antd/es/table"
 import Styles from "./index.module.less"
-import { EyeOutlined } from "@ant-design/icons"
 
 const { RangePicker } = DatePicker
+
+function c(...classNameList: (string | undefined | null | boolean)[]) {
+    return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
+}
 
 interface DataType {
     key: string
@@ -124,7 +127,6 @@ const Application: React.FC = () => {
             render: (_, e) => {
                 return (
                     <>
-                        {/* <EyeOutlined onClick={() => show(e)} /> */}
                         <Tooltip>
                             <span></span>
                         </Tooltip>
@@ -249,21 +251,20 @@ const Application: React.FC = () => {
     return (
         <>
             <AddForm />
-            <div className={Styles["header"]}>
-                <div className={Styles["add"]}>
-                    <Button type="primary" onClick={() => setAddOpen(true)}>
+            <div className={c("header")}>
+                <div className={Styles["query"]}>
+                    <div className={c("inputs")}>
+                        <RangePicker />
+                    </div>
+                    <div className={c("query-reset")}>
+                        <Button>查询</Button>
+                        <Button>重置</Button>
+                    </div>
+                </div>
+                <div className={c("btn-group")}>
+                    <Button className={c("add")} onClick={() => setAddOpen(true)}>
                         新增
                     </Button>
-                </div>
-                <div className={Styles["query"]}>
-                    <Input placeholder="请输入编码" />
-                    <Input placeholder="请输入指向对象" />
-                    <Select placeholder="请选择类型" options={mbOption} />
-                    <Select placeholder="请选择辖区" />
-                    <Select placeholder="请选择状态" />
-                    <RangePicker />
-                    <Button type="primary">查询</Button>
-                    <Button>重置</Button>
                 </div>
             </div>
             <Table columns={column} dataSource={tableData} />
