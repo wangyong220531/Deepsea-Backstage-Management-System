@@ -1,6 +1,6 @@
 import { FC, ReactNode, useEffect, useState } from "react"
 import Styles from "./index.module.less"
-import { Button, Input, Switch, Table } from "antd"
+import { Button, Input, Modal, Switch, Table, Form, Popconfirm } from "antd"
 import type { ColumnsType } from "antd/es/table"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
@@ -85,15 +85,45 @@ const UserManage: FC = () => {
                 return (
                     <>
                         <div className={c("operate")}>
-                            <div className={c("item")}>编辑</div>
-                            <div className={c("item")}>密码修改</div>
-                            <div className={c("item")}>删除</div>
+                            <div className={c("item")} onClick={() => edit(e)}>
+                                编辑
+                            </div>
+                            <div className={c("item")} onClick={() => pwdChange(e)}>
+                                密码修改
+                            </div>
+                            <Popconfirm title="确定要删除吗？">
+                                <div className={c("item")} onClick={() => del()}>
+                                    删除
+                                </div>
+                            </Popconfirm>
                         </div>
                     </>
                 )
             }
         }
     ]
+
+    const edit = (e: TableHead) => {
+        setOperateShow(true)
+        setModalContent("编辑")
+        editForm.setFieldsValue({
+            account: e.account,
+            name: e.name,
+            IDnumber: e.IDnumber,
+            policeNo: e.policeNo,
+            phoneNumber: e.phoneNumber,
+            unit: e.unit,
+            role: e.role
+        })
+    }
+
+    const pwdChange = (e: TableHead) => {
+        setOperateShow(true)
+        setModalContent("密码修改")
+        seteditAccount(e.account)
+    }
+
+    const del = () => {}
 
     const onChange = (checked: boolean) => {
         console.log(`switch to ${checked}`)
@@ -123,13 +153,86 @@ const UserManage: FC = () => {
     const [total, setTotal] = useState(100)
     const [pageSize, setPageSize] = useState(10)
 
-    const changePage = () => {
+    const changePage = () => {}
+
+    const [modalContent, setModalContent] = useState<"新增" | "编辑" | "密码修改">("编辑")
+    const [operateShow, setOperateShow] = useState(false)
+
+    const [editAccount, seteditAccount] = useState("")
+
+    const [editForm] = Form.useForm()
+
+    const [pwdChangeForm] = Form.useForm()
+
+    const Operate: FC = () => {
+        return (
+            <>
+                <Modal
+                    title={modalContent}
+                    open={operateShow}
+                    onOk={() => setOperateShow(false)}
+                    onCancel={() => setOperateShow(false)}
+                    footer={
+                        <>
+                            <Button className={c("cancel")} onClick={() => setOperateShow(false)}>
+                                取消
+                            </Button>
+                            <Button className={c("save")} onClick={() => setOperateShow(false)}>
+                                保存
+                            </Button>
+                        </>
+                    }
+                >
+                    {modalContent === "新增" || modalContent === "编辑" ? (
+                        <Form labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} form={editForm}>
+                            <Form.Item label="用户账号" name="account">
+                                <Input className={c("form-item-input")} />
+                            </Form.Item>
+                            <Form.Item label="用户姓名" name="name">
+                                <Input className={c("form-item-input")} />
+                            </Form.Item>
+                            <Form.Item label="身份证号" name="IDnumber">
+                                <Input className={c("form-item-input")} />
+                            </Form.Item>
+                            <Form.Item label="警号" name="policeNo">
+                                <Input className={c("form-item-input")} />
+                            </Form.Item>
+                            <Form.Item label="手机号" name="phoneNumber">
+                                <Input className={c("form-item-input")} />
+                            </Form.Item>
+                            <Form.Item label="单位" name="unit">
+                                <Input className={c("form-item-input")} />
+                            </Form.Item>
+                            <Form.Item label="角色" name="role">
+                                <Input className={c("form-item-input")} />
+                            </Form.Item>
+                        </Form>
+                    ) : (
+                        <Form labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} form={pwdChangeForm}>
+                            <Form.Item label="账号">
+                                <Input value={editAccount} disabled className={c("form-item-input")} />
+                            </Form.Item>
+                            <Form.Item label="密码" name="password" rules={[{ required: true, message: "请输入密码!" }]}>
+                                <Input className={c("form-item-input")} />
+                            </Form.Item>
+                            <Form.Item label="再次输入" name="confirm-pwd" rules={[{ required: true, message: "请再次确认!" }]}>
+                                <Input className={c("form-item-input")} />
+                            </Form.Item>
+                        </Form>
+                    )}
+                </Modal>
+            </>
+        )
     }
 
-
+    const addNew = () => {
+        setOperateShow(true)
+        setModalContent("新增")
+        editForm.resetFields()
+    }
 
     return (
-        <div className={c("userManage")}>
+        <>
             <div className={c("header")}>
                 <div className={Styles["query"]}>
                     <div className={c("inputs")}>
@@ -148,14 +251,17 @@ const UserManage: FC = () => {
                     </div>
                 </div>
                 <div className={c("btn-group")}>
-                    <Button className={c("add")}>新增</Button>
+                    <Button className={c("add")} onClick={() => addNew()}>
+                        新增
+                    </Button>
                     <Button>下载模板</Button>
-                    <Button>导入</Button>
+                    <Button>上传</Button>
                     <Button>导出</Button>
                 </div>
             </div>
-            <Table columns={columns} dataSource={tableData} pagination={{ onChange: changePage, total, pageSize }} />
-        </div>
+            <Table rowKey={e => e.IDnumber} columns={columns} dataSource={tableData} pagination={{ onChange: changePage, total, pageSize }} />
+            <Operate />
+        </>
     )
 }
 

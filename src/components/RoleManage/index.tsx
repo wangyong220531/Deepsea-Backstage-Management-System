@@ -1,4 +1,4 @@
-import { Button, Input, Modal, Switch, Table, Drawer, Tree } from "antd"
+import { Button, Input, Modal, Switch, Table, Drawer, Tree, Form } from "antd"
 import Styles from "./index.module.less"
 import type { ColumnsType } from "antd/es/table"
 import { ReactNode, useEffect, useState } from "react"
@@ -79,17 +79,19 @@ const RoleManage: React.FC = () => {
     ]
 
     const userClick = () => {
-        setUserShow(true)
+        setModalWidth(800)
         setmodalContent("用户授权")
+        setUserShow(true)
     }
 
     const authorize = () => {
+        setModalWidth(800)
         setDrawShow(true)
     }
 
     const edit = (e: TableHead) => {
-        setUserShow(true)
         setmodalContent("角色编辑")
+        setUserShow(true)
     }
 
     const modalColumns: ColumnsType<ModalTableHead> = [
@@ -167,7 +169,9 @@ const RoleManage: React.FC = () => {
     const [modalTotal, setModalTotal] = useState(100)
     const [modalPagesize, setModalPagesize] = useState(10)
 
-    const [modalContent, setmodalContent] = useState<"用户授权" | "角色编辑">("用户授权")
+    const [modalContent, setmodalContent] = useState<"新增" | "用户授权" | "角色编辑">("用户授权")
+
+    const [modalWidth, setModalWidth] = useState(600)
 
     const User: React.FC = () => {
         return (
@@ -179,13 +183,24 @@ const RoleManage: React.FC = () => {
                     onOk={() => setUserShow(false)}
                     footer={
                         <>
-                            <Button className={c("cancel")} onClick={() => setUserShow(false)}>取消</Button>
-                            <Button className={c("save")} onClick={() => setUserShow(false)}>保存</Button>
+                            <Button className={c("cancel")} onClick={() => setUserShow(false)}>
+                                取消
+                            </Button>
+                            <Button className={c("save")} onClick={() => setUserShow(false)}>
+                                保存
+                            </Button>
                         </>
                     }
-                    width={800}
+                    width={modalWidth}
                 >
-                    {modalContent === "用户授权" ? (
+                    {modalContent === "新增" && (
+                        <Form>
+                            <Form.Item label="角色名称">
+                                <Input />
+                            </Form.Item>
+                        </Form>
+                    )}
+                    {modalContent === "用户授权" && (
                         <>
                             <div className={c("modal-header")}>
                                 <div className={c("inputs")}>
@@ -205,11 +220,12 @@ const RoleManage: React.FC = () => {
                             </div>
                             <Table columns={modalColumns} pagination={{ onChange: changePage, total: modalTotal, pageSize: modalPagesize, size: "small" }} />
                         </>
-                    ) : (
+                    )}
+                    {modalContent === "角色编辑" && (
                         <>
                             <div className={c("roleName-edit")}>
                                 <div className={c("label")}>角色名称：</div>
-                                <Input placeholder="请输入角色名称"/>
+                                <Input placeholder="请输入角色名称" />
                             </div>
                         </>
                     )}
@@ -367,6 +383,12 @@ const RoleManage: React.FC = () => {
         }
     ]
 
+    const addNew = () => {
+        setModalWidth(600)
+        setUserShow(true)
+        setmodalContent("新增")
+    }
+
     return (
         <>
             <div className={c("header")}>
@@ -383,7 +405,9 @@ const RoleManage: React.FC = () => {
                     </div>
                 </div>
                 <div className={c("btn-group")}>
-                    <Button className={c("add")}>新增</Button>
+                    <Button className={c("add")} onClick={() => addNew()}>
+                        新增
+                    </Button>
                 </div>
             </div>
             <Table columns={columns} dataSource={tableData} pagination={{ onChange: changePage, total, pageSize }} />

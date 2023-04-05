@@ -6,7 +6,6 @@ import { useLocal, useSession } from "../../store/index"
 import { Outlet, useLocation, useNavigate } from "react-router-dom"
 import routes, { RouteChild } from "../../routes"
 import { getPng } from "../../utils"
-import dayjs from "dayjs"
 import BreadcrumbIcon from "../../assets/SystemManagement/BreadcrumbIcon.png"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
