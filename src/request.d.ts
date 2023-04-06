@@ -33,6 +33,13 @@ type ResponseResult = {
     "/duty/stormMind/addStormMindQuestion": AddMindQuestionResult
     "/duty/stormMind/addStormMindPlan": AddMindSolutionResult
     "/duty/totalPlayClock": AllDutyResult
+    "/system/user/list": AllUserResult
+    "/system/user/queryByAccount{account}": QueryUserByAccountResult
+    "/system/user/update": { success: Boolean }
+    "/system/user/vague": QueryUserInfoResult
+    "/system/role/add": { success: Boolean }
+    "/system/role/delete2": { success: Boolean }
+    "/system/role/list": GetAllRolesResult
 }
 type RequestQuery = {
     "/serve/ask/delAskInfo": { id: string }
@@ -43,6 +50,10 @@ type RequestQuery = {
     "/wisdom/apply/deleteWisdomApply": { id: string }
     "/pointAreas/getPointAreaList": {}
     "/policeSituation/selectAllTeam": {}
+    "/system/user/list": {}
+    "/system/user/queryByAccount{account}": { account: string }
+    "/system/role/delete2": { id: string }
+    "/system/role/list": {}
 }
 type RequestData = {
     "/policeSituation/selectNewAlarm": QueryLatestPS
@@ -71,6 +82,9 @@ type RequestData = {
     "/duty/stormMind/addStormMindQuestion": AddMindQuestionData
     "/duty/stormMind/addStormMindPlan": AddMindSolutionData
     "/duty/totalPlayClock": GetAllDuty
+    "/system/user/update": UpdateUserInfoData
+    "/system/user/vague": SearchUserInfoData
+    "/system/role/add": AddRoleData
 }
 
 type UrlList = keyof ResponseResult
@@ -780,4 +794,41 @@ interface DutyAnalysis {
     stayWaringTimes: number
     teamName: string
     unitName: string
+}
+
+interface AllUserResult {
+    rows: []
+    total: number
+}
+
+interface QueryUserByAccountResult {
+    data: {}
+}
+
+interface UpdateUserInfoData {
+    id: string
+    account: string
+    userName: string
+    userNo: string
+    roleId: string
+    status: 0 | 1 // 0-禁用 1-启用
+}
+
+interface SearchUserInfoData {
+    account: string
+    userUnitNo: string
+}
+
+interface QueryUserInfoResult {
+    rows: []
+}
+
+interface UserInfo {}
+
+interface AddRoleData {
+    roleName: string
+}
+
+interface GetAllRolesResult {
+    rows: []
 }

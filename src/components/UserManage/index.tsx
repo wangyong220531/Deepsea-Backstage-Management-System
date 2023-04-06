@@ -2,6 +2,7 @@ import { FC, ReactNode, useEffect, useState } from "react"
 import Styles from "./index.module.less"
 import { Button, Input, Modal, Switch, Table, Form, Popconfirm } from "antd"
 import type { ColumnsType } from "antd/es/table"
+import { getAllUser } from "../../api/userManage"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -10,7 +11,6 @@ function c(...classNameList: (string | undefined | null | boolean)[]) {
 interface TableHead {
     account: string
     name: string
-    IDnumber: string
     policeNo: string
     phoneNumber: string
     unit: string
@@ -31,12 +31,6 @@ const UserManage: FC = () => {
             key: "name",
             dataIndex: "name",
             title: "用户姓名",
-            align: "center"
-        },
-        {
-            key: "IDnumber",
-            dataIndex: "IDnumber",
-            title: "身份证号",
             align: "center"
         },
         {
@@ -103,13 +97,20 @@ const UserManage: FC = () => {
         }
     ]
 
+    const search = () => {
+        getAllUser({})
+    }
+
+    useEffect(() => {
+        search()
+    }, [])
+
     const edit = (e: TableHead) => {
         setOperateShow(true)
         setModalContent("编辑")
         editForm.setFieldsValue({
             account: e.account,
             name: e.name,
-            IDnumber: e.IDnumber,
             policeNo: e.policeNo,
             phoneNumber: e.phoneNumber,
             unit: e.unit,
@@ -140,7 +141,6 @@ const UserManage: FC = () => {
             {
                 account: "19945372694",
                 name: "徐腾",
-                IDnumber: "320812456987234654",
                 policeNo: "0815246",
                 phoneNumber: "18145623564",
                 unit: "反恐大队",
@@ -189,9 +189,6 @@ const UserManage: FC = () => {
                                 <Input className={c("form-item-input")} />
                             </Form.Item>
                             <Form.Item label="用户姓名" name="name">
-                                <Input className={c("form-item-input")} />
-                            </Form.Item>
-                            <Form.Item label="身份证号" name="IDnumber">
                                 <Input className={c("form-item-input")} />
                             </Form.Item>
                             <Form.Item label="警号" name="policeNo">
@@ -259,7 +256,7 @@ const UserManage: FC = () => {
                     <Button>导出</Button>
                 </div>
             </div>
-            <Table rowKey={e => e.IDnumber} columns={columns} dataSource={tableData} pagination={{ onChange: changePage, total, pageSize }} />
+            <Table rowKey={e => e.account} columns={columns} dataSource={tableData} pagination={{ onChange: changePage, total, pageSize }} />
             <Operate />
         </>
     )

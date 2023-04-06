@@ -389,6 +389,14 @@ const RoleManage: React.FC = () => {
         setmodalContent("新增")
     }
 
+    const save = () => {
+        console.log()
+    }
+
+    const test = (e: any) => {
+        console.log("1",e)
+    }
+
     return (
         <>
             <div className={c("header")}>
@@ -410,7 +418,7 @@ const RoleManage: React.FC = () => {
                     </Button>
                 </div>
             </div>
-            <Table columns={columns} dataSource={tableData} pagination={{ onChange: changePage, total, pageSize }} />
+            <Table rowKey={e => e.createTime} columns={columns} dataSource={tableData} pagination={{ onChange: changePage, total, pageSize }} />
             <Drawer
                 placement="right"
                 title="菜单授权"
@@ -426,12 +434,14 @@ const RoleManage: React.FC = () => {
                     <>
                         <div className={c("drawer-footer")}>
                             <Button>取消</Button>
-                            <Button className={c("right")}>保存</Button>
+                            <Button className={c("right")} onClick={save}>
+                                保存
+                            </Button>
                         </div>
                     </>
                 }
             >
-                <Tree treeData={treeData} checkable />
+                <Tree treeData={treeData} checkable defaultExpandAll onCheck={test} />
             </Drawer>
             <User />
         </>
