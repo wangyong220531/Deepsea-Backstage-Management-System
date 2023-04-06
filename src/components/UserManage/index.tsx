@@ -2,20 +2,13 @@ import { FC, ReactNode, useEffect, useState } from "react"
 import Styles from "./index.module.less"
 import { Button, Input, Modal, Switch, Table, Form, Popconfirm } from "antd"
 import type { ColumnsType } from "antd/es/table"
-import { getAllUser } from "../../api/userManage"
+import { searchUserInfo } from "../../api/userManage"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
 }
 
-interface TableHead {
-    account: string
-    name: string
-    policeNo: string
-    phoneNumber: string
-    unit: string
-    role: string
-    status: string
+interface TableHead extends UserInfo {
     operate?: ReactNode
 }
 
@@ -28,14 +21,20 @@ const UserManage: FC = () => {
             align: "center"
         },
         {
-            key: "name",
-            dataIndex: "name",
+            key: "userName",
+            dataIndex: "userName",
             title: "用户姓名",
             align: "center"
         },
         {
-            key: "policeNo",
-            dataIndex: "policeNo",
+            key: "identityCode",
+            dataIndex: "identityCode",
+            title: "身份证号",
+            align: "center"
+        },
+        {
+            key: "userNo",
+            dataIndex: "userNo",
             title: "警号",
             align: "center"
         },
@@ -46,8 +45,8 @@ const UserManage: FC = () => {
             align: "center"
         },
         {
-            key: "unit",
-            dataIndex: "unit",
+            key: "unitName",
+            dataIndex: "unitName",
             title: "单位",
             align: "center"
         },
@@ -55,7 +54,10 @@ const UserManage: FC = () => {
             key: "role",
             dataIndex: "role",
             title: "角色",
-            align: "center"
+            align: "center",
+            render: (_, e) => {
+                return <>{e.role.roleName}</>
+            }
         },
         {
             key: "status",
@@ -65,7 +67,7 @@ const UserManage: FC = () => {
             render: (_, e) => {
                 return (
                     <>
-                        <Switch defaultChecked checkedChildren="启用" unCheckedChildren="禁用" onChange={onChange} />
+                        <Switch defaultChecked={e.status === 0 ? false : true} checkedChildren="启用" unCheckedChildren="禁用" onChange={onChange} />
                     </>
                 )
             }
@@ -98,7 +100,29 @@ const UserManage: FC = () => {
     ]
 
     const search = () => {
-        getAllUser({})
+        searchUserInfo({
+            account: "",
+            userUnitNo: "",
+            pageNum: 1,
+            pageSize: 10
+        }).then(res => {
+            res &&
+                (setTableData(
+                    res.data.rows.map(e => {
+                        return {
+                            account: e.account,
+                            userName: e.userName,
+                            userNo: e.userNo,
+                            unitName: e.unitName,
+                            identityCode: e.identityCode,
+                            role: e.role,
+                            phone: e.phone,
+                            status: e.status
+                        }
+                    })
+                ),
+                setTotal(res.data.total))
+        })
     }
 
     useEffect(() => {
@@ -106,15 +130,16 @@ const UserManage: FC = () => {
     }, [])
 
     const edit = (e: TableHead) => {
+        e.role.roleName === "超级管理员" ? setIsGeneral(false) : setIsGeneral(true)
         setOperateShow(true)
         setModalContent("编辑")
         editForm.setFieldsValue({
             account: e.account,
-            name: e.name,
-            policeNo: e.policeNo,
-            phoneNumber: e.phoneNumber,
-            unit: e.unit,
-            role: e.role
+            userName: e.userName,
+            userNo: e.userNo,
+            phone: e.phone,
+            unitName: e.unitName,
+            role: e.role.roleName
         })
     }
 
@@ -132,24 +157,6 @@ const UserManage: FC = () => {
 
     const [tableData, setTableData] = useState<TableHead[]>([])
 
-    useEffect(() => {
-        query()
-    }, [])
-
-    const query = () => {
-        setTableData([
-            {
-                account: "19945372694",
-                name: "徐腾",
-                policeNo: "0815246",
-                phoneNumber: "18145623564",
-                unit: "反恐大队",
-                role: "超级管理员",
-                status: "禁用"
-            }
-        ])
-    }
-
     const [total, setTotal] = useState(100)
     const [pageSize, setPageSize] = useState(10)
 
@@ -163,6 +170,8 @@ const UserManage: FC = () => {
     const [editForm] = Form.useForm()
 
     const [pwdChangeForm] = Form.useForm()
+
+    const [isGeneral, setIsGeneral] = useState(true)
 
     const Operate: FC = () => {
         return (
@@ -186,22 +195,22 @@ const UserManage: FC = () => {
                     {modalContent === "新增" || modalContent === "编辑" ? (
                         <Form labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} form={editForm}>
                             <Form.Item label="用户账号" name="account">
-                                <Input className={c("form-item-input")} />
+                                <Input className={c("form-item-input")} disabled={isGeneral} />
                             </Form.Item>
-                            <Form.Item label="用户姓名" name="name">
-                                <Input className={c("form-item-input")} />
+                            <Form.Item label="用户姓名" name="userName">
+                                <Input className={c("form-item-input")} disabled={isGeneral} />
                             </Form.Item>
-                            <Form.Item label="警号" name="policeNo">
-                                <Input className={c("form-item-input")} />
+                            <Form.Item label="警号" name="userNo">
+                                <Input className={c("form-item-input")} disabled={isGeneral} />
                             </Form.Item>
                             <Form.Item label="手机号" name="phoneNumber">
                                 <Input className={c("form-item-input")} />
                             </Form.Item>
-                            <Form.Item label="单位" name="unit">
-                                <Input className={c("form-item-input")} />
+                            <Form.Item label="单位" name="unitName">
+                                <Input className={c("form-item-input")} disabled={isGeneral} />
                             </Form.Item>
                             <Form.Item label="角色" name="role">
-                                <Input className={c("form-item-input")} />
+                                <Input className={c("form-item-input")} disabled={isGeneral} />
                             </Form.Item>
                         </Form>
                     ) : (

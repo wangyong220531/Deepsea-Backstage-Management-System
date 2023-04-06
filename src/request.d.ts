@@ -801,6 +801,14 @@ interface AllUserResult {
     total: number
 }
 
+interface User {
+    id: string
+    account: string
+    userName: string
+    userUnitNo: string
+    status: 0 | 1
+}
+
 interface QueryUserByAccountResult {
     data: {}
 }
@@ -817,13 +825,34 @@ interface UpdateUserInfoData {
 interface SearchUserInfoData {
     account: string
     userUnitNo: string
+    pageNum: number
+    pageSize: number
 }
 
 interface QueryUserInfoResult {
-    rows: []
+    data: {
+        pageNum: number
+        pageSize: number
+        rows: UserInfo[]
+        total: number
+    }
 }
 
-interface UserInfo {}
+interface UserInfo {
+    id?: string
+    account: string
+    identityCode: string
+    phone: string
+    status: 0 | 1
+    unitName: string
+    userName: string
+    userNo: string
+    role: {
+        id: string
+        roleName: string
+    }
+    unitNo?: string
+}
 
 interface AddRoleData {
     roleName: string
