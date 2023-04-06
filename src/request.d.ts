@@ -40,6 +40,9 @@ type ResponseResult = {
     "/system/role/add": { success: Boolean }
     "/system/role/delete2": { success: Boolean }
     "/system/role/list": GetAllRolesResult
+    "/report/list": GetUnitListResult
+    "/system/user/modifyPassword": { success: Boolean }
+    "/system/user/delete": { success: Boolean }
 }
 type RequestQuery = {
     "/serve/ask/delAskInfo": { id: string }
@@ -54,6 +57,9 @@ type RequestQuery = {
     "/system/user/queryByAccount{account}": { account: string }
     "/system/role/delete2": { id: string }
     "/system/role/list": {}
+    "/report/list": {}
+    "/system/user/modifyPassword": { newPass: string; userId: string }
+    "/system/user/delete": { id: string }
 }
 type RequestData = {
     "/policeSituation/selectNewAlarm": QueryLatestPS
@@ -839,7 +845,7 @@ interface QueryUserInfoResult {
 }
 
 interface UserInfo {
-    id?: string
+    id: string
     account: string
     identityCode: string
     phone: string
@@ -860,4 +866,13 @@ interface AddRoleData {
 
 interface GetAllRolesResult {
     rows: []
+}
+
+interface GetUnitListResult {
+    data: Unit[]
+}
+
+interface Unit {
+    unitName: string
+    unitNo: string
 }

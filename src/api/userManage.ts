@@ -36,3 +36,29 @@ export function searchUserInfo(data: SearchUserInfoData) {
     })
 }
 
+export function getUnitList(config: {}) {
+    return request({
+        url: "/report/list",
+        baseURL,
+        query: config,
+        method: "GET"
+    })
+}
+
+export function updatePassword(config: { newPass: string; userId: string }) {
+    return request({
+        url: "/system/user/modifyPassword",
+        baseURL,
+        query: config,
+        method: "GET"
+    })
+}
+
+export function delUser(config: { id: string }) {
+    return request({
+        url: "/system/user/delete",
+        baseURL,
+        query: config,
+        method: "DELETE"
+    })
+}

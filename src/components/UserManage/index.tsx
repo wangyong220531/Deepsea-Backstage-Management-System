@@ -1,8 +1,8 @@
 import { FC, ReactNode, useEffect, useState } from "react"
 import Styles from "./index.module.less"
-import { Button, Input, Modal, Switch, Table, Form, Popconfirm } from "antd"
+import { Button, Input, Modal, Switch, Table, Form, Popconfirm, Select } from "antd"
 import type { ColumnsType } from "antd/es/table"
-import { searchUserInfo } from "../../api/userManage"
+import { delUser, getUnitList, searchUserInfo, updatePassword, updateUserInfo } from "../../api/userManage"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -87,10 +87,8 @@ const UserManage: FC = () => {
                             <div className={c("item")} onClick={() => pwdChange(e)}>
                                 密码修改
                             </div>
-                            <Popconfirm title="确定要删除吗？">
-                                <div className={c("item")} onClick={() => del()}>
-                                    删除
-                                </div>
+                            <Popconfirm title="确定要删除吗？" onConfirm={() => delConfirm(e)}>
+                                <div className={c("item")}>删除</div>
                             </Popconfirm>
                         </div>
                     </>
@@ -98,6 +96,14 @@ const UserManage: FC = () => {
             }
         }
     ]
+
+    const delConfirm = (e: TableHead) => {
+        delUser({ id: e.id }).then(() => {
+            search()
+        })
+    }
+
+    const [unitList, setUnitList] = useState<OptionType[]>([])
 
     const search = () => {
         searchUserInfo({
@@ -110,6 +116,7 @@ const UserManage: FC = () => {
                 (setTableData(
                     res.data.rows.map(e => {
                         return {
+                            id: e.id,
                             account: e.account,
                             userName: e.userName,
                             userNo: e.userNo,
@@ -123,13 +130,27 @@ const UserManage: FC = () => {
                 ),
                 setTotal(res.data.total))
         })
+        getUnitList({}).then(res => {
+            res &&
+                setUnitList(
+                    res.data.map(e => {
+                        return {
+                            value: e.unitNo,
+                            label: e.unitName
+                        }
+                    })
+                )
+        })
     }
 
     useEffect(() => {
         search()
     }, [])
 
+    const [selectId, setSelectId] = useState("")
+
     const edit = (e: TableHead) => {
+        setSelectId(e.id)
         e.role.roleName === "超级管理员" ? setIsGeneral(false) : setIsGeneral(true)
         setOperateShow(true)
         setModalContent("编辑")
@@ -144,12 +165,11 @@ const UserManage: FC = () => {
     }
 
     const pwdChange = (e: TableHead) => {
-        setOperateShow(true)
+        setSelectId(e.id)
         setModalContent("密码修改")
         seteditAccount(e.account)
+        setOperateShow(true)
     }
-
-    const del = () => {}
 
     const onChange = (checked: boolean) => {
         console.log(`switch to ${checked}`)
@@ -186,7 +206,7 @@ const UserManage: FC = () => {
                             <Button className={c("cancel")} onClick={() => setOperateShow(false)}>
                                 取消
                             </Button>
-                            <Button className={c("save")} onClick={() => setOperateShow(false)}>
+                            <Button className={c("save")} onClick={save}>
                                 保存
                             </Button>
                         </>
@@ -207,7 +227,7 @@ const UserManage: FC = () => {
                                 <Input className={c("form-item-input")} />
                             </Form.Item>
                             <Form.Item label="单位" name="unitName">
-                                <Input className={c("form-item-input")} disabled={isGeneral} />
+                                <Select placeholder="请选择单位" options={unitList} className={c("form-item-input")} />
                             </Form.Item>
                             <Form.Item label="角色" name="role">
                                 <Input className={c("form-item-input")} disabled={isGeneral} />
@@ -221,7 +241,7 @@ const UserManage: FC = () => {
                             <Form.Item label="密码" name="password" rules={[{ required: true, message: "请输入密码!" }]}>
                                 <Input className={c("form-item-input")} />
                             </Form.Item>
-                            <Form.Item label="再次输入" name="confirm-pwd" rules={[{ required: true, message: "请再次确认!" }]}>
+                            <Form.Item label="再次输入" name="confirmPwd" rules={[{ required: true, message: "请再次确认!" }]}>
                                 <Input className={c("form-item-input")} />
                             </Form.Item>
                         </Form>
@@ -231,10 +251,34 @@ const UserManage: FC = () => {
         )
     }
 
+    const save = async () => {
+        setOperateShow(false)
+        if (modalContent === "新增" || modalContent === "编辑") {
+            const res = await editForm.validateFields()
+            updateUserInfo({
+                id: selectId,
+                account: res.account,
+                userName: res.userName,
+                userNo: res.userNo,
+                roleId: res.role,
+                status: 0
+            })
+            editForm.resetFields()
+            return
+        }
+        const res = await pwdChangeForm.validateFields()
+        updatePassword({
+            newPass: res.confirmPwd,
+            userId: selectId
+        })
+        pwdChangeForm.resetFields()
+    }
+
     const addNew = () => {
-        setOperateShow(true)
         setModalContent("新增")
+        setIsGeneral(false)
         editForm.resetFields()
+        setOperateShow(true)
     }
 
     return (
