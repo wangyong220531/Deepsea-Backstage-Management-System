@@ -43,6 +43,7 @@ type ResponseResult = {
     "/report/list": GetUnitListResult
     "/system/user/modifyPassword": { success: Boolean }
     "/system/user/delete": { success: Boolean }
+    "/system/permission/list/:parentId": GetPermissionTreeResult
 }
 type RequestQuery = {
     "/serve/ask/delAskInfo": { id: string }
@@ -91,6 +92,10 @@ type RequestData = {
     "/system/user/update": UpdateUserInfoData
     "/system/user/vague": SearchUserInfoData
     "/system/role/add": AddRoleData
+}
+
+type RequestParams = {
+    "/system/permission/list/:parentId": { parentId: string }
 }
 
 type UrlList = keyof ResponseResult
@@ -865,7 +870,14 @@ interface AddRoleData {
 }
 
 interface GetAllRolesResult {
-    rows: []
+    rows: Role[]
+}
+
+interface Role {
+    id: string
+    roleName: string
+    createTime: string
+    status: 0 | 1
 }
 
 interface GetUnitListResult {
@@ -876,3 +888,5 @@ interface Unit {
     unitName: string
     unitNo: string
 }
+
+interface GetPermissionTreeResult {}

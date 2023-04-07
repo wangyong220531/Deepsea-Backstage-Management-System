@@ -4,15 +4,14 @@ import type { ColumnsType } from "antd/es/table"
 import { ReactNode, useEffect, useState } from "react"
 import type { DataNode } from "antd/es/tree"
 import { CloseOutlined } from "@ant-design/icons"
+import { addRole, getAllRoles } from "../../api/roleManage"
+import { getPermissionTree } from "../../api/permisssion"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
 }
 
-interface TableHead {
-    name: string
-    createTime: string
-    status: Boolean
+interface TableHead extends Role {
     operate?: ReactNode
 }
 
@@ -29,8 +28,8 @@ interface ModalTableHead {
 const RoleManage: React.FC = () => {
     const columns: ColumnsType<TableHead> = [
         {
-            key: "name",
-            dataIndex: "name",
+            key: "roleName",
+            dataIndex: "roleName",
             title: "角色名称",
             align: "center"
         },
@@ -48,7 +47,7 @@ const RoleManage: React.FC = () => {
             render: (_, e) => {
                 return (
                     <>
-                        <Switch defaultChecked checkedChildren="启用" unCheckedChildren="禁用" onChange={onChange} />
+                        <Switch defaultChecked={e.status === 0 ? false : true} checkedChildren="启用" unCheckedChildren="禁用" onChange={onChange} />
                     </>
                 )
             }
@@ -77,6 +76,27 @@ const RoleManage: React.FC = () => {
             }
         }
     ]
+
+    const search = () => {
+        getAllRoles({}).then(res => {
+            res &&
+                setTableData(
+                    res.rows.map(e => {
+                        return {
+                            id: e.id,
+                            roleName: e.roleName,
+                            createTime: e.createTime,
+                            status: e.status
+                        }
+                    })
+                )
+        })
+    }
+
+    useEffect(() => {
+        search()
+        getPermissionTree({ parentId: "123" })
+    }, [])
 
     const userClick = () => {
         setModalWidth(800)
@@ -141,20 +161,6 @@ const RoleManage: React.FC = () => {
 
     const [tableData, setTableData] = useState<TableHead[]>([])
 
-    const query = () => {
-        setTableData([
-            {
-                name: "超级管理员",
-                createTime: "2023-04-05 15:05:06",
-                status: false
-            }
-        ])
-    }
-
-    useEffect(() => {
-        query()
-    }, [])
-
     const onChange = (checked: boolean) => {
         console.log(`switch to ${checked}`)
     }
@@ -194,11 +200,12 @@ const RoleManage: React.FC = () => {
                     width={modalWidth}
                 >
                     {modalContent === "新增" && (
-                        <Form>
-                            <Form.Item label="角色名称">
-                                <Input />
-                            </Form.Item>
-                        </Form>
+                        <>
+                            <div className={c("add-role-box")}>
+                                <div className={c("title")}>角色名称：</div>
+                                <Input placeholder="请输入角色名称" onChange={roleNameInput} />
+                            </div>
+                        </>
                     )}
                     {modalContent === "用户授权" && (
                         <>
@@ -233,6 +240,7 @@ const RoleManage: React.FC = () => {
             </>
         )
     }
+    const [addRoleName, setAddRoleName] = useState("")
 
     const [drawShow, setDrawShow] = useState(false)
 
@@ -383,6 +391,10 @@ const RoleManage: React.FC = () => {
         }
     ]
 
+    const roleNameInput = (e: any) => {
+        setAddRoleName(e.target.value)
+    }
+
     const addNew = () => {
         setModalWidth(600)
         setUserShow(true)
@@ -390,11 +402,12 @@ const RoleManage: React.FC = () => {
     }
 
     const save = () => {
-        console.log()
+        // addRole({ roleName: addRoleName })
+        console.log(addRoleName)
     }
 
     const test = (e: any) => {
-        console.log("1",e)
+        console.log("1", e)
     }
 
     return (

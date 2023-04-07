@@ -20,6 +20,7 @@ export async function request<T extends UrlList>(config: GetAxiosConfig<T>): Pro
         let url: string = config.url
         if (url.includes(":") && param) {
             Object.keys(param).forEach(key => {
+                console.log("test", param)
                 url = url.replace(`:${key}`, param[key as GetParamsList<T>])
             })
         }
