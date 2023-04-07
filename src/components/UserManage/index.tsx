@@ -1,8 +1,8 @@
 import { FC, ReactNode, useEffect, useState } from "react"
 import Styles from "./index.module.less"
-import { Button, Input, Modal, Switch, Table, Form, Popconfirm, Select } from "antd"
+import { Button, Input, Modal, Switch, Table, Form, Popconfirm, Select, message } from "antd"
 import type { ColumnsType } from "antd/es/table"
-import { delUser, getUnitList, searchUserInfo, updatePassword, updateUserInfo } from "../../api/userManage"
+import { delUser, getUnitList, searchUser, updatePassword, updateUserInfo } from "../../api/userManage"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -99,6 +99,7 @@ const UserManage: FC = () => {
 
     const delConfirm = (e: TableHead) => {
         delUser({ id: e.id }).then(() => {
+            message.success("删除用户成功！")
             search()
         })
     }
@@ -106,7 +107,7 @@ const UserManage: FC = () => {
     const [unitList, setUnitList] = useState<OptionType[]>([])
 
     const search = () => {
-        searchUserInfo({
+        searchUser({
             account: "",
             userUnitNo: "",
             pageNum: 1,
@@ -215,7 +216,7 @@ const UserManage: FC = () => {
                     {modalContent === "新增" || modalContent === "编辑" ? (
                         <Form labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} form={editForm}>
                             <Form.Item label="用户账号" name="account">
-                                <Input className={c("form-item-input")} disabled={isGeneral} />
+                                <Input className={c("form-item-input")} disabled={isGeneral} addonAfter="同警号" />
                             </Form.Item>
                             <Form.Item label="用户姓名" name="userName">
                                 <Input className={c("form-item-input")} disabled={isGeneral} />
@@ -262,6 +263,8 @@ const UserManage: FC = () => {
                 userNo: res.userNo,
                 roleId: res.role,
                 status: 0
+            }).then(() => {
+                message.success("更改用户信息成功！")
             })
             editForm.resetFields()
             return
@@ -270,6 +273,8 @@ const UserManage: FC = () => {
         updatePassword({
             newPass: res.confirmPwd,
             userId: selectId
+        }).then(() => {
+            message.success("修改密码成功！")
         })
         pwdChangeForm.resetFields()
     }

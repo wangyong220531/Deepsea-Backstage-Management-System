@@ -27,7 +27,7 @@ const DutyAnalysis: React.FC = () => {
     useEffect(() => {
         getAllDutyClock({
             endDate: Date.now().toString(),
-            startDate: (Date.now() - 60 * 60 * 24 * 30 * 1000).toString(),
+            startDate: (Date.now() - 2592000000).toString(),
             unitNo: "",
             pageNum: 1,
             pageSize: 10

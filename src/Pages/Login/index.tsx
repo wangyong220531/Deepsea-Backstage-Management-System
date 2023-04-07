@@ -1,15 +1,22 @@
 import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons"
 import { Button } from "antd"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Navigate, useSearchParams } from "react-router-dom"
 import { useSession } from "../../store"
 import UsernameIcon from "../../assets/usernameIcon.png"
-import PasswordIcon from "../../assets/PasswordIcon.png"
+import Captcha from "../../assets/Login/Captcha.png"
 import Logo from "../../assets/logo.png"
 import styles from "./index.module.less"
-import { FileInput } from "gskj-components"
+import { getCaptcha } from "../../api/login"
 
 const Login: React.FC = () => {
+
+    useEffect(() => {
+        getCaptcha({
+            userNo: ""
+        })
+    },[])
+
     const store = useSession()
     const [showPwd, setShowPwd] = useState(false)
     const [userName, setUserName] = useState("wangyong")
@@ -19,8 +26,6 @@ const Login: React.FC = () => {
     const submit = () => {
         store.setState({ token: "ssssssasas12121212" })
     }
-    const [base64, setBase64] = useState<string | undefined | null>("")
-    const [fileName, setFileName] = useState("")
     return store.token ? (
         <Navigate to={from ? decodeURIComponent(from) : "/"} replace={true} />
     ) : (
@@ -40,12 +45,12 @@ const Login: React.FC = () => {
                             </div>
                         </div>
                         <div className={styles["input-css"]}>
-                            <img src={PasswordIcon} alt="" />
+                            <img src={Captcha} alt="" />
                             <div className={styles["box"]}>
                                 <input type={showPwd ? "text" : "password"} placeholder="请输入密码" onKeyDown={e => e.key === "Enter" && submit()} value={password} onChange={e => setPassword(e.target.value)} />
-                                <div className={styles["password"]} onClick={() => setShowPwd(!showPwd)}>
+                                {/* <div className={styles["password"]} onClick={() => setShowPwd(!showPwd)}>
                                     {showPwd ? <EyeInvisibleOutlined /> : <EyeOutlined />}
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                         <Button onClick={submit} className={styles["login-btn"]}>

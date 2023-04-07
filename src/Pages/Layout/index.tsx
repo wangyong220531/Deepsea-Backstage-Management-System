@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { SettingOutlined } from "@ant-design/icons"
 import { Dropdown, Layout, Menu, MenuProps } from "antd"
-import styles from "./index.module.less"
+import Styles from "./index.module.less"
 import { useLocal, useSession } from "../../store/index"
 import { Outlet, useLocation, useNavigate } from "react-router-dom"
 import routes, { RouteChild } from "../../routes"
@@ -9,7 +9,7 @@ import { getPng } from "../../utils"
 import BreadcrumbIcon from "../../assets/SystemManagement/BreadcrumbIcon.png"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
-    return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : styles[className])).join(" ")
+    return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
 }
 
 const { Header, Content, Sider } = Layout
@@ -66,7 +66,7 @@ const LayoutFC: React.FC = () => {
     const BreakMenu: React.FC = () => {
         return (
             <>
-                <div className={styles["breaks"]}>
+                <div className={c("breaks")}>
                     <img src={BreadcrumbIcon} alt="" />
                     <div>
                         {breaks &&
@@ -86,9 +86,9 @@ const LayoutFC: React.FC = () => {
 
     const Title: React.FC = () => {
         return (
-            <div className={styles["title"]}>
+            <div className={c("title")}>
                 <img src={getPng("police-icon")} alt="" />
-                {showTitle && <div className={styles["title-text"]}>深海后台管理系统</div>}
+                {showTitle && <div className={c("title-text")}>深海后台管理系统</div>}
             </div>
         )
     }
@@ -116,7 +116,7 @@ const LayoutFC: React.FC = () => {
     const items: MenuProps["items"] = [
         {
             label: (
-                <div className={styles["logout"]} onClick={logout}>
+                <div className={c("logout")} onClick={logout}>
                     退出登录
                 </div>
             ),
@@ -126,16 +126,15 @@ const LayoutFC: React.FC = () => {
 
     return (
         <Layout className={c("layout")}>
-            <Header style={{ background: "#2a58ad", height: "64px" }} className={styles["header"]}>
+            <Header style={{ background: "#2a58ad", height: "64px" }} className={c("header")}>
                 <Title></Title>
                 <Dropdown menu={{ items }} trigger={["click"]}>
-                    <SettingOutlined className={styles["setting"]} />
+                    <SettingOutlined className={c("setting")} />
                 </Dropdown>
             </Header>
-
             <Layout hasSider>
-                <Sider trigger={null} style={{ width: "200px", background: local.themeColor, height: "100vh" }} collapsed={collapsed} collapsible>
-                    <Menu mode="inline" defaultOpenKeys={[location.pathname.split("/")[1]]} selectedKeys={[location.pathname.split("/").slice(-1).toString()]} style={{ height: "calc(100vh-64px)", borderRight: 0 }} items={menuList} onClick={changeRoute} />
+                <Sider trigger={null} style={{ width: "200px", background: local.themeColor, height: "920px" }} collapsed={collapsed} collapsible>
+                    <Menu mode="inline" defaultOpenKeys={[location.pathname.split("/")[1]]} selectedKeys={[location.pathname.split("/").slice(-1).toString()]} items={menuList} onClick={changeRoute} />
                 </Sider>
                 <BreakMenu></BreakMenu>
                 <Content className={c("content")}>

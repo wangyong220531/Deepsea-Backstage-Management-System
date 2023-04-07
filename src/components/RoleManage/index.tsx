@@ -1,11 +1,11 @@
-import { Button, Input, Modal, Switch, Table, Drawer, Tree, Form } from "antd"
+import { Button, Input, Modal, Switch, Table, Drawer, Tree, Form, message } from "antd"
 import Styles from "./index.module.less"
 import type { ColumnsType } from "antd/es/table"
 import { ReactNode, useEffect, useState } from "react"
 import type { DataNode } from "antd/es/tree"
 import { CloseOutlined } from "@ant-design/icons"
-import { addRole, getAllRoles } from "../../api/roleManage"
-import { getPermissionTree } from "../../api/permisssion"
+import { addRole, searchRole } from "../../api/roleManage"
+import { searchUser } from "../../api/userManage"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -13,16 +13,6 @@ function c(...classNameList: (string | undefined | null | boolean)[]) {
 
 interface TableHead extends Role {
     operate?: ReactNode
-}
-
-interface ModalTableHead {
-    account: string
-    name: string
-    sex: "男" | "女"
-    policeNo: string
-    phoneNum: string
-    unit: string
-    role: string
 }
 
 const RoleManage: React.FC = () => {
@@ -78,10 +68,14 @@ const RoleManage: React.FC = () => {
     ]
 
     const search = () => {
-        getAllRoles({}).then(res => {
+        searchRole({
+            pageNum: 1,
+            pageSize: 10,
+            roleName: ""
+        }).then(res => {
             res &&
                 setTableData(
-                    res.rows.map(e => {
+                    res.data.rows.map(e => {
                         return {
                             id: e.id,
                             roleName: e.roleName,
@@ -95,11 +89,33 @@ const RoleManage: React.FC = () => {
 
     useEffect(() => {
         search()
-        getPermissionTree({ parentId: "123" })
     }, [])
 
     const userClick = () => {
+        setSelectedRowKeys([])
         setModalWidth(800)
+        searchUser({
+            account: "",
+            userUnitNo: "",
+            pageNum: 1,
+            pageSize: 10
+        }).then(res => {
+            res &&
+                setModalTableData(
+                    res.data.rows.map(e => {
+                        return {
+                            id: e.id,
+                            account: e.account,
+                            userName: e.unitName,
+                            identityCode: e.identityCode,
+                            userNo: e.userNo,
+                            phone: e.phone,
+                            role: e.role,
+                            unitName: e.unitName
+                        }
+                    })
+                )
+        })
         setmodalContent("用户授权")
         setUserShow(true)
     }
@@ -114,7 +130,7 @@ const RoleManage: React.FC = () => {
         setUserShow(true)
     }
 
-    const modalColumns: ColumnsType<ModalTableHead> = [
+    const modalColumns: ColumnsType<UserInfo> = [
         {
             key: "account",
             dataIndex: "account",
@@ -122,32 +138,32 @@ const RoleManage: React.FC = () => {
             align: "center"
         },
         {
-            key: "name",
-            dataIndex: "name",
+            key: "userName",
+            dataIndex: "userName",
             title: "用户姓名",
             align: "center"
         },
         {
-            key: "sex",
-            dataIndex: "sex",
-            title: "性别",
+            key: "identityCode",
+            dataIndex: "identityCode",
+            title: "身份证号",
             align: "center"
         },
         {
-            key: "policeNo",
-            dataIndex: "policeNo",
+            key: "userNo",
+            dataIndex: "userNo",
             title: "警号",
             align: "center"
         },
         {
-            key: "phoneNum",
-            dataIndex: "phoneNum",
+            key: "phone",
+            dataIndex: "phone",
             title: "手机号码",
             align: "center"
         },
         {
-            key: "unit",
-            dataIndex: "unit",
+            key: "unitName",
+            dataIndex: "unitName",
             title: "单位",
             align: "center"
         },
@@ -155,7 +171,10 @@ const RoleManage: React.FC = () => {
             key: "role",
             dataIndex: "role",
             title: "角色",
-            align: "center"
+            align: "center",
+            render: (_, e) => {
+                return <>{e.role.roleName}</>
+            }
         }
     ]
 
@@ -179,6 +198,22 @@ const RoleManage: React.FC = () => {
 
     const [modalWidth, setModalWidth] = useState(600)
 
+    const [addForm] = Form.useForm()
+
+    const [modalTableData, setModalTableData] = useState<UserInfo[]>([])
+
+    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
+
+    const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+        console.log("selectedRowKeys changed: ", newSelectedRowKeys)
+        setSelectedRowKeys(newSelectedRowKeys)
+    }
+
+    const rowSelection = {
+        selectedRowKeys,
+        onChange: onSelectChange
+    }
+
     const User: React.FC = () => {
         return (
             <>
@@ -192,7 +227,7 @@ const RoleManage: React.FC = () => {
                             <Button className={c("cancel")} onClick={() => setUserShow(false)}>
                                 取消
                             </Button>
-                            <Button className={c("save")} onClick={() => setUserShow(false)}>
+                            <Button className={c("save")} onClick={save}>
                                 保存
                             </Button>
                         </>
@@ -201,10 +236,14 @@ const RoleManage: React.FC = () => {
                 >
                     {modalContent === "新增" && (
                         <>
-                            <div className={c("add-role-box")}>
-                                <div className={c("title")}>角色名称：</div>
-                                <Input placeholder="请输入角色名称" onChange={roleNameInput} />
-                            </div>
+                            <Form form={addForm}>
+                                <Form.Item label="角色名称" name="roleName">
+                                    <Input placeholder="请输入角色名称" className={c("form-item-input")} />
+                                </Form.Item>
+                                <Form.Item label="角色名称" name="roleComment">
+                                    <Input.TextArea placeholder="请输入角色说明" className={c("form-item-input")} />
+                                </Form.Item>
+                            </Form>
                         </>
                     )}
                     {modalContent === "用户授权" && (
@@ -225,7 +264,7 @@ const RoleManage: React.FC = () => {
                                     <Button className={c("reset-btn")}>重置</Button>
                                 </div>
                             </div>
-                            <Table columns={modalColumns} pagination={{ onChange: changePage, total: modalTotal, pageSize: modalPagesize, size: "small" }} />
+                            <Table rowKey={e => e.id} rowSelection={rowSelection} columns={modalColumns} dataSource={modalTableData} pagination={{ onChange: changePage, total: modalTotal, pageSize: modalPagesize, size: "small" }} />
                         </>
                     )}
                     {modalContent === "角色编辑" && (
@@ -240,7 +279,6 @@ const RoleManage: React.FC = () => {
             </>
         )
     }
-    const [addRoleName, setAddRoleName] = useState("")
 
     const [drawShow, setDrawShow] = useState(false)
 
@@ -391,19 +429,19 @@ const RoleManage: React.FC = () => {
         }
     ]
 
-    const roleNameInput = (e: any) => {
-        setAddRoleName(e.target.value)
-    }
-
     const addNew = () => {
         setModalWidth(600)
         setUserShow(true)
         setmodalContent("新增")
     }
 
-    const save = () => {
-        // addRole({ roleName: addRoleName })
-        console.log(addRoleName)
+    const save = async () => {
+        setUserShow(false)
+        const res = await addForm.validateFields()
+        addRole({ roleName: res.roleName, roleComment: res.roleComment }).then(() => {
+            message.success("新增角色成功！")
+            search()
+        })
     }
 
     const test = (e: any) => {
@@ -431,7 +469,7 @@ const RoleManage: React.FC = () => {
                     </Button>
                 </div>
             </div>
-            <Table rowKey={e => e.createTime} columns={columns} dataSource={tableData} pagination={{ onChange: changePage, total, pageSize }} />
+            <Table rowKey={e => e.id} columns={columns} dataSource={tableData} pagination={{ onChange: changePage, total, pageSize }} />
             <Drawer
                 placement="right"
                 title="菜单授权"
@@ -447,9 +485,7 @@ const RoleManage: React.FC = () => {
                     <>
                         <div className={c("drawer-footer")}>
                             <Button>取消</Button>
-                            <Button className={c("right")} onClick={save}>
-                                保存
-                            </Button>
+                            <Button className={c("right")}>保存</Button>
                         </div>
                     </>
                 }

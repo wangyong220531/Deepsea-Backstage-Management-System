@@ -42,8 +42,13 @@ type ResponseResult = {
     "/system/role/list": GetAllRolesResult
     "/report/list": GetUnitListResult
     "/system/user/modifyPassword": { success: Boolean }
-    "/system/user/delete": { success: Boolean }
+    "/system/user/delete/:id": { success: Boolean }
     "/system/permission/list/:parentId": GetPermissionTreeResult
+    "/system/role/vague": SearchRoleResult
+    "/system/user/add": { success: Boolean }
+    "/monitor/loginLog/query": SearchLoginLogResult
+    "/captcha2": GetCaptchaResult
+    "/monitor/operationLog/query": SearchOperateLogResult
 }
 type RequestQuery = {
     "/serve/ask/delAskInfo": { id: string }
@@ -60,7 +65,7 @@ type RequestQuery = {
     "/system/role/list": {}
     "/report/list": {}
     "/system/user/modifyPassword": { newPass: string; userId: string }
-    "/system/user/delete": { id: string }
+    "/captcha2": { userNo: string }
 }
 type RequestData = {
     "/policeSituation/selectNewAlarm": QueryLatestPS
@@ -90,12 +95,17 @@ type RequestData = {
     "/duty/stormMind/addStormMindPlan": AddMindSolutionData
     "/duty/totalPlayClock": GetAllDuty
     "/system/user/update": UpdateUserInfoData
-    "/system/user/vague": SearchUserInfoData
+    "/system/user/vague": SearchUserData
     "/system/role/add": AddRoleData
+    "/system/role/vague": SearchRoleData
+    "/system/user/add": AddUserData
+    "/monitor/loginLog/query": SearchLoginLogData
+    "/monitor/operationLog/query": SearchOperateLogData
 }
 
 type RequestParams = {
     "/system/permission/list/:parentId": { parentId: string }
+    "/system/user/delete/:id": { id: string }
 }
 
 type UrlList = keyof ResponseResult
@@ -833,7 +843,7 @@ interface UpdateUserInfoData {
     status: 0 | 1 // 0-禁用 1-启用
 }
 
-interface SearchUserInfoData {
+interface SearchUserData {
     account: string
     userUnitNo: string
     pageNum: number
@@ -854,7 +864,7 @@ interface UserInfo {
     account: string
     identityCode: string
     phone: string
-    status: 0 | 1
+    status?: 0 | 1
     unitName: string
     userName: string
     userNo: string
@@ -867,6 +877,7 @@ interface UserInfo {
 
 interface AddRoleData {
     roleName: string
+    roleComment: string
 }
 
 interface GetAllRolesResult {
@@ -890,3 +901,77 @@ interface Unit {
 }
 
 interface GetPermissionTreeResult {}
+
+interface SearchRoleData {
+    pageNum: number
+    pageSize: number
+    roleName: string
+}
+
+interface SearchRoleResult {
+    data: {
+        pageNum: number
+        pageSize: number
+        rows: Role[]
+        total: number
+    }
+}
+
+interface AddUserData {
+    phone: string
+    status: 0
+    userName: string
+    userNo: string
+    userUnitNo: string
+}
+
+interface SearchLoginLogData {
+    endTime: string
+    pageNum: number
+    pageSize: number
+    startTime: string
+    userName: string
+}
+
+interface SearchLoginLogResult {
+    data: {
+        pageNum: number
+        pageSize: number
+        rows: LoginLog[]
+        total: number
+    }
+}
+
+interface LoginLog {
+    id: string
+    userNo: string
+    userName: string
+    loginIp: string
+    oginTime: string
+}
+
+interface GetCaptchaResult {}
+
+interface SearchOperateLogData {
+    endTime: string
+    pageNum: number
+    pageSize: number
+    startTime: string
+    userName: string
+}
+
+interface SearchOperateLogResult {
+    data: {
+        pageNum: number
+        pageSize: number
+        rows: Operate[]
+        total: number
+    }
+}
+
+interface Operate {
+    id: string
+    userNo: string
+    userName: string
+    operationType: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13
+}

@@ -27,7 +27,7 @@ export function updateUserInfo(data: UpdateUserInfoData) {
     })
 }
 
-export function searchUserInfo(data: SearchUserInfoData) {
+export function searchUser(data: SearchUserData) {
     return request({
         url: "/system/user/vague",
         baseURL,
@@ -56,9 +56,18 @@ export function updatePassword(config: { newPass: string; userId: string }) {
 
 export function delUser(config: { id: string }) {
     return request({
-        url: "/system/user/delete",
+        url: "/system/user/delete/:id",
         baseURL,
-        query: config,
+        params: config,
         method: "DELETE"
+    })
+}
+
+export function addUser(data: AddUserData) {
+    return request({
+        url: "/system/user/add",
+        baseURL,
+        data,
+        method: "POST"
     })
 }

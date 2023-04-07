@@ -26,3 +26,12 @@ export function delRole(config: { id: string }) {
         method: "DELETE"
     })
 }
+
+export function searchRole(data: SearchRoleData) {
+    return request({
+        url: "/system/role/vague",
+        baseURL,
+        data,
+        method: "POST"
+    })
+}
