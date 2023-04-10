@@ -2,7 +2,7 @@ import { FC, ReactNode, useEffect, useState } from "react"
 import Styles from "./index.module.less"
 import { Button, Input, Modal, Switch, Table, Form, Popconfirm, Select, message } from "antd"
 import type { ColumnsType } from "antd/es/table"
-import { delUser, getUnitList, searchUser, updatePassword, updateUserInfo, userInfoExpor } from "../../api/userManage"
+import { delUser, getUnitList, searchUser, updatePassword, updateUserInfo } from "../../api/userManage"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -289,10 +289,8 @@ const UserManage: FC = () => {
         editForm.resetFields()
         setOperateShow(true)
     }
-
-    const exportUserInfo = () => {
-        userInfoExpor({})
-    }
+    
+    
 
     return (
         <>

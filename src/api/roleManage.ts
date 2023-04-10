@@ -50,6 +50,6 @@ export function AssignPermission(data: AssignPermissionsData) {
         url: "/system/role/distributePSet",
         baseURL,
         data,
-        method: "PUT"
+        method: "POST"
     })
 }

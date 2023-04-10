@@ -17,43 +17,69 @@ interface TableHead extends Role {
 }
 
 const RoleManage: React.FC = () => {
+    const [treeData, setTreeData] = useState<DataNode[]>([])
 
     const search = () => {
         getPermissionTree({
             parentId: "0"
         }).then(res => {
-            res && console.log(res.data.map(e => {
-                return {
-                    id: e.id,
-                    permissionName: e.permissionName,
-                    childList: e.childList?.map(a => {
-                        return {
-                            id: a.id,
-                            permissionName: a.permissionName,
-                            childList: a.childList?.map(b => {
-                                return {
-                                    id: b.id,
-                                    permissionName: b.permissionName,
-                                    childList: b.childList?.map(c => {
+            res &&
+                setTreeData(
+                    res.data.map(e => {
+                        if (e.childList && e.childList.length > 0) {
+                            return {
+                                key: e.id,
+                                title: e.permissionName,
+                                children: e.childList.map(a => {
+                                    if (a.childList && a.childList.length > 0) {
                                         return {
-                                            id: c.id,
-                                            permissionName: c.permissionName,
-                                            childList: c.childList?.map(d => {
+                                            key: a.id,
+                                            title: a.permissionName,
+                                            children: a.childList.map(b => {
+                                                if (b.childList && b.childList.length > 0) {
+                                                    return {
+                                                        key: b.id,
+                                                        title: b.permissionName,
+                                                        children: b.childList.map(c => {
+                                                            if (c.childList && c.childList.length > 0) {
+                                                                return {
+                                                                    key: c.id,
+                                                                    title: c.permissionName,
+                                                                    children: c.childList.map(d => {
+                                                                        return {
+                                                                            key: d.id,
+                                                                            title: d.permissionName
+                                                                        }
+                                                                    })
+                                                                }
+                                                            }
+                                                            return {
+                                                                key: c.id,
+                                                                title: c.permissionName
+                                                            }
+                                                        })
+                                                    }
+                                                }
                                                 return {
-                                                    id: d.id,
-                                                    permissionName: d.permissionName,
-                                                    childList: d.childList
+                                                    key: b.id,
+                                                    title: b.permissionName
                                                 }
                                             })
                                         }
-                                    })
-                                }
-                            })
+                                    }
+                                    return {
+                                        key: a.id,
+                                        title: a.permissionName
+                                    }
+                                })
+                            }
+                        }
+                        return {
+                            key: e.id,
+                            title: e.permissionName
                         }
                     })
-                }
-            }));
-            
+                )
         })
         searchRole({
             pageNum: 1,
@@ -161,12 +187,7 @@ const RoleManage: React.FC = () => {
     }
 
     const authorize = (e: TableHead) => {
-        AssignPermission({
-            roleId: e.id,
-            permissionIds: []
-        }).then(() => {
-            message.success("授权成功！")
-        })
+        setRoleselect(e.id)
         setModalWidth(800)
         setDrawShow(true)
     }
@@ -327,153 +348,6 @@ const RoleManage: React.FC = () => {
 
     const [drawShow, setDrawShow] = useState(false)
 
-    const treeData: DataNode[] = [
-        {
-            title: "首页",
-            key: "0"
-        },
-        {
-            title: "指挥",
-            key: "1",
-            children: [
-                {
-                    title: "警情处置",
-                    key: "1-0",
-                    children: [
-                        {
-                            title: "跟进处置",
-                            key: "1-0-0"
-                        },
-                        {
-                            title: "警情处置",
-                            key: "1-0-1"
-                        },
-                        {
-                            title: "派警分析",
-                            key: "1-0-2"
-                        }
-                    ]
-                },
-                {
-                    title: "铁拳勤务",
-                    key: "1-1",
-                    children: [
-                        {
-                            title: "勤务管理",
-                            key: "1-1-0",
-                            children: [
-                                {
-                                    title: "新增",
-                                    key: "1-1-0-0"
-                                }
-                            ]
-                        },
-                        {
-                            title: "勤务分析",
-                            key: "1-1-1"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            title: "请求服务",
-            key: "2",
-            children: [
-                {
-                    title: "新增",
-                    key: "2-0"
-                }
-            ]
-        },
-        {
-            title: "智慧+",
-            key: "3"
-        },
-        {
-            title: "智慧单元",
-            key: "4",
-            children: [
-                {
-                    title: "智慧应用",
-                    key: "4-0",
-                    children: [
-                        {
-                            title: "新增",
-                            key: "4-0-0"
-                        }
-                    ]
-                },
-                {
-                    title: "智慧安防小区",
-                    key: "4-1",
-                    children: [
-                        {
-                            title: "新增",
-                            key: "4-1-0"
-                        }
-                    ]
-                },
-                {
-                    title: "智慧安防校园",
-                    key: "4-2"
-                }
-            ]
-        },
-        {
-            title: "风暴思维",
-            key: "5",
-            children: [
-                {
-                    title: "新增",
-                    key: "5-0"
-                }
-            ]
-        },
-        {
-            title: "系统管理",
-            key: "6",
-            children: [
-                {
-                    title: "用户管理",
-                    key: "6-0",
-                    children: [
-                        {
-                            title: "新增",
-                            key: "6-0-0"
-                        },
-                        {
-                            title: "下载模板",
-                            key: "6-0-1"
-                        },
-                        {
-                            title: "导入",
-                            key: "6-0-2"
-                        },
-                        {
-                            title: "导出",
-                            key: "6-0-3"
-                        }
-                    ]
-                },
-                {
-                    title: "角色管理",
-                    key: "6-1",
-                    children: [
-                        {
-                            title: "新增",
-                            key: "6-1-0"
-                        }
-                    ]
-                },
-                {
-                    title: "日志管理",
-                    key: "6-2"
-                }
-            ]
-        }
-    ]
-
     const addNew = () => {
         setModalWidth(600)
         setUserShow(true)
@@ -501,9 +375,20 @@ const RoleManage: React.FC = () => {
         }
     }
 
-    const treeSave = () => {}
+    const [pselcted, setPselcted] = useState<string[]>([])
 
-    const test = () => {}
+    const test = (e: any) => {
+        setPselcted(e)
+    }
+
+    const treeSave = () => {
+        AssignPermission({
+            roleId: roleselect,
+            permissionIds: pselcted
+        }).then(() => {
+            message.success("授权成功！")
+        })
+    }
 
     return (
         <>
