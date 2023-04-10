@@ -14,6 +14,24 @@ export function searchOperateLog(data: SearchOperateLogData) {
         url: "/monitor/operationLog/query",
         baseURL,
         data,
-        method:"POST"
+        method: "POST"
+    })
+}
+
+export function exportLoginLog(config: {}) {
+    return request({
+        url: "/monitor/loginLog/export",
+        baseURL,
+        query: config,
+        method: "GET"
+    })
+}
+
+export function exportOperateLog(config: {}) {
+    return request({
+        url: "/monitor/operationLog/export",
+        baseURL,
+        query: config,
+        method: "GET"
     })
 }

@@ -36,11 +36,20 @@ export function searchRole(data: SearchRoleData) {
     })
 }
 
-export function AssignMultiUsers(config: { roleId: string; userIds: string }) {
+export function AssignMultiUsers(data: AssignMultiUsersData) {
     return request({
-        url: "/system/user/distributeRole2/:roleId/:userIds",
+        url: "/system/user/distributeRole2",
         baseURL,
-        params: config,
+        data,
+        method: "POST"
+    })
+}
+
+export function AssignPermission(data: AssignPermissionsData) {
+    return request({
+        url: "/system/role/distributePSet",
+        baseURL,
+        data,
         method: "PUT"
     })
 }

@@ -50,6 +50,12 @@ type ResponseResult = {
     "/captcha2": GetCaptchaResult
     "/monitor/operationLog/query": SearchOperateLogResult
     "/system/user/distributeRole2/:roleId/:userIds": { success: Boolean }
+    "/system/role/distributePSet/:roleId/:pSetId": { success: Boolean }
+    "/system/user/distributeRole2": { success: Boolean }
+    "/system/role/distributePSet": { success: Boolean }
+    "/monitor/loginLog/export": string
+    "/monitor/operationLog/export": string
+    "/system/user/export": string
 }
 type RequestQuery = {
     "/serve/ask/delAskInfo": { id: string }
@@ -67,6 +73,9 @@ type RequestQuery = {
     "/report/list": {}
     "/system/user/modifyPassword": { newPass: string; userId: string }
     "/captcha2": { userNo: string }
+    "/monitor/loginLog/export": {}
+    "/monitor/operationLog/export": {}
+    "/system/user/export": {}
 }
 type RequestData = {
     "/policeSituation/selectNewAlarm": QueryLatestPS
@@ -102,12 +111,14 @@ type RequestData = {
     "/system/user/add": AddUserData
     "/monitor/loginLog/query": SearchLoginLogData
     "/monitor/operationLog/query": SearchOperateLogData
+    "/system/user/distributeRole2": AssignMultiUsersData
+    "/system/role/distributePSet": AssignPermissionsData
 }
 
 type RequestParams = {
     "/system/permission/list/:parentId": { parentId: string }
     "/system/user/delete/:id": { id: string }
-    "/system/user/distributeRole2/:roleId/:userIds": { roleId: string; userIds: string[] }
+    "/system/role/distributePSet/:roleId/:pSetId": { roleId: string; pSetId: string }
 }
 
 type UrlList = keyof ResponseResult
@@ -902,7 +913,15 @@ interface Unit {
     unitNo: string
 }
 
-interface GetPermissionTreeResult {}
+interface GetPermissionTreeResult {
+    data: MenuChild[]
+}
+
+interface MenuChild {
+    id: string
+    permissionName: string
+    childList?: MenuChild[]
+}
 
 interface SearchRoleData {
     pageNum: number
@@ -949,7 +968,7 @@ interface LoginLog {
     userNo: string
     userName: string
     loginIp: string
-    oginTime: string
+    loginTime: string
 }
 
 interface GetCaptchaResult {}
@@ -977,4 +996,14 @@ interface Operate {
     userName: string
     operationType: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13
     operationTime: string
+}
+
+interface AssignMultiUsersData {
+    roleId: string
+    userIds: React.Key[]
+}
+
+interface AssignPermissionsData {
+    roleId: string
+    permissionIds: string[]
 }

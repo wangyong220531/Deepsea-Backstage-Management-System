@@ -2,7 +2,7 @@ import { FC, ReactNode, useEffect, useState } from "react"
 import Styles from "./index.module.less"
 import { Button, Input, Modal, Switch, Table, Form, Popconfirm, Select, message } from "antd"
 import type { ColumnsType } from "antd/es/table"
-import { delUser, getUnitList, searchUser, updatePassword, updateUserInfo } from "../../api/userManage"
+import { delUser, getUnitList, searchUser, updatePassword, updateUserInfo, userInfoExpor } from "../../api/userManage"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -67,7 +67,7 @@ const UserManage: FC = () => {
             render: (_, e) => {
                 return (
                     <>
-                        <Switch defaultChecked={e.status === 0 ? false : true} checkedChildren="启用" unCheckedChildren="禁用" onChange={onChange} />
+                        <Switch defaultChecked={e.status === 0 ? false : true} checkedChildren="启用" unCheckedChildren="禁用" onChange={(checked, e) => statusSwitch(checked, event)} />
                     </>
                 )
             }
@@ -96,6 +96,10 @@ const UserManage: FC = () => {
             }
         }
     ]
+
+    const statusSwitch = (checked: Boolean, event:any) => {
+        console.log(checked,event)
+    }
 
     const delConfirm = (e: TableHead) => {
         delUser({ id: e.id }).then(() => {
@@ -172,9 +176,9 @@ const UserManage: FC = () => {
         setOperateShow(true)
     }
 
-    const onChange = (checked: boolean) => {
-        console.log(`switch to ${checked}`)
-    }
+    // const onChange = (checked: boolean) => {
+    //     console.log(`switch to ${checked}`)
+    // }
 
     const [tableData, setTableData] = useState<TableHead[]>([])
 
@@ -286,6 +290,10 @@ const UserManage: FC = () => {
         setOperateShow(true)
     }
 
+    const exportUserInfo = () => {
+        userInfoExpor({})
+    }
+
     return (
         <>
             <div className={c("header")}>
@@ -311,7 +319,7 @@ const UserManage: FC = () => {
                     </Button>
                     <Button>下载模板</Button>
                     <Button>上传</Button>
-                    <Button>导出</Button>
+                    <Button onClick={exportUserInfo}>导出</Button>
                 </div>
             </div>
             <Table rowKey={e => e.account} columns={columns} dataSource={tableData} pagination={{ onChange: changePage, total, pageSize }} />

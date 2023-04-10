@@ -4,7 +4,7 @@ import type { ColumnsType } from "antd/es/table"
 import { ReactNode, useEffect, useState } from "react"
 import type { DataNode } from "antd/es/tree"
 import { CloseOutlined } from "@ant-design/icons"
-import { addRole, searchRole } from "../../api/roleManage"
+import { addRole, AssignMultiUsers, AssignPermission, searchRole } from "../../api/roleManage"
 import { searchUser } from "../../api/userManage"
 import { getPermissionTree } from "../../api/permisssion"
 
@@ -17,6 +17,67 @@ interface TableHead extends Role {
 }
 
 const RoleManage: React.FC = () => {
+
+    const search = () => {
+        getPermissionTree({
+            parentId: "0"
+        }).then(res => {
+            res && console.log(res.data.map(e => {
+                return {
+                    id: e.id,
+                    permissionName: e.permissionName,
+                    childList: e.childList?.map(a => {
+                        return {
+                            id: a.id,
+                            permissionName: a.permissionName,
+                            childList: a.childList?.map(b => {
+                                return {
+                                    id: b.id,
+                                    permissionName: b.permissionName,
+                                    childList: b.childList?.map(c => {
+                                        return {
+                                            id: c.id,
+                                            permissionName: c.permissionName,
+                                            childList: c.childList?.map(d => {
+                                                return {
+                                                    id: d.id,
+                                                    permissionName: d.permissionName,
+                                                    childList: d.childList
+                                                }
+                                            })
+                                        }
+                                    })
+                                }
+                            })
+                        }
+                    })
+                }
+            }));
+            
+        })
+        searchRole({
+            pageNum: 1,
+            pageSize: 10,
+            roleName: ""
+        }).then(res => {
+            res &&
+                setTableData(
+                    res.data.rows.map(e => {
+                        return {
+                            id: e.id,
+                            roleName: e.roleName,
+                            createTime: e.createTime,
+                            status: e.status
+                        }
+                    })
+                )
+        })
+    }
+
+    useEffect(() => {
+        search()
+    }, [])
+
     const columns: ColumnsType<TableHead> = [
         {
             key: "roleName",
@@ -52,10 +113,10 @@ const RoleManage: React.FC = () => {
                 return (
                     <>
                         <div className={c("operate")}>
-                            <div className={c("item")} onClick={userClick}>
+                            <div className={c("item")} onClick={() => userClick(e)}>
                                 用户
                             </div>
-                            <div className={c("item")} onClick={authorize}>
+                            <div className={c("item")} onClick={() => authorize(e)}>
                                 授权
                             </div>
                             <div className={c("item")} onClick={() => edit(e)}>
@@ -68,35 +129,10 @@ const RoleManage: React.FC = () => {
         }
     ]
 
-    const search = () => {
-        getPermissionTree({
-            parentId: ""
-        })
-        searchRole({
-            pageNum: 1,
-            pageSize: 10,
-            roleName: ""
-        }).then(res => {
-            res &&
-                setTableData(
-                    res.data.rows.map(e => {
-                        return {
-                            id: e.id,
-                            roleName: e.roleName,
-                            createTime: e.createTime,
-                            status: e.status
-                        }
-                    })
-                )
-        })
-    }
+    const [roleselect, setRoleselect] = useState("")
 
-    useEffect(() => {
-        search()
-    }, [])
-
-    const userClick = () => {
-        setSelectedRowKeys([])
+    const userClick = (e: TableHead) => {
+        setRoleselect(e.id)
         setModalWidth(800)
         searchUser({
             account: "",
@@ -124,7 +160,13 @@ const RoleManage: React.FC = () => {
         setUserShow(true)
     }
 
-    const authorize = () => {
+    const authorize = (e: TableHead) => {
+        AssignPermission({
+            roleId: e.id,
+            permissionIds: []
+        }).then(() => {
+            message.success("授权成功！")
+        })
         setModalWidth(800)
         setDrawShow(true)
     }
@@ -185,7 +227,7 @@ const RoleManage: React.FC = () => {
     const [tableData, setTableData] = useState<TableHead[]>([])
 
     const onChange = (checked: boolean) => {
-        console.log(`switch to ${checked}`)
+        // console.log(`switch to ${checked}`)
     }
 
     const [total, setTotal] = useState(100)
@@ -209,7 +251,6 @@ const RoleManage: React.FC = () => {
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
 
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-        console.log("selectedRowKeys changed: ", newSelectedRowKeys)
         setSelectedRowKeys(newSelectedRowKeys)
     }
 
@@ -441,16 +482,28 @@ const RoleManage: React.FC = () => {
 
     const save = async () => {
         setUserShow(false)
-        const res = await addForm.validateFields()
-        addRole({ roleName: res.roleName, roleComment: res.roleComment }).then(() => {
-            message.success("新增角色成功！")
-            search()
-        })
+        if (modalContent === "新增") {
+            const res = await addForm.validateFields()
+            addRole({ roleName: res.roleName, roleComment: res.roleComment }).then(() => {
+                message.success("新增角色成功！")
+                search()
+            })
+            return
+        }
+        if (modalContent === "用户授权") {
+            AssignMultiUsers({
+                roleId: roleselect,
+                userIds: selectedRowKeys
+            }).then(() => {
+                message.success("赋予角色成功！")
+            })
+            return
+        }
     }
 
-    const test = (e: any) => {
-        console.log("1", e)
-    }
+    const treeSave = () => {}
+
+    const test = () => {}
 
     return (
         <>
@@ -489,7 +542,9 @@ const RoleManage: React.FC = () => {
                     <>
                         <div className={c("drawer-footer")}>
                             <Button>取消</Button>
-                            <Button className={c("right")}>保存</Button>
+                            <Button className={c("right")} onClick={treeSave}>
+                                保存
+                            </Button>
                         </div>
                     </>
                 }

@@ -71,3 +71,12 @@ export function addUser(data: AddUserData) {
         method: "POST"
     })
 }
+
+export function userInfoExpor(config: {}) {
+    return request({
+        url: "/system/user/export",
+        baseURL,
+        query: config,
+        method: "GET"
+    })
+}

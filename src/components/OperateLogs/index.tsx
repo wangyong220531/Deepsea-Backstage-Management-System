@@ -3,7 +3,7 @@ import styles from "./index.module.less"
 import { Button, Input, Table, Tabs, DatePicker } from "antd"
 import type { TabsProps } from "antd"
 import type { ColumnsType } from "antd/es/table"
-import { searchLoginLog, searchOperateLog } from "../../api/logManage"
+import { exportLoginLog, exportOperateLog, searchLoginLog, searchOperateLog } from "../../api/logManage"
 import dayjs from "dayjs"
 
 const { RangePicker } = DatePicker
@@ -40,7 +40,7 @@ const OperateLogs: FC = () => {
                                   userNo: e.userNo,
                                   userName: e.userName,
                                   loginIp: e.loginIp,
-                                  oginTime: e.oginTime
+                                  loginTime: e.loginTime
                               }
                           })
                       ),
@@ -98,8 +98,8 @@ const OperateLogs: FC = () => {
             align: "center"
         },
         {
-            key: "oginTime",
-            dataIndex: "oginTime",
+            key: "loginTime",
+            dataIndex: "loginTime",
             title: "创建时间",
             align: "center"
         }
@@ -126,21 +126,23 @@ const OperateLogs: FC = () => {
             render: (_, e) => {
                 return (
                     <>
-                        <div>e.operationTime</div>
-                        {e.operationType === 0 && "其它"}
-                        {e.operationType === 1 && "新增"}
-                        {e.operationType === 2 && "修改"}
-                        {e.operationType === 3 && "重置密码"}
-                        {e.operationType === 4 && "修改密码"}
-                        {e.operationType === 5 && "查询"}
-                        {e.operationType === 6 && "删除"}
-                        {e.operationType === 7 && "授权"}
-                        {e.operationType === 8 && "取消授权"}
-                        {e.operationType === 9 && "导出"}
-                        {e.operationType === 10 && "导入"}
-                        {e.operationType === 11 && "强制退出"}
-                        {e.operationType === 12 && "生成代码12"}
-                        {e.operationType === 13 && "清空数据13"}
+                        <div className={c("operate-type")}>
+                            <div>{e.operationTime}</div>
+                            {e.operationType === 0 && <div>其它</div>}
+                            {e.operationType === 1 && <div>新增</div>}
+                            {e.operationType === 2 && <div>修改</div>}
+                            {e.operationType === 3 && <div>重置密码</div>}
+                            {e.operationType === 4 && <div>修改密码</div>}
+                            {e.operationType === 5 && <div>查询</div>}
+                            {e.operationType === 6 && <div>删除</div>}
+                            {e.operationType === 7 && <div>授权</div>}
+                            {e.operationType === 8 && <div>取消授权</div>}
+                            {e.operationType === 9 && <div>导出</div>}
+                            {e.operationType === 10 && <div>导入</div>}
+                            {e.operationType === 11 && <div>强制退出</div>}
+                            {e.operationType === 12 && <div>生成代码</div>}
+                            {e.operationType === 13 && <div>清空数据</div>}
+                        </div>
                     </>
                 )
             }
@@ -173,6 +175,10 @@ const OperateLogs: FC = () => {
     const [loginTableData, setTableData] = useState<LoginLog[]>([])
     const [operateTableData, setOperateTableData] = useState<Operate[]>([])
 
+    const exportLog = () => {
+        tabActived === "登录日志" ? exportLoginLog({}) : exportOperateLog({})
+    }
+
     return (
         <>
             <div className={c("operateLogs")}>
@@ -196,10 +202,10 @@ const OperateLogs: FC = () => {
                     </div>
                 </div>
                 <div className={c("btn-group")}>
-                    <Button>导出</Button>
+                    <Button onClick={exportLog}>导出</Button>
                 </div>
             </div>
-            {tabActived === "登录日志" ? <Table columns={loginColumns} dataSource={loginTableData} pagination={{ onChange: logPageChange, total: logTotal, pageSize: logPagesize }} /> : <Table columns={operateColumns} dataSource={operateTableData} pagination={{ onChange: logPageChange, total: logTotal, pageSize: logPagesize }} />}
+            {tabActived === "登录日志" ? <Table rowKey={e => e.id} columns={loginColumns} dataSource={loginTableData} pagination={{ onChange: logPageChange, total: logTotal, pageSize: logPagesize }} /> : <Table rowKey={e => e.id} columns={operateColumns} dataSource={operateTableData} pagination={{ onChange: logPageChange, total: logTotal, pageSize: logPagesize }} />}
         </>
     )
 }
