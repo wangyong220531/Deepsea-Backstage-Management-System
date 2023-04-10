@@ -6,6 +6,7 @@ import type { DataNode } from "antd/es/tree"
 import { CloseOutlined } from "@ant-design/icons"
 import { addRole, searchRole } from "../../api/roleManage"
 import { searchUser } from "../../api/userManage"
+import { getPermissionTree } from "../../api/permisssion"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -68,6 +69,9 @@ const RoleManage: React.FC = () => {
     ]
 
     const search = () => {
+        getPermissionTree({
+            parentId: ""
+        })
         searchRole({
             pageNum: 1,
             pageSize: 10,

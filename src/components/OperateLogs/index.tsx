@@ -53,7 +53,18 @@ const OperateLogs: FC = () => {
                   startTime: dayjs(Date.now() - 2592000000).format("YYYY-MM-DD HH:mm:ss"),
                   userName: ""
               }).then(res => {
-                  // res && set
+                  res &&
+                      setOperateTableData(
+                          res.data.rows.map(e => {
+                              return {
+                                  id: e.id,
+                                  userName: e.userName,
+                                  userNo: e.userNo,
+                                  operationType: e.operationType,
+                                  operationTime: e.operationTime
+                              }
+                          })
+                      )
               })
     }
 
@@ -111,7 +122,28 @@ const OperateLogs: FC = () => {
             key: "operationType",
             dataIndex: "operationType",
             title: "类型",
-            align: "center"
+            align: "center",
+            render: (_, e) => {
+                return (
+                    <>
+                        <div>e.operationTime</div>
+                        {e.operationType === 0 && "其它"}
+                        {e.operationType === 1 && "新增"}
+                        {e.operationType === 2 && "修改"}
+                        {e.operationType === 3 && "重置密码"}
+                        {e.operationType === 4 && "修改密码"}
+                        {e.operationType === 5 && "查询"}
+                        {e.operationType === 6 && "删除"}
+                        {e.operationType === 7 && "授权"}
+                        {e.operationType === 8 && "取消授权"}
+                        {e.operationType === 9 && "导出"}
+                        {e.operationType === 10 && "导入"}
+                        {e.operationType === 11 && "强制退出"}
+                        {e.operationType === 12 && "生成代码12"}
+                        {e.operationType === 13 && "清空数据13"}
+                    </>
+                )
+            }
         }
     ]
 
@@ -127,6 +159,12 @@ const OperateLogs: FC = () => {
     ]
 
     const logPageChange = (pageNum: number, pageSize: number) => {
+        setPageNum(pageNum)
+        setlogPagesize(pageSize)
+        search()
+    }
+
+    const operatePageChange = (pageNum: number, pageSize: number) => {
         setPageNum(pageNum)
         setlogPagesize(pageSize)
         search()
@@ -161,7 +199,7 @@ const OperateLogs: FC = () => {
                     <Button>导出</Button>
                 </div>
             </div>
-            {tabActived === "登录日志" ? <Table columns={loginColumns} dataSource={loginTableData} pagination={{ onChange: logPageChange, total: logTotal, pageSize: logPagesize }} /> : <Table columns={loginColumns} dataSource={loginTableData} pagination={{ onChange: logPageChange, total: logTotal, pageSize: logPagesize }} />}
+            {tabActived === "登录日志" ? <Table columns={loginColumns} dataSource={loginTableData} pagination={{ onChange: logPageChange, total: logTotal, pageSize: logPagesize }} /> : <Table columns={operateColumns} dataSource={operateTableData} pagination={{ onChange: logPageChange, total: logTotal, pageSize: logPagesize }} />}
         </>
     )
 }

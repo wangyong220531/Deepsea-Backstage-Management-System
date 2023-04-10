@@ -49,6 +49,7 @@ type ResponseResult = {
     "/monitor/loginLog/query": SearchLoginLogResult
     "/captcha2": GetCaptchaResult
     "/monitor/operationLog/query": SearchOperateLogResult
+    "/system/user/distributeRole2/:roleId/:userIds": { success: Boolean }
 }
 type RequestQuery = {
     "/serve/ask/delAskInfo": { id: string }
@@ -106,6 +107,7 @@ type RequestData = {
 type RequestParams = {
     "/system/permission/list/:parentId": { parentId: string }
     "/system/user/delete/:id": { id: string }
+    "/system/user/distributeRole2/:roleId/:userIds": { roleId: string; userIds: string[] }
 }
 
 type UrlList = keyof ResponseResult
@@ -974,4 +976,5 @@ interface Operate {
     userNo: string
     userName: string
     operationType: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13
+    operationTime: string
 }

@@ -10,16 +10,17 @@ import styles from "./index.module.less"
 import { getCaptcha } from "../../api/login"
 
 const Login: React.FC = () => {
+    
+    const [userName, setUserName] = useState("082845")
 
     useEffect(() => {
         getCaptcha({
-            userNo: ""
+            userNo: userName
         })
-    },[])
+    },[userName])
 
     const store = useSession()
     const [showPwd, setShowPwd] = useState(false)
-    const [userName, setUserName] = useState("wangyong")
     const [password, setPassword] = useState("deepsea")
     const [searchParams] = useSearchParams()
     const from = searchParams.get("from")
