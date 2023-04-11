@@ -55,7 +55,7 @@ type ResponseResult = {
     "/system/role/distributePSet": { success: Boolean }
     "/monitor/loginLog/export": string
     "/monitor/operationLog/export": string
-    "/system/user/export": string
+    "/system/user/export": any
 }
 type RequestQuery = {
     "/serve/ask/delAskInfo": { id: string }
@@ -971,7 +971,9 @@ interface LoginLog {
     loginTime: string
 }
 
-interface GetCaptchaResult {}
+interface GetCaptchaResult {
+    data: {}
+}
 
 interface SearchOperateLogData {
     endTime: string

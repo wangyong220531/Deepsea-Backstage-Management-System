@@ -72,11 +72,12 @@ export function addUser(data: AddUserData) {
     })
 }
 
-export function userInfoExpor(config: {}) {
+export function userInfoExport(config: {}) {
     return request({
         url: "/system/user/export",
         baseURL,
         query: config,
-        method: "GET"
+        method: "GET",
+        responseType: "blob"
     })
 }

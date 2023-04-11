@@ -1,6 +1,6 @@
 import { request, baseURL } from "./index"
 
-export function getCaptcha(config: {userNo: string}) {
+export function getCaptcha(config: { userNo: string }) {
     return request({
         url: "/captcha2",
         baseURL,
@@ -8,3 +8,8 @@ export function getCaptcha(config: {userNo: string}) {
         method: "GET"
     })
 }
+
+// export function login(data: LoginData){
+//     return request({
+//     })
+// }

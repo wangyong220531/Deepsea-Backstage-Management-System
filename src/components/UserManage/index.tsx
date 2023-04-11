@@ -2,7 +2,7 @@ import { FC, ReactNode, useEffect, useState } from "react"
 import Styles from "./index.module.less"
 import { Button, Input, Modal, Switch, Table, Form, Popconfirm, Select, message } from "antd"
 import type { ColumnsType } from "antd/es/table"
-import { delUser, getUnitList, searchUser, updatePassword, updateUserInfo } from "../../api/userManage"
+import { delUser, getUnitList, searchUser, updatePassword, updateUserInfo, userInfoExport } from "../../api/userManage"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -97,8 +97,8 @@ const UserManage: FC = () => {
         }
     ]
 
-    const statusSwitch = (checked: Boolean, event:any) => {
-        console.log(checked,event)
+    const statusSwitch = (checked: Boolean, event: any) => {
+        console.log(checked, event)
     }
 
     const delConfirm = (e: TableHead) => {
@@ -289,8 +289,22 @@ const UserManage: FC = () => {
         editForm.resetFields()
         setOperateShow(true)
     }
-    
-    
+
+    const exportUserInfo = async () => {
+        const res = await userInfoExport({})
+        if (res) {
+            const blob: Blob = new Blob([res.data], { type: "application/vnd.ms-excel" })
+            const downloadElement = document.createElement("a")
+            const href = window.URL.createObjectURL(blob)
+            downloadElement.href = href
+            downloadElement.download = "用户信息导出"
+            document.body.appendChild(downloadElement)
+            downloadElement.click()
+            document.body.removeChild(downloadElement)
+            window.URL.revokeObjectURL(href)
+            message.success("导出成功")
+        }
+    }
 
     return (
         <>
