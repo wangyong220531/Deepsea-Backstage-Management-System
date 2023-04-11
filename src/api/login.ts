@@ -9,7 +9,14 @@ export function getCaptcha(config: { userNo: string }) {
     })
 }
 
-// export function login(data: LoginData){
-//     return request({
-//     })
-// }
+export function login(data: LoginData) {
+    return request({
+        url: "/login",
+        baseURL,
+        data,
+        method: "POST",
+        headers: {
+            Authorization: sessionStorage.getItem("token")
+        }
+    })
+}

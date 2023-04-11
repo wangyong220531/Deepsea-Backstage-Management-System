@@ -1,35 +1,41 @@
 import { Button } from "antd"
 import React, { useEffect, useState } from "react"
 import { Navigate, useSearchParams } from "react-router-dom"
-import { useLocal,useSession } from "../../store"
+import { useLocal, useSession } from "../../store"
 import UsernameIcon from "../../assets/usernameIcon.png"
 import Captcha from "../../assets/Login/Captcha.png"
 import Logo from "../../assets/logo.png"
 import styles from "./index.module.less"
-import { getCaptcha } from "../../api/login"
+import { getCaptcha, login } from "../../api/login"
 
 const Login: React.FC = () => {
     const [userNo, setUserNo] = useState("082845")
-    const localStore = useLocal()
+    // const localStore = useLocal()
     const sessionStore = useSession()
     const [searchParams] = useSearchParams()
     const from = searchParams.get("from")
     const [captcha, setCaptcha] = useState("")
 
-    const getImgUrl = () => {
-        getCaptcha({
-            userNo: userNo
-        }).then(res => {
-            res && console.log(res.data);
-        })
-    }
-
     useEffect(() => {
         getImgUrl()
     }, [userNo])
 
+    const getImgUrl = () => {
+        getCaptcha({
+            userNo: userNo
+        }).then(res => {
+            res && setCaptcha(res.data)
+        })
+    }
+
     const submit = () => {
-        sessionStore.setState({ token: "ssssssasas12121212" })
+        sessionStore.setState({ token: "123" })
+        login({
+            code: captcha,
+            userNo: userNo
+        }).then(res => {
+            res && sessionStore.setState({ token: res.data.token })
+        })
     }
 
     return sessionStore.token ? (

@@ -16,10 +16,17 @@ interface TableHead extends Role {
     operate?: ReactNode
 }
 
+interface TreeNode {
+    key: string
+    title: string
+    children?: TreeNode
+}
+
 const RoleManage: React.FC = () => {
     const [treeData, setTreeData] = useState<DataNode[]>([])
+    const [inputRolename, setInputRolename] = useState("")
 
-    const search = () => {
+    const searchPermissionTree = () => {
         getPermissionTree({
             parentId: "0"
         }).then(res => {
@@ -81,27 +88,34 @@ const RoleManage: React.FC = () => {
                     })
                 )
         })
+    }
+
+    const search = () => {
         searchRole({
             pageNum: 1,
             pageSize: 10,
-            roleName: ""
+            roleName: inputRolename
         }).then(res => {
-            res &&
-                setTableData(
-                    res.data.rows.map(e => {
-                        return {
-                            id: e.id,
-                            roleName: e.roleName,
-                            createTime: e.createTime,
-                            status: e.status
-                        }
-                    })
-                )
+            if (res) {
+                res.success
+                    ? setTableData(
+                          res.data.rows.map(e => {
+                              return {
+                                  id: e.id,
+                                  roleName: e.roleName,
+                                  createTime: e.createTime,
+                                  status: e.status
+                              }
+                          })
+                      )
+                    : setTableData([])
+            }
         })
     }
 
     useEffect(() => {
         search()
+        searchPermissionTree()
     }, [])
 
     const columns: ColumnsType<TableHead> = [
@@ -156,13 +170,13 @@ const RoleManage: React.FC = () => {
     ]
 
     const [roleselect, setRoleselect] = useState("")
+    const [assignAccount, setAssignAccount] = useState("")
+    const [assignUnit, setAssignUnit] = useState("")
 
-    const userClick = (e: TableHead) => {
-        setRoleselect(e.id)
-        setModalWidth(800)
+    const userSearch = () => {
         searchUser({
-            account: "",
-            userUnitNo: "",
+            account: assignAccount,
+            userUnitNo: assignUnit,
             pageNum: 1,
             pageSize: 10
         }).then(res => {
@@ -182,6 +196,12 @@ const RoleManage: React.FC = () => {
                     })
                 )
         })
+    }
+
+    const userClick = (e: TableHead) => {
+        setRoleselect(e.id)
+        setModalWidth(800)
+        userSearch()
         setmodalContent("用户授权")
         setUserShow(true)
     }
@@ -280,6 +300,15 @@ const RoleManage: React.FC = () => {
         onChange: onSelectChange
     }
 
+    const assignUserQuery = () => {
+        userSearch()
+    }
+
+    const assignUserReset = () => {
+        setAssignAccount("")
+        setAssignUnit("")
+    }
+
     const User: React.FC = () => {
         return (
             <>
@@ -318,16 +347,20 @@ const RoleManage: React.FC = () => {
                                 <div className={c("inputs")}>
                                     <div className={c("query-item")}>
                                         <div className={c("title")}>账号：</div>
-                                        <Input placeholder="请输入账号" />
+                                        <Input placeholder="请输入账号" value={assignAccount} onChange={e => setAssignAccount(e.target.value)} />
                                     </div>
                                     <div className={c("query-item")}>
                                         <div className={c("title")}>单位：</div>
-                                        <Input placeholder="请输入单位" />
+                                        <Input placeholder="请输入单位" value={assignUnit} onChange={e => setAssignUnit(e.target.value)} />
                                     </div>
                                 </div>
                                 <div className={c("query-reset")}>
-                                    <Button className={c("query-btn")}>查询</Button>
-                                    <Button className={c("reset-btn")}>重置</Button>
+                                    <Button className={c("query-btn")} onClick={assignUserQuery}>
+                                        查询
+                                    </Button>
+                                    <Button className={c("reset-btn")} onClick={assignUserReset}>
+                                        重置
+                                    </Button>
                                 </div>
                             </div>
                             <Table rowKey={e => e.id} rowSelection={rowSelection} columns={modalColumns} dataSource={modalTableData} pagination={{ onChange: changePage, total: modalTotal, pageSize: modalPagesize, size: "small" }} />
@@ -377,8 +410,8 @@ const RoleManage: React.FC = () => {
 
     const [pselcted, setPselcted] = useState<string[]>([])
 
-    const test = (e: any) => {
-        setPselcted(e)
+    const treeChecksClick = (a: any, e: any) => {
+        setPselcted(e.checkedNodes.filter((e: TreeNode) => !e.children).map((e: TreeNode) => e.key))
     }
 
     const treeSave = () => {
@@ -387,7 +420,16 @@ const RoleManage: React.FC = () => {
             permissionIds: pselcted
         }).then(() => {
             message.success("授权成功！")
+            setDrawShow(false)
         })
+    }
+
+    const query = () => {
+        search()
+    }
+
+    const reset = () => {
+        setInputRolename("")
     }
 
     return (
@@ -397,12 +439,16 @@ const RoleManage: React.FC = () => {
                     <div className={c("inputs")}>
                         <div className={c("query-item")}>
                             <div className={c("label")}>角色名称：</div>
-                            <Input placeholder="请输入角色名称" />
+                            <Input placeholder="请输入角色名称" value={inputRolename} onChange={e => setInputRolename(e.target.value)} />
                         </div>
                     </div>
                     <div className={c("query-reset")}>
-                        <Button className={c("query-btn")}>查询</Button>
-                        <Button className={c("reset-btn")}>重置</Button>
+                        <Button className={c("query-btn")} onClick={query}>
+                            查询
+                        </Button>
+                        <Button className={c("reset-btn")} onClick={reset}>
+                            重置
+                        </Button>
                     </div>
                 </div>
                 <div className={c("btn-group")}>
@@ -434,7 +480,7 @@ const RoleManage: React.FC = () => {
                     </>
                 }
             >
-                <Tree treeData={treeData} checkable defaultExpandAll onCheck={test} />
+                <Tree treeData={treeData} checkable defaultExpandAll onCheck={treeChecksClick} />
             </Drawer>
             <User />
         </>

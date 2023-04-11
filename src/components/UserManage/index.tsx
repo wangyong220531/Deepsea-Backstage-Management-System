@@ -109,11 +109,27 @@ const UserManage: FC = () => {
     }
 
     const [unitList, setUnitList] = useState<OptionType[]>([])
+    const [inputAccount, setInputAccount] = useState("")
+    const [inputUnit, setInputUnit] = useState("")
+
+    const searchUnitList = () => {
+        getUnitList({}).then(res => {
+            res &&
+                setUnitList(
+                    res.data.map(e => {
+                        return {
+                            value: e.unitNo,
+                            label: e.unitName
+                        }
+                    })
+                )
+        })
+    }
 
     const search = () => {
         searchUser({
-            account: "",
-            userUnitNo: "",
+            account: inputAccount,
+            userUnitNo: inputUnit,
             pageNum: 1,
             pageSize: 10
         }).then(res => {
@@ -135,22 +151,21 @@ const UserManage: FC = () => {
                 ),
                 setTotal(res.data.total))
         })
-        getUnitList({}).then(res => {
-            res &&
-                setUnitList(
-                    res.data.map(e => {
-                        return {
-                            value: e.unitNo,
-                            label: e.unitName
-                        }
-                    })
-                )
-        })
     }
 
     useEffect(() => {
         search()
+        searchUnitList()
     }, [])
+
+    const query = () => {
+        search()
+    }
+
+    const reset = () => {
+        setInputAccount("")
+        setInputUnit("")
+    }
 
     const [selectId, setSelectId] = useState("")
 
@@ -175,10 +190,6 @@ const UserManage: FC = () => {
         seteditAccount(e.account)
         setOperateShow(true)
     }
-
-    // const onChange = (checked: boolean) => {
-    //     console.log(`switch to ${checked}`)
-    // }
 
     const [tableData, setTableData] = useState<TableHead[]>([])
 
@@ -313,16 +324,20 @@ const UserManage: FC = () => {
                     <div className={c("inputs")}>
                         <div className={c("query-item")}>
                             <div className={c("label")}>账号：</div>
-                            <Input placeholder="亲输入账号" />
+                            <Input placeholder="亲输入账号" value={inputAccount} onChange={e => setInputAccount(e.target.value)} />
                         </div>
                         <div className={c("query-item")}>
                             <div className={c("label")}>单位：</div>
-                            <Input placeholder="亲输入单位名称" />
+                            <Input placeholder="亲输入单位名称" value={inputUnit} onChange={e => setInputUnit(e.target.value)} />
                         </div>
                     </div>
                     <div className={c("query-reset")}>
-                        <Button className={c("query-btn")}>查询</Button>
-                        <Button className={c("reset-btn")}>重置</Button>
+                        <Button className={c("query-btn")} onClick={query}>
+                            查询
+                        </Button>
+                        <Button className={c("reset-btn")} onClick={reset}>
+                            重置
+                        </Button>
                     </div>
                 </div>
                 <div className={c("btn-group")}>

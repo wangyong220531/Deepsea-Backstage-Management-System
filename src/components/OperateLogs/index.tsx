@@ -40,7 +40,8 @@ const OperateLogs: FC = () => {
                                   userNo: e.userNo,
                                   userName: e.userName,
                                   loginIp: e.loginIp,
-                                  loginTime: e.loginTime
+                                  loginTime: e.loginTime,
+                                  remark: e.remark
                               }
                           })
                       ),
@@ -77,7 +78,10 @@ const OperateLogs: FC = () => {
             key: "loginContent",
             dataIndex: "loginContent",
             title: "日志内容",
-            align: "center"
+            align: "center",
+            render: (_, e) => {
+                return <>{`${e.loginTime}  ${e.remark === "Login" ? "登录成功！" : "退出登录！"}`}</>
+            }
         },
         {
             key: "userNo",

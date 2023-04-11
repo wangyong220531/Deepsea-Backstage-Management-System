@@ -56,6 +56,7 @@ type ResponseResult = {
     "/monitor/loginLog/export": string
     "/monitor/operationLog/export": string
     "/system/user/export": any
+    "/login": LoginResult
 }
 type RequestQuery = {
     "/serve/ask/delAskInfo": { id: string }
@@ -113,6 +114,7 @@ type RequestData = {
     "/monitor/operationLog/query": SearchOperateLogData
     "/system/user/distributeRole2": AssignMultiUsersData
     "/system/role/distributePSet": AssignPermissionsData
+    "/login": LoginData
 }
 
 type RequestParams = {
@@ -930,6 +932,7 @@ interface SearchRoleData {
 }
 
 interface SearchRoleResult {
+    success: Boolean
     data: {
         pageNum: number
         pageSize: number
@@ -969,10 +972,11 @@ interface LoginLog {
     userName: string
     loginIp: string
     loginTime: string
+    remark: "Login" | "Logout"
 }
 
 interface GetCaptchaResult {
-    data: {}
+    data: string
 }
 
 interface SearchOperateLogData {
@@ -1008,4 +1012,15 @@ interface AssignMultiUsersData {
 interface AssignPermissionsData {
     roleId: string
     permissionIds: string[]
+}
+
+interface LoginData {
+    code: string
+    userNo: string
+}
+
+interface LoginResult {
+    data: {
+        token: string
+    }
 }
