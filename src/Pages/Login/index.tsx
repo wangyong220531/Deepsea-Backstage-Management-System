@@ -10,7 +10,6 @@ import { getCaptcha, login } from "../../api/login"
 
 const Login: React.FC = () => {
     const [userNo, setUserNo] = useState("082845")
-    // const localStore = useLocal()
     const sessionStore = useSession()
     const [searchParams] = useSearchParams()
     const from = searchParams.get("from")
@@ -29,12 +28,61 @@ const Login: React.FC = () => {
     }
 
     const submit = () => {
-        sessionStore.setState({ token: "123" })
         login({
             code: captcha,
             userNo: userNo
         }).then(res => {
-            res && sessionStore.setState({ token: res.data.token })
+            if (res) {
+                sessionStorage.setItem("token", res.data.token)
+                sessionStore.setState({ token: res.data.token })
+                sessionStore.setState({
+                    menu: res.data.user.map(e => {
+                        if (e.childList && e.childList.length > 0) {
+                            return {
+                                name: e.permissionName,
+                                children: e.childList.map(a => {
+                                    if (a.childList && a.childList.length > 0) {
+                                        return {
+                                            name: a.permissionName,
+                                            children: a.childList.map(b => {
+                                                if (b.childList && b.childList.length > 0) {
+                                                    return {
+                                                        name: b.permissionName,
+                                                        children: b.childList.map(c => {
+                                                            if (c.childList && c.childList.length > 0) {
+                                                                return {
+                                                                    name: c.permissionName,
+                                                                    children: c.childList.map(d => {
+                                                                        return {
+                                                                            name: d.permissionName
+                                                                        }
+                                                                    })
+                                                                }
+                                                            }
+                                                            return {
+                                                                name: c.permissionName
+                                                            }
+                                                        })
+                                                    }
+                                                }
+                                                return {
+                                                    name: b.permissionName
+                                                }
+                                            })
+                                        }
+                                    }
+                                    return {
+                                        name: a.permissionName
+                                    }
+                                })
+                            }
+                        }
+                        return {
+                            name: e.permissionName
+                        }
+                    })
+                })
+            }
         })
     }
 

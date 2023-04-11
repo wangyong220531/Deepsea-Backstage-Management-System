@@ -1022,5 +1022,7 @@ interface LoginData {
 interface LoginResult {
     data: {
         token: string
+        user: MenuChild[]
     }
 }
+

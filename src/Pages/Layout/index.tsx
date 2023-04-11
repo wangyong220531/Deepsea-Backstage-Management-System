@@ -28,22 +28,32 @@ const LayoutFC: React.FC = () => {
     const session = useSession()
     const navigate = useNavigate()
     const location = useLocation()
+    const sessionStore = useSession()
+    console.log(sessionStore.menu)
 
-    const menuList: MenuProps["items"] = routes.map(route => {
+    const menuList: MenuProps["items"] = sessionStore.menu.map(route => {
         return {
-            key: route.path,
+            key: route.name,
             label: route.name,
-            icon: route.icon,
             children: route.children?.map(r => {
+                if (r.children && r.children.length > 0) {
+                    return {
+                        key: r.name,
+                        label: r.name,
+                        chidren: r.children.map(a => {
+                            if (a.children && a.children.length > 0) {
+                                return {
+                                    key: a.name,
+                                    label: a.name,
+                                    chidren: a.children
+                                }
+                            }
+                        })
+                    }
+                }
                 return {
-                    key: r.path,
-                    label: r.name,
-                    children: r.children?.map(sr => {
-                        return {
-                            key: sr.path,
-                            label: sr.name
-                        }
-                    })
+                    key: r.name,
+                    label: r.name
                 }
             })
         }

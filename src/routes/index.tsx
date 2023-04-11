@@ -20,6 +20,8 @@ import SystemManagement from "../components/SystemManagement"
 import UserManage from "../components/UserManage"
 import RoleManage from "../components/RoleManage"
 import OperateLogs from "../components/OperateLogs"
+import { useSession } from "../store"
+
 
 export interface RouteChild {
     name: string
@@ -41,6 +43,7 @@ export interface Route {
     children?: RouteChild[]
     icon: ReactNode
 }
+
 const routes: Route[] = [
     {
         name: "首页",

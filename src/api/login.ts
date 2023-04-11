@@ -15,8 +15,5 @@ export function login(data: LoginData) {
         baseURL,
         data,
         method: "POST",
-        headers: {
-            Authorization: sessionStorage.getItem("token")
-        }
     })
 }

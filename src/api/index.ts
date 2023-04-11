@@ -1,32 +1,25 @@
 import { message } from "antd"
-import axios, { AxiosHeaders, AxiosRequestConfig, Method, RawAxiosRequestHeaders } from "axios"
-
-type MethodsHeaders = Partial<{
-    [Key in Method as Lowercase<Key>]: AxiosHeaders;
-  } & {common: AxiosHeaders}>;
+import axios from "axios"
 
 type GetAxiosConfig<T extends UrlList> = {
     url: T
     baseURL: string
     method: "GET" | "POST" | "DELETE" | "PUT"
-    responseType?: string
-    headers?: (RawAxiosRequestHeaders & MethodsHeaders) | AxiosHeaders;
 } & (T extends keyof RequestQuery ? { query: RequestQuery[T] } : {}) &
     (T extends keyof RequestData ? { data: RequestData[T] } : {}) &
-    (IsParams<T> extends true ? { params: Record<GetParamsList<T>, string> } : {})
+    (IsParams<T> extends true ? { params: Record<GetParamsList<T>, string> } : {}) & { headers?: Record<string, string | null> }
 
-export async function request<T extends UrlList>(config: GetAxiosConfig<T> ): Promise<ResponseResult[T] | null> {
+export async function request<T extends UrlList>(config: GetAxiosConfig<T>): Promise<ResponseResult[T] | null> {
     try {
-        const Token = sessionStorage.getItem("token")
-        if (config.headers && Token) {
-            config.headers.Authorization = Token
-            console.log(config);
-        }
         const { method, baseURL } = config
         const data = config["data" as keyof GetAxiosConfig<T>] as T extends keyof RequestData ? RequestData[T] : undefined
         const params = config["query" as keyof GetAxiosConfig<T>] as T extends keyof RequestQuery ? RequestQuery[T] : undefined
         const param = config["params" as keyof GetAxiosConfig<T>] as IsParams<T> extends true ? Record<GetParamsList<T>, string> : undefined
         let url: string = config.url
+        if (sessionStorage.getItem("token")) {
+            const Token: string | null = sessionStorage.getItem("token")
+            config.headers = { Authorization: Token }
+        }
         if (url.includes(":") && param) {
             Object.keys(param).forEach(key => {
                 url = url.replace(`:${key}`, param[key as GetParamsList<T>])

@@ -77,7 +77,6 @@ export function userInfoExport(config: {}) {
         url: "/system/user/export",
         baseURL,
         query: config,
-        method: "GET",
-        responseType: "blob"
+        method: "GET"
     })
 }
