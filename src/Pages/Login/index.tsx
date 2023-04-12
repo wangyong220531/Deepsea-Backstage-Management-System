@@ -35,53 +35,65 @@ const Login: React.FC = () => {
             if (res) {
                 sessionStorage.setItem("token", res.data.token)
                 sessionStore.setState({ token: res.data.token })
-                sessionStore.setState({
-                    menu: res.data.user.map(e => {
-                        if (e.childList && e.childList.length > 0) {
-                            return {
-                                name: e.permissionName,
-                                children: e.childList.map(a => {
-                                    if (a.childList && a.childList.length > 0) {
-                                        return {
-                                            name: a.permissionName,
-                                            children: a.childList.map(b => {
-                                                if (b.childList && b.childList.length > 0) {
-                                                    return {
-                                                        name: b.permissionName,
-                                                        children: b.childList.map(c => {
-                                                            if (c.childList && c.childList.length > 0) {
+                // res.data.user === "superAdmin" ? sessionStore.setState({userType:res.data.user}) :
+                if (res.data.user instanceof Array) {
+                    sessionStore.setState({
+                        menu: res.data.user.map(e => {
+                            if (e.childList && e.childList.length > 0) {
+                                return {
+                                    name: e.permissionName,
+                                    path: e.permissionPath,
+                                    children: e.childList.map(a => {
+                                        if (a.childList && a.childList.length > 0) {
+                                            return {
+                                                name: a.permissionName,
+                                                path: a.permissionPath,
+                                                children: a.childList.map(b => {
+                                                    if (b.childList && b.childList.length > 0) {
+                                                        return {
+                                                            name: b.permissionName,
+                                                            path: b.permissionPath,
+                                                            children: b.childList.map(c => {
+                                                                if (c.childList && c.childList.length > 0) {
+                                                                    return {
+                                                                        name: c.permissionName,
+                                                                        path: c.permissionPath,
+                                                                        children: c.childList.map(d => {
+                                                                            return {
+                                                                                name: d.permissionName,
+                                                                                path: d.permissionPath
+                                                                            }
+                                                                        })
+                                                                    }
+                                                                }
                                                                 return {
                                                                     name: c.permissionName,
-                                                                    children: c.childList.map(d => {
-                                                                        return {
-                                                                            name: d.permissionName
-                                                                        }
-                                                                    })
+                                                                    path: c.permissionPath
                                                                 }
-                                                            }
-                                                            return {
-                                                                name: c.permissionName
-                                                            }
-                                                        })
+                                                            })
+                                                        }
                                                     }
-                                                }
-                                                return {
-                                                    name: b.permissionName
-                                                }
-                                            })
+                                                    return {
+                                                        name: b.permissionName,
+                                                        path: b.permissionPath
+                                                    }
+                                                })
+                                            }
                                         }
-                                    }
-                                    return {
-                                        name: a.permissionName
-                                    }
-                                })
+                                        return {
+                                            name: a.permissionName,
+                                            path: a.permissionPath
+                                        }
+                                    })
+                                }
                             }
-                        }
-                        return {
-                            name: e.permissionName
-                        }
+                            return {
+                                name: e.permissionName,
+                                path: e.permissionPath
+                            }
+                        })
                     })
-                })
+                }
             }
         })
     }

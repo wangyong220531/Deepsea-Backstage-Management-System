@@ -3,6 +3,7 @@ import Styles from "./index.module.less"
 import { Button, Input, Modal, Switch, Table, Form, Popconfirm, Select, message } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import { delUser, getUnitList, searchUser, updatePassword, updateUserInfo, userInfoExport } from "../../api/userManage"
+import { exportExcel } from "../../utils/index"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -10,6 +11,16 @@ function c(...classNameList: (string | undefined | null | boolean)[]) {
 
 interface TableHead extends UserInfo {
     operate?: ReactNode
+}
+
+export interface ExcelHead {
+    userName: string
+    userNo: string
+    account: string
+    roleName: string
+    phone: string
+    identityCode: string
+    unitName: string
 }
 
 const UserManage: FC = () => {
@@ -304,16 +315,20 @@ const UserManage: FC = () => {
     const exportUserInfo = async () => {
         const res = await userInfoExport({})
         if (res) {
-            const blob: Blob = new Blob([res.data], { type: "application/vnd.ms-excel" })
-            const downloadElement = document.createElement("a")
-            const href = window.URL.createObjectURL(blob)
-            downloadElement.href = href
-            downloadElement.download = "用户信息导出"
-            document.body.appendChild(downloadElement)
-            downloadElement.click()
-            document.body.removeChild(downloadElement)
-            window.URL.revokeObjectURL(href)
-            message.success("导出成功")
+            exportExcel(
+                res.data.map((e: ExcelHead) => {
+                    return {
+                        账号: e.account,
+                        姓名: e.userName,
+                        身份证号: e.identityCode,
+                        警号: e.userNo,
+                        角色: e.roleName,
+                        手机号: e.phone,
+                        单位: e.unitName
+                    }
+                }),
+                "用户导出信息"
+            )
         }
     }
 

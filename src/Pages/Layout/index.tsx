@@ -31,31 +31,40 @@ const LayoutFC: React.FC = () => {
     const sessionStore = useSession()
     console.log(sessionStore.menu)
 
-    const menuList: MenuProps["items"] = sessionStore.menu.map(route => {
-        return {
-            key: route.name,
-            label: route.name,
-            children: route.children?.map(r => {
-                if (r.children && r.children.length > 0) {
-                    return {
-                        key: r.name,
-                        label: r.name,
-                        chidren: r.children.map(a => {
-                            if (a.children && a.children.length > 0) {
-                                return {
-                                    key: a.name,
-                                    label: a.name,
-                                    chidren: a.children
+    const menuList: MenuProps["items"] = sessionStore.menu.map(e => {
+        if (e.children && e.children.length > 0) {
+            return {
+                key: e.path,
+                label: e.name,
+                children: e.children.map(a => {
+                    if (a.children && a.children.length > 0 && a.children.find(x => x.children)) {
+                        return {
+                            key: a.path,
+                            label: a.name,
+                            children: a.children.map(b => {
+                                if (b.children && b.children.length > 0 && b.children.find(x => x.children)) {
+                                    return {
+                                        key: b.path,
+                                        label: b.name
+                                    }
                                 }
-                            }
-                        })
+                                return {
+                                    key: b.path,
+                                    label: b.name
+                                }
+                            })
+                        }
                     }
-                }
-                return {
-                    key: r.name,
-                    label: r.name
-                }
-            })
+                    return {
+                        key: a.path,
+                        label: a.name
+                    }
+                })
+            }
+        }
+        return {
+            key: e.path,
+            label: e.name
         }
     })
 

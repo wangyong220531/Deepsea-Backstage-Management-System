@@ -11,10 +11,9 @@ export const useLocal = createStorage<Local>(
 export const useSession = createStorage<Session>(
     {
         token: undefined,
-        menu: []
+        menu: [],
+        userType: ""
     },
     "user",
     "session"
 )
-
-

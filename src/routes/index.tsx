@@ -152,7 +152,7 @@ const routes: Route[] = [
             },
             {
                 name: "角色管理",
-                path: "roleManag",
+                path: "roleManage",
                 component: <RoleManage />
             },
             {

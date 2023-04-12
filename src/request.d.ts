@@ -53,9 +53,9 @@ type ResponseResult = {
     "/system/role/distributePSet/:roleId/:pSetId": { success: Boolean }
     "/system/user/distributeRole2": { success: Boolean }
     "/system/role/distributePSet": { success: Boolean }
-    "/monitor/loginLog/export": string
-    "/monitor/operationLog/export": string
-    "/system/user/export": any
+    "/monitor/loginLog/export": LoginLogExportResult
+    "/monitor/operationLog/export": OperateLogExportResult
+    "/system/user/export": UserExportResult
     "/login": LoginResult
 }
 type RequestQuery = {
@@ -922,6 +922,7 @@ interface GetPermissionTreeResult {
 interface MenuChild {
     id: string
     permissionName: string
+    permissionPath: string
     childList?: MenuChild[]
 }
 
@@ -1022,7 +1023,36 @@ interface LoginData {
 interface LoginResult {
     data: {
         token: string
-        user: MenuChild[]
+        user: MenuChild[] | string
     }
 }
 
+interface UserExportResult {
+    success: Boolean
+    data: ExcelHead[]
+}
+
+interface LoginLogExportResult {
+    success: Boolean
+    data: LoginExcelHead[]
+}
+
+interface LoginExcelHead {
+    account: string
+    userName: string
+    loginIp: string
+    loginTime: string
+    remark: string
+}
+
+interface OperateLogExportResult {
+    success: Boolean
+    data: OperateExcelHead[]
+}
+
+interface OperateExcelHead {
+    account: string
+    userName: string
+    operationTime: string
+    operationType: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13
+}

@@ -5,11 +5,17 @@ import type { TabsProps } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import { exportLoginLog, exportOperateLog, searchLoginLog, searchOperateLog } from "../../api/logManage"
 import dayjs from "dayjs"
+import { exportExcel } from "../../utils/index"
 
 const { RangePicker } = DatePicker
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : styles[className])).join(" ")
+}
+
+interface OperationType {
+    key: number
+    type: string
 }
 
 const OperateLogs: FC = () => {
@@ -80,7 +86,7 @@ const OperateLogs: FC = () => {
             title: "日志内容",
             align: "center",
             render: (_, e) => {
-                return <>{`${e.loginTime}  ${e.remark === "Login" ? "登录成功！" : "退出登录！"}`}</>
+                return <>{e.remark === "Login" ? "登录成功！" : "退出登录！"}</>
             }
         },
         {
@@ -109,6 +115,65 @@ const OperateLogs: FC = () => {
         }
     ]
 
+    const operationType: OperationType[] = [
+        {
+            key: 0,
+            type: "其它"
+        },
+        {
+            key: 1,
+            type: "新增"
+        },
+        {
+            key: 2,
+            type: "修改"
+        },
+        {
+            key: 3,
+            type: "重置密码"
+        },
+        {
+            key: 4,
+            type: "修改密码"
+        },
+        {
+            key: 5,
+            type: "查询"
+        },
+        {
+            key: 6,
+            type: "删除"
+        },
+        {
+            key: 7,
+            type: "授权"
+        },
+        {
+            key: 8,
+            type: "取消授权"
+        },
+        {
+            key: 9,
+            type: "导出"
+        },
+        {
+            key: 10,
+            type: "导入"
+        },
+        {
+            key: 11,
+            type: "强制退出"
+        },
+        {
+            key: 12,
+            type: "生成代码"
+        },
+        {
+            key: 13,
+            type: "清空数据"
+        }
+    ]
+
     const operateColumns: ColumnsType<Operate> = [
         {
             key: "userNo",
@@ -132,20 +197,7 @@ const OperateLogs: FC = () => {
                     <>
                         <div className={c("operate-type")}>
                             <div>{e.operationTime}</div>
-                            {e.operationType === 0 && <div>其它</div>}
-                            {e.operationType === 1 && <div>新增</div>}
-                            {e.operationType === 2 && <div>修改</div>}
-                            {e.operationType === 3 && <div>重置密码</div>}
-                            {e.operationType === 4 && <div>修改密码</div>}
-                            {e.operationType === 5 && <div>查询</div>}
-                            {e.operationType === 6 && <div>删除</div>}
-                            {e.operationType === 7 && <div>授权</div>}
-                            {e.operationType === 8 && <div>取消授权</div>}
-                            {e.operationType === 9 && <div>导出</div>}
-                            {e.operationType === 10 && <div>导入</div>}
-                            {e.operationType === 11 && <div>强制退出</div>}
-                            {e.operationType === 12 && <div>生成代码</div>}
-                            {e.operationType === 13 && <div>清空数据</div>}
+                            <div>{operationType.find(a => a.key === e.operationType)?.type}</div>
                         </div>
                     </>
                 )
@@ -179,8 +231,37 @@ const OperateLogs: FC = () => {
     const [loginTableData, setTableData] = useState<LoginLog[]>([])
     const [operateTableData, setOperateTableData] = useState<Operate[]>([])
 
-    const exportLog = () => {
-        tabActived === "登录日志" ? exportLoginLog({}) : exportOperateLog({})
+    const exportLog = async () => {
+        if (tabActived === "登录日志") {
+            const res = await exportLoginLog({})
+            res &&
+                exportExcel(
+                    res.data.map(e => {
+                        return {
+                            账号: e.account,
+                            姓名: e.userName,
+                            IP: e.loginIp,
+                            操作时间: e.loginTime,
+                            日志内容: e.remark === "Login" ? "登录成功！" : "退出登录！"
+                        }
+                    }),
+                    "登录日志导出"
+                )
+            return
+        }
+        const res = await exportOperateLog({})
+        res &&
+            exportExcel(
+                res.data.map(e => {
+                    return {
+                        警号: e.account,
+                        姓名: e.userName,
+                        操作时间: e.operationTime,
+                        操作类型: operationType.find(a => a.key === e.operationType)?.type
+                    }
+                }),
+                "操作日志导出"
+            )
     }
 
     return (
