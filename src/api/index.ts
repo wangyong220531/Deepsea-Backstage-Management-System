@@ -7,7 +7,7 @@ type GetAxiosConfig<T extends UrlList> = {
     method: "GET" | "POST" | "DELETE" | "PUT"
 } & (T extends keyof RequestQuery ? { query: RequestQuery[T] } : {}) &
     (T extends keyof RequestData ? { data: RequestData[T] } : {}) &
-    (IsParams<T> extends true ? { params: Record<GetParamsList<T>, string> } : {}) & { headers?: Record<string, string | null> }
+    (IsParams<T> extends true ? { params: Record<GetParamsList<T>, string> } : {}) & { headers?: Record<string, string | null> } & { headers?: Record<string, string | null> }
 
 export async function request<T extends UrlList>(config: GetAxiosConfig<T>): Promise<ResponseResult[T] | null> {
     try {
@@ -25,7 +25,7 @@ export async function request<T extends UrlList>(config: GetAxiosConfig<T>): Pro
                 url = url.replace(`:${key}`, param[key as GetParamsList<T>])
             })
         }
-        const response = await axios({ url, method, baseURL, params, data })
+        const response = await axios({ url, method, baseURL, params, data, headers: config.headers })
         if (!response.data.success) {
             message.warning(response.data.message)
             return null

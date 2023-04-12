@@ -152,17 +152,19 @@ const RoleManage: React.FC = () => {
             render: (_, e) => {
                 return (
                     <>
-                        <div className={c("operate")}>
-                            <div className={c("item")} onClick={() => userClick(e)}>
-                                用户
+                        {e.roleName !== "超级管理员" && (
+                            <div className={c("operate")}>
+                                <div className={c("item")} onClick={() => userClick(e)}>
+                                    用户
+                                </div>
+                                <div className={c("item")} onClick={() => authorize(e)}>
+                                    授权
+                                </div>
+                                <div className={c("item")} onClick={() => edit(e)}>
+                                    编辑
+                                </div>
                             </div>
-                            <div className={c("item")} onClick={() => authorize(e)}>
-                                授权
-                            </div>
-                            <div className={c("item")} onClick={() => edit(e)}>
-                                编辑
-                            </div>
-                        </div>
+                        )}
                     </>
                 )
             }
@@ -186,7 +188,7 @@ const RoleManage: React.FC = () => {
                         return {
                             id: e.id,
                             account: e.account,
-                            userName: e.unitName,
+                            userName: e.userName,
                             identityCode: e.identityCode,
                             userNo: e.userNo,
                             phone: e.phone,

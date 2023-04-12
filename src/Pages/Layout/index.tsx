@@ -29,14 +29,19 @@ const LayoutFC: React.FC = () => {
     const navigate = useNavigate()
     const location = useLocation()
     const sessionStore = useSession()
-    console.log(sessionStore.menu)
 
-    const menuList: MenuProps["items"] = sessionStore.menu.map(e => {
-        if (e.children && e.children.length > 0) {
+    const superAdminMenu:MenuProps["items"] = sessionStore.menu.map(e => {
+        if (e.children && e.children.length > 0 && e.children.find(x => x.children)) {
             return {
                 key: e.path,
                 label: e.name,
                 children: e.children.map(a => {
+                    if(a.name === "日志管理"){
+                        return {
+                            key: a.path,
+                            label: a.name
+                        }
+                    }
                     if (a.children && a.children.length > 0 && a.children.find(x => x.children)) {
                         return {
                             key: a.path,
@@ -65,6 +70,26 @@ const LayoutFC: React.FC = () => {
         return {
             key: e.path,
             label: e.name
+        }
+    })
+
+    const menuList:MenuProps["items"] = routes.map(e => {
+        return {
+            key: e.path,
+            label: e.name,
+            icon: e.icon,
+            children: e.children?.map(a => {
+                return {
+                    key: a.path,
+                    label: a.name,
+                    children: a.children?.map(b => {
+                        return {
+                            key: b.path,
+                            label: b.name
+                        }
+                    })
+                }
+            })
         }
     })
 
@@ -128,7 +153,7 @@ const LayoutFC: React.FC = () => {
     }
 
     const logout = () => {
-        session.setState({ token: undefined })
+        session.setState({ token: undefined , menu:[]})
         navigate(`/login?${encodeURIComponent("from=" + location.pathname + location.search)}`, { replace: true })
     }
 
@@ -141,7 +166,7 @@ const LayoutFC: React.FC = () => {
             ),
             key: 0
         }
-    ]
+    ]   
 
     return (
         <Layout className={c("layout")}>
@@ -153,7 +178,7 @@ const LayoutFC: React.FC = () => {
             </Header>
             <Layout hasSider>
                 <Sider trigger={null} style={{ width: "200px", background: local.themeColor, height: "920px" }} collapsed={collapsed} collapsible>
-                    <Menu mode="inline" defaultOpenKeys={[location.pathname.split("/")[1]]} selectedKeys={[location.pathname.split("/").slice(-1).toString()]} items={menuList} onClick={changeRoute} />
+                    <Menu mode="inline" defaultOpenKeys={[location.pathname.split("/")[1]]} selectedKeys={[location.pathname.split("/").slice(-1).toString()]} items={sessionStore.menu.length > 0 ? superAdminMenu : menuList  } onClick={changeRoute} />
                 </Sider>
                 <BreakMenu></BreakMenu>
                 <Content className={c("content")}>

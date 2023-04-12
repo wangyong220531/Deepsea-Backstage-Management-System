@@ -1,19 +1,21 @@
 import { Button } from "antd"
 import React, { useEffect, useState } from "react"
 import { Navigate, useSearchParams } from "react-router-dom"
-import { useLocal, useSession } from "../../store"
+import { useSession } from "../../store"
 import UsernameIcon from "../../assets/usernameIcon.png"
 import Captcha from "../../assets/Login/Captcha.png"
 import Logo from "../../assets/logo.png"
 import styles from "./index.module.less"
 import { getCaptcha, login } from "../../api/login"
+import useAccount from "../../store/account"
 
 const Login: React.FC = () => {
-    const [userNo, setUserNo] = useState("082845")
+    const [userNo, setUserNo] = useState("")
     const sessionStore = useSession()
     const [searchParams] = useSearchParams()
     const from = searchParams.get("from")
     const [captcha, setCaptcha] = useState("")
+    const [account, setAccount] = useAccount()
 
     useEffect(() => {
         getImgUrl()
@@ -35,7 +37,11 @@ const Login: React.FC = () => {
             if (res) {
                 sessionStorage.setItem("token", res.data.token)
                 sessionStore.setState({ token: res.data.token })
-                // res.data.user === "superAdmin" ? sessionStore.setState({userType:res.data.user}) :
+                setAccount({login: res.data.token})
+                if (res.data.user === "superAdmin") {
+                    sessionStore.setState({ userType: res.data.user })
+                    return
+                }
                 if (res.data.user instanceof Array) {
                     sessionStore.setState({
                         menu: res.data.user.map(e => {
@@ -93,6 +99,7 @@ const Login: React.FC = () => {
                             }
                         })
                     })
+                    return
                 }
             }
         })

@@ -20,8 +20,6 @@ import SystemManagement from "../components/SystemManagement"
 import UserManage from "../components/UserManage"
 import RoleManage from "../components/RoleManage"
 import OperateLogs from "../components/OperateLogs"
-import { useSession } from "../store"
-
 
 export interface RouteChild {
     name: string
@@ -156,7 +154,7 @@ const routes: Route[] = [
                 component: <RoleManage />
             },
             {
-                name: "操作日志",
+                name: "日志管理",
                 path: "operateLogs",
                 component: <OperateLogs />
             }
