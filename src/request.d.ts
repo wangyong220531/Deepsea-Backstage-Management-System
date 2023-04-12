@@ -57,6 +57,8 @@ type ResponseResult = {
     "/monitor/operationLog/export": OperateLogExportResult
     "/system/user/export": UserExportResult
     "/login": LoginResult
+    "/logout": { success: Boolean }
+    "/system/user/getUserPathTree/:roleId": GetRolePermissionResult
 }
 type RequestQuery = {
     "/serve/ask/delAskInfo": { id: string }
@@ -77,6 +79,7 @@ type RequestQuery = {
     "/monitor/loginLog/export": {}
     "/monitor/operationLog/export": {}
     "/system/user/export": {}
+    "/logout": {}
 }
 type RequestData = {
     "/policeSituation/selectNewAlarm": QueryLatestPS
@@ -121,6 +124,7 @@ type RequestParams = {
     "/system/permission/list/:parentId": { parentId: string }
     "/system/user/delete/:id": { id: string }
     "/system/role/distributePSet/:roleId/:pSetId": { roleId: string; pSetId: string }
+    "/system/user/getUserPathTree/:userId": { roleId: string }
 }
 
 type UrlList = keyof ResponseResult
@@ -851,10 +855,11 @@ interface QueryUserByAccountResult {
 
 interface UpdateUserInfoData {
     id: string
-    account: string
-    userName: string
-    userNo: string
-    roleId: string
+    // account: string
+    // userName: string
+    // userNo: string
+    // roleId: string
+    phone: string
     status: 0 | 1 // 0-禁用 1-启用
 }
 
@@ -999,8 +1004,10 @@ interface SearchOperateLogResult {
 
 interface Operate {
     id: string
-    userNo: string
+    account: string
     userName: string
+    operationIp: string
+    operationTitle: string
     operationType: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13
     operationTime: string
 }
@@ -1055,4 +1062,8 @@ interface OperateExcelHead {
     userName: string
     operationTime: string
     operationType: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13
+}
+
+interface GetRolePermissionResult {
+    data: string[]
 }

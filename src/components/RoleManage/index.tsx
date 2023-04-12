@@ -4,9 +4,11 @@ import type { ColumnsType } from "antd/es/table"
 import { ReactNode, useEffect, useState } from "react"
 import type { DataNode } from "antd/es/tree"
 import { CloseOutlined } from "@ant-design/icons"
-import { addRole, AssignMultiUsers, AssignPermission, searchRole } from "../../api/roleManage"
+import { addRole, AssignMultiUsers, AssignPermission, getRolePermission, searchRole } from "../../api/roleManage"
 import { searchUser } from "../../api/userManage"
 import { getPermissionTree } from "../../api/permisssion"
+import { useSession } from "../../store"
+import { useAsync } from "../../utils/hooks"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -25,6 +27,8 @@ interface TreeNode {
 const RoleManage: React.FC = () => {
     const [treeData, setTreeData] = useState<DataNode[]>([])
     const [inputRolename, setInputRolename] = useState("")
+    const sessionStore = useSession()
+    const [isSuperAdmin, setIsSuperAdmin] = useState(false)
 
     const searchPermissionTree = () => {
         getPermissionTree({
@@ -90,31 +94,31 @@ const RoleManage: React.FC = () => {
         })
     }
 
-    const search = () => {
-        searchRole({
-            pageNum: 1,
-            pageSize: 10,
+    const search = async () => {
+        if (sessionStore.userType === "superAdmin") {
+            setIsSuperAdmin(true)
+        }
+        const res = await searchRole({
+            pageNum: pageNum,
+            pageSize: pageSize,
             roleName: inputRolename
-        }).then(res => {
-            if (res) {
-                res.success
-                    ? setTableData(
-                          res.data.rows.map(e => {
-                              return {
-                                  id: e.id,
-                                  roleName: e.roleName,
-                                  createTime: e.createTime,
-                                  status: e.status
-                              }
-                          })
-                      )
-                    : setTableData([])
-            }
         })
+        if (res) {
+            setTableData(
+                res.data.rows.map(e => {
+                    return {
+                        id: e.id,
+                        roleName: e.roleName,
+                        createTime: e.createTime,
+                        status: e.status
+                    }
+                })
+            )
+            setTotal(res.data.total)
+        }
     }
 
     useEffect(() => {
-        search()
         searchPermissionTree()
     }, [])
 
@@ -139,7 +143,7 @@ const RoleManage: React.FC = () => {
             render: (_, e) => {
                 return (
                     <>
-                        <Switch defaultChecked={e.status === 0 ? false : true} checkedChildren="启用" unCheckedChildren="禁用" onChange={onChange} />
+                        <Switch defaultChecked={e.status === 0 ? false : true} checkedChildren="启用" unCheckedChildren="禁用" onChange={() => statusSwitch(e)} />
                     </>
                 )
             }
@@ -201,6 +205,7 @@ const RoleManage: React.FC = () => {
     }
 
     const userClick = (e: TableHead) => {
+        setSelectedRowKeys([])
         setRoleselect(e.id)
         setModalWidth(800)
         userSearch()
@@ -209,6 +214,12 @@ const RoleManage: React.FC = () => {
     }
 
     const authorize = (e: TableHead) => {
+        getRolePermission({ roleId: e.id }).then(res => {
+            if(res){
+                setTreeChecked(res.data)
+                console.log(treeChecked);
+            }
+        })
         setRoleselect(e.id)
         setModalWidth(800)
         setDrawShow(true)
@@ -216,6 +227,7 @@ const RoleManage: React.FC = () => {
 
     const edit = (e: TableHead) => {
         setmodalContent("角色编辑")
+        setEditRoleName(e.roleName)
         setUserShow(true)
     }
 
@@ -269,14 +281,14 @@ const RoleManage: React.FC = () => {
 
     const [tableData, setTableData] = useState<TableHead[]>([])
 
-    const onChange = (checked: boolean) => {
-        // console.log(`switch to ${checked}`)
+    const statusSwitch = (e: TableHead) => {
+        console.log(e)
     }
 
-    const [total, setTotal] = useState(100)
-    const [pageSize, setPageSize] = useState(10)
-
-    const changePage = () => {}
+    const changePage = (pageNum: number, pageSize: number) => {
+        setPageNum(pageNum)
+        setPageSize(pageSize)
+    }
 
     const [userShow, setUserShow] = useState(false)
 
@@ -296,6 +308,8 @@ const RoleManage: React.FC = () => {
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
         setSelectedRowKeys(newSelectedRowKeys)
     }
+
+    const [editRoleName, setEditRoleName] = useState("")
 
     const rowSelection = {
         selectedRowKeys,
@@ -372,7 +386,7 @@ const RoleManage: React.FC = () => {
                         <>
                             <div className={c("roleName-edit")}>
                                 <div className={c("label")}>角色名称：</div>
-                                <Input placeholder="请输入角色名称" />
+                                <Input placeholder="请输入角色名称" value={editRoleName} onChange={e => setEditRoleName(e.target.value)} />
                             </div>
                         </>
                     )}
@@ -408,6 +422,9 @@ const RoleManage: React.FC = () => {
             })
             return
         }
+        if (modalContent === "角色编辑") {
+            return
+        }
     }
 
     const [pselcted, setPselcted] = useState<string[]>([])
@@ -432,6 +449,19 @@ const RoleManage: React.FC = () => {
 
     const reset = () => {
         setInputRolename("")
+        search()
+    }
+
+    const [treeChecked, setTreeChecked] = useState<string[]>([])
+
+    const [total, setTotal] = useState(100)
+    const [pageNum, setPageNum] = useState(1)
+    const [pageSize, setPageSize] = useState(10)
+
+    useAsync(() => search(), [pageNum, pageSize])
+
+    const selectALL = () => {
+        setTreeChecked([])
     }
 
     return (
@@ -454,13 +484,15 @@ const RoleManage: React.FC = () => {
                     </div>
                 </div>
                 <div className={c("btn-group")}>
-                    <Button className={c("add")} onClick={() => addNew()}>
-                        新增
-                    </Button>
+                    {isSuperAdmin && (
+                        <Button className={c("add")} onClick={() => addNew()}>
+                            新增
+                        </Button>
+                    )}
                 </div>
             </div>
             <Table rowKey={e => e.id} columns={columns} dataSource={tableData} pagination={{ onChange: changePage, total, pageSize }} />
-            <Drawer
+            {drawShow && <Drawer
                 placement="right"
                 title="菜单授权"
                 open={drawShow}
@@ -482,8 +514,9 @@ const RoleManage: React.FC = () => {
                     </>
                 }
             >
-                <Tree treeData={treeData} checkable defaultExpandAll onCheck={treeChecksClick} />
-            </Drawer>
+                <Button className={c("select-all-btn")} type="primary" size="small" onClick={selectALL}>全选</Button>
+                <Tree treeData={treeData} checkable defaultExpandAll defaultCheckedKeys={treeChecked} onCheck={treeChecksClick} />
+            </Drawer>}
             <User />
         </>
     )

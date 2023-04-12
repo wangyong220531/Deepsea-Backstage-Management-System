@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react"
 import { SettingOutlined } from "@ant-design/icons"
-import { Dropdown, Layout, Menu, MenuProps } from "antd"
+import { Dropdown, Layout, Menu, MenuProps, message } from "antd"
 import Styles from "./index.module.less"
 import { useLocal, useSession } from "../../store/index"
 import { Outlet, useLocation, useNavigate } from "react-router-dom"
 import routes, { RouteChild } from "../../routes"
 import { getPng } from "../../utils"
 import BreadcrumbIcon from "../../assets/SystemManagement/BreadcrumbIcon.png"
+import { logoutQuery } from "../../api/login"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -30,13 +31,13 @@ const LayoutFC: React.FC = () => {
     const location = useLocation()
     const sessionStore = useSession()
 
-    const superAdminMenu:MenuProps["items"] = sessionStore.menu.map(e => {
+    const superAdminMenu: MenuProps["items"] = sessionStore.menu.map(e => {
         if (e.children && e.children.length > 0 && e.children.find(x => x.children)) {
             return {
                 key: e.path,
                 label: e.name,
                 children: e.children.map(a => {
-                    if(a.name === "日志管理"){
+                    if (a.name === "日志管理") {
                         return {
                             key: a.path,
                             label: a.name
@@ -73,7 +74,7 @@ const LayoutFC: React.FC = () => {
         }
     })
 
-    const menuList:MenuProps["items"] = routes.map(e => {
+    const menuList: MenuProps["items"] = routes.map(e => {
         return {
             key: e.path,
             label: e.name,
@@ -153,7 +154,11 @@ const LayoutFC: React.FC = () => {
     }
 
     const logout = () => {
-        session.setState({ token: undefined , menu:[]})
+        logoutQuery({}).then(() => {
+            message.success("退出登录成功！")
+        })
+        session.setState({ token: undefined, menu: [] })
+        sessionStorage.removeItem("token")
         navigate(`/login?${encodeURIComponent("from=" + location.pathname + location.search)}`, { replace: true })
     }
 
@@ -166,7 +171,7 @@ const LayoutFC: React.FC = () => {
             ),
             key: 0
         }
-    ]   
+    ]
 
     return (
         <Layout className={c("layout")}>
@@ -178,7 +183,7 @@ const LayoutFC: React.FC = () => {
             </Header>
             <Layout hasSider>
                 <Sider trigger={null} style={{ width: "200px", background: local.themeColor, height: "920px" }} collapsed={collapsed} collapsible>
-                    <Menu mode="inline" defaultOpenKeys={[location.pathname.split("/")[1]]} selectedKeys={[location.pathname.split("/").slice(-1).toString()]} items={sessionStore.menu.length > 0 ? superAdminMenu : menuList  } onClick={changeRoute} />
+                    <Menu mode="inline" defaultOpenKeys={[location.pathname.split("/")[1]]} selectedKeys={[location.pathname.split("/").slice(-1).toString()]} items={sessionStore.menu.length > 0 ? superAdminMenu : menuList} onClick={changeRoute} />
                 </Sider>
                 <BreakMenu></BreakMenu>
                 <Content className={c("content")}>

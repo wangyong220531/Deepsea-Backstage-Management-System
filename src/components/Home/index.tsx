@@ -1,4 +1,4 @@
 const Home: React.FC = () => {
-    return <>Home</>
+    return <>首页</>
 }
 export default Home

@@ -4,6 +4,7 @@ import { Button, Input, Modal, Switch, Table, Form, Popconfirm, Select, message 
 import type { ColumnsType } from "antd/es/table"
 import { delUser, getUnitList, searchUser, updatePassword, updateUserInfo, userInfoExport } from "../../api/userManage"
 import { exportExcel } from "../../utils/index"
+import { useAsync } from "../../utils/hooks"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -50,8 +51,8 @@ const UserManage: FC = () => {
             align: "center"
         },
         {
-            key: "phoneNumber",
-            dataIndex: "phoneNumber",
+            key: "phone",
+            dataIndex: "phone",
             title: "手机号",
             align: "center"
         },
@@ -78,7 +79,7 @@ const UserManage: FC = () => {
             render: (_, e) => {
                 return (
                     <>
-                        <Switch defaultChecked={e.status === 0 ? false : true} checkedChildren="启用" unCheckedChildren="禁用" onChange={(checked, e) => statusSwitch(checked, event)} />
+                        <Switch defaultChecked={e.status === 0 ? false : true} checkedChildren="启用" unCheckedChildren="禁用" onChange={() => statusSwitch(e)} />
                     </>
                 )
             }
@@ -95,9 +96,9 @@ const UserManage: FC = () => {
                             <div className={c("item")} onClick={() => edit(e)}>
                                 编辑
                             </div>
-                            <div className={c("item")} onClick={() => pwdChange(e)}>
+                            {/* <div className={c("item")} onClick={() => pwdChange(e)}>
                                 密码修改
-                            </div>
+                            </div> */}
                             <Popconfirm title="确定要删除吗？" onConfirm={() => delConfirm(e)}>
                                 <div className={c("item")}>删除</div>
                             </Popconfirm>
@@ -108,8 +109,22 @@ const UserManage: FC = () => {
         }
     ]
 
-    const statusSwitch = (checked: Boolean, event: any) => {
-        console.log(checked, event)
+    const statusSwitch = (e: TableHead) => {
+        e.status === 1
+            ? updateUserInfo({
+                  id: e.id,
+                  phone: e.phone,
+                  status: 0
+              }).then(() => {
+                  search()
+              })
+            : updateUserInfo({
+                  id: e.id,
+                  phone: e.phone,
+                  status: 1
+              }).then(() => {
+                  search()
+              })
     }
 
     const delConfirm = (e: TableHead) => {
@@ -137,37 +152,47 @@ const UserManage: FC = () => {
         })
     }
 
-    const search = () => {
-        searchUser({
+    const [total, setTotal] = useState(100)
+    const [pageNum, setPageNum] = useState(1)
+    const [pageSize, setPageSize] = useState(10)
+
+    const changePage = (pageNum: number, pageSize: number) => {
+        setPageNum(pageNum)
+        setPageSize(pageSize)
+    }
+
+    const search = async () => {
+        const res = await searchUser({
             account: inputAccount,
             userUnitNo: inputUnit,
-            pageNum: 1,
-            pageSize: 10
-        }).then(res => {
-            res &&
-                (setTableData(
-                    res.data.rows.map(e => {
-                        return {
-                            id: e.id,
-                            account: e.account,
-                            userName: e.userName,
-                            userNo: e.userNo,
-                            unitName: e.unitName,
-                            identityCode: e.identityCode,
-                            role: e.role,
-                            phone: e.phone,
-                            status: e.status
-                        }
-                    })
-                ),
-                setTotal(res.data.total))
+            pageNum: pageNum,
+            pageSize: pageSize
         })
+        if (res) {
+            setTableData(
+                res.data.rows.map(e => {
+                    return {
+                        id: e.id,
+                        account: e.account,
+                        userName: e.userName,
+                        userNo: e.userNo,
+                        unitName: e.unitName,
+                        identityCode: e.identityCode,
+                        role: e.role,
+                        phone: e.phone,
+                        status: e.status
+                    }
+                })
+            )
+            setTotal(res.data.total)
+        }
     }
 
     useEffect(() => {
-        search()
         searchUnitList()
     }, [])
+
+    useAsync(() => search(), [pageNum, pageSize])
 
     const query = () => {
         search()
@@ -176,13 +201,14 @@ const UserManage: FC = () => {
     const reset = () => {
         setInputAccount("")
         setInputUnit("")
+        search()
     }
 
     const [selectId, setSelectId] = useState("")
 
     const edit = (e: TableHead) => {
         setSelectId(e.id)
-        e.role.roleName === "超级管理员" ? setIsGeneral(false) : setIsGeneral(true)
+        // e.role.roleName === "超级管理员" ? setIsGeneral(false) : setIsGeneral(true)
         setOperateShow(true)
         setModalContent("编辑")
         editForm.setFieldsValue({
@@ -195,19 +221,14 @@ const UserManage: FC = () => {
         })
     }
 
-    const pwdChange = (e: TableHead) => {
-        setSelectId(e.id)
-        setModalContent("密码修改")
-        seteditAccount(e.account)
-        setOperateShow(true)
-    }
+    // const pwdChange = (e: TableHead) => {
+    //     setSelectId(e.id)
+    //     setModalContent("密码修改")
+    //     seteditAccount(e.account)
+    //     setOperateShow(true)
+    // }
 
     const [tableData, setTableData] = useState<TableHead[]>([])
-
-    const [total, setTotal] = useState(100)
-    const [pageSize, setPageSize] = useState(10)
-
-    const changePage = () => {}
 
     const [modalContent, setModalContent] = useState<"新增" | "编辑" | "密码修改">("编辑")
     const [operateShow, setOperateShow] = useState(false)
@@ -218,7 +239,7 @@ const UserManage: FC = () => {
 
     const [pwdChangeForm] = Form.useForm()
 
-    const [isGeneral, setIsGeneral] = useState(true)
+    // const [isGeneral, setIsGeneral] = useState(true)
 
     const Operate: FC = () => {
         return (
@@ -242,22 +263,23 @@ const UserManage: FC = () => {
                     {modalContent === "新增" || modalContent === "编辑" ? (
                         <Form labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} form={editForm}>
                             <Form.Item label="用户账号" name="account">
-                                <Input className={c("form-item-input")} disabled={isGeneral} addonAfter="同警号" />
+                                <Input className={c("form-item-input")} disabled addonAfter="同警号" />
                             </Form.Item>
                             <Form.Item label="用户姓名" name="userName">
-                                <Input className={c("form-item-input")} disabled={isGeneral} />
+                                <Input className={c("form-item-input")} disabled />
                             </Form.Item>
                             <Form.Item label="警号" name="userNo">
-                                <Input className={c("form-item-input")} disabled={isGeneral} />
+                                <Input className={c("form-item-input")} disabled />
                             </Form.Item>
-                            <Form.Item label="手机号" name="phoneNumber">
+                            <Form.Item label="手机号" name="phone">
                                 <Input className={c("form-item-input")} />
                             </Form.Item>
                             <Form.Item label="单位" name="unitName">
-                                <Select placeholder="请选择单位" options={unitList} className={c("form-item-input")} />
+                                {/* <Select placeholder="请选择单位" options={unitList} className={c("form-item-input")} /> */}
+                                <Input className={c("form-item-input")} disabled />
                             </Form.Item>
                             <Form.Item label="角色" name="role">
-                                <Input className={c("form-item-input")} disabled={isGeneral} />
+                                <Input className={c("form-item-input")} disabled />
                             </Form.Item>
                         </Form>
                     ) : (
@@ -284,12 +306,10 @@ const UserManage: FC = () => {
             const res = await editForm.validateFields()
             updateUserInfo({
                 id: selectId,
-                account: res.account,
-                userName: res.userName,
-                userNo: res.userNo,
-                roleId: res.role,
+                phone: res.phone,
                 status: 0
             }).then(() => {
+                search()
                 message.success("更改用户信息成功！")
             })
             editForm.resetFields()
@@ -305,12 +325,12 @@ const UserManage: FC = () => {
         pwdChangeForm.resetFields()
     }
 
-    const addNew = () => {
-        setModalContent("新增")
-        setIsGeneral(false)
-        editForm.resetFields()
-        setOperateShow(true)
-    }
+    // const addNew = () => {
+    //     setModalContent("新增")
+    //     setIsGeneral(false)
+    //     editForm.resetFields()
+    //     setOperateShow(true)
+    // }
 
     const exportUserInfo = async () => {
         const res = await userInfoExport({})
@@ -356,11 +376,11 @@ const UserManage: FC = () => {
                     </div>
                 </div>
                 <div className={c("btn-group")}>
-                    <Button className={c("add")} onClick={() => addNew()}>
+                    {/* <Button className={c("add")} onClick={() => addNew()}>
                         新增
-                    </Button>
-                    <Button>下载模板</Button>
-                    <Button>上传</Button>
+                    </Button> */}
+                    {/* <Button>下载模板</Button>
+                    <Button>上传</Button> */}
                     <Button onClick={exportUserInfo}>导出</Button>
                 </div>
             </div>

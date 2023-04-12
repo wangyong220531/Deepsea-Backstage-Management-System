@@ -6,6 +6,7 @@ import type { ColumnsType } from "antd/es/table"
 import { exportLoginLog, exportOperateLog, searchLoginLog, searchOperateLog } from "../../api/logManage"
 import dayjs from "dayjs"
 import { exportExcel } from "../../utils/index"
+import { useAsync } from "../../utils/hooks"
 
 const { RangePicker } = DatePicker
 
@@ -20,6 +21,8 @@ interface OperationType {
 
 const OperateLogs: FC = () => {
     const onChange = (key: string) => {
+        setPageNum(1)
+        setlogPagesize(10)
         key === "2" ? setTabActived("操作日志") : setTabActived("登录日志")
     }
 
@@ -29,50 +32,53 @@ const OperateLogs: FC = () => {
 
     const [tabActived, setTabActived] = useState<"登录日志" | "操作日志">("登录日志")
 
-    const search = () => {
-        tabActived === "登录日志"
-            ? searchLoginLog({
-                  endTime: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                  pageNum: pageNum,
-                  pageSize: logPagesize,
-                  startTime: dayjs(Date.now() - 2592000000).format("YYYY-MM-DD HH:mm:ss"),
-                  userName: ""
-              }).then(res => {
-                  res &&
-                      (setTableData(
-                          res.data.rows.map(e => {
-                              return {
-                                  id: e.id,
-                                  userNo: e.userNo,
-                                  userName: e.userName,
-                                  loginIp: e.loginIp,
-                                  loginTime: e.loginTime,
-                                  remark: e.remark
-                              }
-                          })
-                      ),
-                      setLogTotal(res.data.total))
-              })
-            : searchOperateLog({
-                  endTime: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-                  pageNum: pageNum,
-                  pageSize: logPagesize,
-                  startTime: dayjs(Date.now() - 2592000000).format("YYYY-MM-DD HH:mm:ss"),
-                  userName: ""
-              }).then(res => {
-                  res &&
-                      setOperateTableData(
-                          res.data.rows.map(e => {
-                              return {
-                                  id: e.id,
-                                  userName: e.userName,
-                                  userNo: e.userNo,
-                                  operationType: e.operationType,
-                                  operationTime: e.operationTime
-                              }
-                          })
-                      )
-              })
+    const search = async () => {
+        if (tabActived === "登录日志") {
+            const res = await searchLoginLog({
+                endTime: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+                pageNum: pageNum,
+                pageSize: logPagesize,
+                startTime: dayjs(Date.now() - 2592000000).format("YYYY-MM-DD HH:mm:ss"),
+                userName: ""
+            })
+            res &&
+                (setTableData(
+                    res.data.rows.map(e => {
+                        return {
+                            id: e.id,
+                            userNo: e.userNo,
+                            userName: e.userName,
+                            loginIp: e.loginIp,
+                            loginTime: e.loginTime,
+                            remark: e.remark
+                        }
+                    })
+                ),
+                setLogTotal(res.data.total))
+            return
+        }
+        const res = await searchOperateLog({
+            endTime: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+            pageNum: pageNum,
+            pageSize: logPagesize,
+            startTime: dayjs(Date.now() - 2592000000).format("YYYY-MM-DD HH:mm:ss"),
+            userName: ""
+        })
+        res &&
+            (setOperateTableData(
+                res.data.rows.map(e => {
+                    return {
+                        id: e.id,
+                        userName: e.userName,
+                        account: e.account,
+                        operationType: e.operationType,
+                        operationTime: e.operationTime,
+                        operationIp: e.operationIp,
+                        operationTitle: e.operationTitle
+                    }
+                })
+            ),
+            setLogTotal(res.data.total))
     }
 
     useEffect(() => {
@@ -90,8 +96,8 @@ const OperateLogs: FC = () => {
             }
         },
         {
-            key: "userNo",
-            dataIndex: "userNo",
+            key: "userName",
+            dataIndex: "userName",
             title: "警号",
             align: "center"
         },
@@ -176,8 +182,8 @@ const OperateLogs: FC = () => {
 
     const operateColumns: ColumnsType<Operate> = [
         {
-            key: "userNo",
-            dataIndex: "userNo",
+            key: "account",
+            dataIndex: "account",
             title: "警号",
             align: "center"
         },
@@ -188,20 +194,31 @@ const OperateLogs: FC = () => {
             align: "center"
         },
         {
+            key: "operationIp",
+            dataIndex: "operationIp",
+            title: "IP",
+            align: "center"
+        },
+        {
+            key: "operationTitle",
+            dataIndex: "operationTitle",
+            title: "操作项",
+            align: "center"
+        },
+        {
             key: "operationType",
             dataIndex: "operationType",
             title: "类型",
             align: "center",
             render: (_, e) => {
-                return (
-                    <>
-                        <div className={c("operate-type")}>
-                            <div>{e.operationTime}</div>
-                            <div>{operationType.find(a => a.key === e.operationType)?.type}</div>
-                        </div>
-                    </>
-                )
+                return <>{operationType.find(x => x.key === e.operationType)?.type}</>
             }
+        },
+        {
+            key: "operationTime",
+            dataIndex: "operationTime",
+            title: "操作时间",
+            align: "center"
         }
     ]
 
@@ -222,11 +239,11 @@ const OperateLogs: FC = () => {
         search()
     }
 
-    const operatePageChange = (pageNum: number, pageSize: number) => {
-        setPageNum(pageNum)
-        setlogPagesize(pageSize)
-        search()
-    }
+    // const operatePageChange = (pageNum: number, pageSize: number) => {
+    //     setPageNum(pageNum)
+    //     setlogPagesize(pageSize)
+    //     search()
+    // }
 
     const [loginTableData, setTableData] = useState<LoginLog[]>([])
     const [operateTableData, setOperateTableData] = useState<Operate[]>([])
@@ -263,6 +280,8 @@ const OperateLogs: FC = () => {
                 "操作日志导出"
             )
     }
+
+    useAsync(() => search(), [pageNum, logPagesize])
 
     return (
         <>

@@ -17,3 +17,13 @@ export function login(data: LoginData) {
         method: "POST",
     })
 }
+
+
+export function logoutQuery(config: {}){
+    return request({
+        url:"/logout",
+        baseURL,
+        query:config,
+        method:"GET"
+    })
+}

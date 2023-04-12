@@ -53,3 +53,12 @@ export function AssignPermission(data: AssignPermissionsData) {
         method: "POST"
     })
 }
+
+export function getRolePermission(config: { roleId: string }) {
+    return request({
+        url: "/system/user/getUserPathTree/:roleId",
+        baseURL,
+        params: config,
+        method: "GET"
+    })
+}
