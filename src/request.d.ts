@@ -38,7 +38,7 @@ type ResponseResult = {
     "/system/user/update": { success: Boolean }
     "/system/user/vague": QueryUserInfoResult
     "/system/role/add": { success: Boolean }
-    "/system/role/delete2": { success: Boolean }
+    "/system/role/delete2/:id": { success: Boolean }
     "/system/role/list": GetAllRolesResult
     "/report/list": GetUnitListResult
     "/system/user/modifyPassword": { success: Boolean }
@@ -72,7 +72,6 @@ type RequestQuery = {
     "/policeSituation/selectAllTeam": {}
     "/system/user/list": {}
     "/system/user/queryByAccount{account}": { account: string }
-    "/system/role/delete2": { id: string }
     "/system/role/list": {}
     "/report/list": {}
     "/system/user/modifyPassword": { newPass: string; userId: string }
@@ -127,6 +126,7 @@ type RequestParams = {
     "/system/user/delete/:id": { id: string }
     "/system/role/distributePSet/:roleId/:pSetId": { roleId: string; pSetId: string }
     "/system/user/getUserPathTree/:userId": { roleId: string }
+    "/system/role/delete2/:id": { id: string }
 }
 
 type UrlList = keyof ResponseResult
@@ -1033,6 +1033,7 @@ interface LoginResult {
     data: {
         token: string
         user: MenuChild[] | string
+        userId: string
     }
 }
 

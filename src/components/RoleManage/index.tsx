@@ -1,10 +1,10 @@
-import { Button, Input, Modal, Switch, Table, Drawer, Tree, Form, message } from "antd"
+import { Button, Input, Modal, Switch, Table, Drawer, Tree, Form, message, Popconfirm } from "antd"
 import Styles from "./index.module.less"
 import type { ColumnsType } from "antd/es/table"
 import { ReactNode, useEffect, useState } from "react"
 import type { DataNode } from "antd/es/tree"
 import { CloseOutlined } from "@ant-design/icons"
-import { addRole, AssignMultiUsers, AssignPermission, getRolePermission, searchRole, updateRole } from "../../api/roleManage"
+import { addRole, AssignMultiUsers, AssignPermission, delRole, getRolePermission, searchRole, updateRole } from "../../api/roleManage"
 import { searchUser } from "../../api/userManage"
 import { getPermissionTree } from "../../api/permisssion"
 import { useSession } from "../../store"
@@ -35,62 +35,66 @@ const RoleManage: React.FC = () => {
             parentId: "0"
         }).then(res => {
             res &&
-                setTreeData(
-                    res.data.map(e => {
-                        if (e.childList && e.childList.length > 0) {
-                            return {
-                                key: e.id,
-                                title: e.permissionName,
-                                children: e.childList.map(a => {
-                                    if (a.childList && a.childList.length > 0) {
-                                        return {
-                                            key: a.id,
-                                            title: a.permissionName,
-                                            children: a.childList.map(b => {
-                                                if (b.childList && b.childList.length > 0) {
-                                                    return {
-                                                        key: b.id,
-                                                        title: b.permissionName,
-                                                        children: b.childList.map(c => {
-                                                            if (c.childList && c.childList.length > 0) {
+                setTreeData([
+                    {
+                        key: "shenhai",
+                        title: "深海后台管理系统",
+                        children: res.data.map(e => {
+                            if (e.childList && e.childList.length > 0) {
+                                return {
+                                    key: e.id,
+                                    title: e.permissionName,
+                                    children: e.childList.map(a => {
+                                        if (a.childList && a.childList.length > 0) {
+                                            return {
+                                                key: a.id,
+                                                title: a.permissionName,
+                                                children: a.childList.map(b => {
+                                                    if (b.childList && b.childList.length > 0) {
+                                                        return {
+                                                            key: b.id,
+                                                            title: b.permissionName,
+                                                            children: b.childList.map(c => {
+                                                                if (c.childList && c.childList.length > 0) {
+                                                                    return {
+                                                                        key: c.id,
+                                                                        title: c.permissionName,
+                                                                        children: c.childList.map(d => {
+                                                                            return {
+                                                                                key: d.id,
+                                                                                title: d.permissionName
+                                                                            }
+                                                                        })
+                                                                    }
+                                                                }
                                                                 return {
                                                                     key: c.id,
-                                                                    title: c.permissionName,
-                                                                    children: c.childList.map(d => {
-                                                                        return {
-                                                                            key: d.id,
-                                                                            title: d.permissionName
-                                                                        }
-                                                                    })
+                                                                    title: c.permissionName
                                                                 }
-                                                            }
-                                                            return {
-                                                                key: c.id,
-                                                                title: c.permissionName
-                                                            }
-                                                        })
+                                                            })
+                                                        }
                                                     }
-                                                }
-                                                return {
-                                                    key: b.id,
-                                                    title: b.permissionName
-                                                }
-                                            })
+                                                    return {
+                                                        key: b.id,
+                                                        title: b.permissionName
+                                                    }
+                                                })
+                                            }
                                         }
-                                    }
-                                    return {
-                                        key: a.id,
-                                        title: a.permissionName
-                                    }
-                                })
+                                        return {
+                                            key: a.id,
+                                            title: a.permissionName
+                                        }
+                                    })
+                                }
                             }
-                        }
-                        return {
-                            key: e.id,
-                            title: e.permissionName
-                        }
-                    })
-                )
+                            return {
+                                key: e.id,
+                                title: e.permissionName
+                            }
+                        })
+                    }
+                ])
         })
     }
 
@@ -167,6 +171,9 @@ const RoleManage: React.FC = () => {
                                 <div className={c("item")} onClick={() => edit(e)}>
                                     编辑
                                 </div>
+                                <Popconfirm title="确定要删除吗？" onConfirm={() => delRoleConfirm(e)}>
+                                    <div className={c("item")}>删除</div>
+                                </Popconfirm>
                             </div>
                         )}
                     </>
@@ -213,36 +220,18 @@ const RoleManage: React.FC = () => {
         setUserShow(true)
     }
 
-    const [allTreeNode, setAllTreeNode] = useState<string[]>([])
-
     const authorize = async (e: TableHead) => {
-        console.log(treeData.map(e => {
-            if(e.children){
-                return e.children.map(a => {
-                    if(a.children){
-                        return a.children.map(b => {
-                            if(b.children){
-                                return b.children.map(c => c.children?.map(d =>d.key))
-                            }
-                            return b.key
-                        })
-                    }
-                    return a.key
-                })
-            }
-            return e.key
-        }).flat(4).filter(e => e));
-        
-        
         const res = await getRolePermission({ roleId: e.id })
         if (res) {
+            console.log("test", res.data)
             setTreeChecked(res.data)
+            console.log(treeChecked)
         }
         setRoleselect(e.id)
         setModalWidth(800)
         setDrawShow(true)
     }
-    
+
     const edit = (e: TableHead) => {
         setmodalContent("角色编辑")
         setEditRole({
@@ -254,6 +243,12 @@ const RoleManage: React.FC = () => {
             roleName: e.roleName
         })
         setUserShow(true)
+    }
+
+    const delRoleConfirm = (e: TableHead) => {
+        delRole({ id: e.id }).then(() => {
+            search()
+        })
     }
 
     const modalColumns: ColumnsType<UserInfo> = [
@@ -454,7 +449,7 @@ const RoleManage: React.FC = () => {
         if (modalContent === "用户授权") {
             AssignMultiUsers({
                 roleId: roleselect,
-                userIds: selectedRowKeys
+                userIds: selectedRowKeys.filter(e => e !== "shenhai")
             }).then(() => {
                 message.success("赋予角色成功！")
             })
@@ -475,6 +470,8 @@ const RoleManage: React.FC = () => {
     }
 
     const treeSave = () => {
+        pselcted.length > 0 ? console.log("1", pselcted) : console.log("2", treeChecked)
+
         AssignPermission({
             roleId: roleselect,
             permissionIds: pselcted
@@ -500,10 +497,6 @@ const RoleManage: React.FC = () => {
     const [pageSize, setPageSize] = useState(10)
 
     useAsync(() => search(), [pageNum, pageSize])
-
-    const selectALL = () => {
-        setTreeChecked([])
-    }
 
     return (
         <>
@@ -556,9 +549,6 @@ const RoleManage: React.FC = () => {
                         </>
                     }
                 >
-                    <Button className={c("select-all-btn")} type="primary" size="small" onClick={selectALL}>
-                        全选
-                    </Button>
                     <Tree treeData={treeData} checkable defaultExpandAll defaultCheckedKeys={treeChecked} onCheck={treeChecksClick} />
                 </Drawer>
             )}

@@ -20,9 +20,9 @@ export function addRole(data: AddRoleData) {
 
 export function delRole(config: { id: string }) {
     return request({
-        url: "/system/role/delete2",
+        url: "/system/role/delete2/:id",
         baseURL,
-        query: config,
+        params: config,
         method: "DELETE"
     })
 }

@@ -106,7 +106,11 @@ const LayoutFC: React.FC = () => {
                 .map(item => getBreak(item))
                 .flat(2) as RouteChild[]
         )
-    }, [location])
+        if (sessionStorage.getItem("isDeferIP") === "yes") {
+            message.warning("你已在别处登录！")
+            logout()
+        }
+    }, [location, sessionStorage.getItem("isDeferIP")])
 
     const BreakMenu: React.FC = () => {
         return (
@@ -154,9 +158,7 @@ const LayoutFC: React.FC = () => {
     }
 
     const logout = () => {
-        logoutQuery({}).then(() => {
-            message.success("退出登录成功！")
-        })
+        logoutQuery({})
         session.setState({ token: undefined, menu: [] })
         sessionStorage.removeItem("token")
         navigate(`/login?${encodeURIComponent("from=" + location.pathname + location.search)}`, { replace: true })

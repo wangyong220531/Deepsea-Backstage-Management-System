@@ -7,7 +7,7 @@ import Captcha from "../../assets/Login/Captcha.png"
 import Logo from "../../assets/logo.png"
 import Styles from "./index.module.less"
 import { getCaptcha, login } from "../../api/login"
-import useAccount from "../../store/account"
+import { websocket } from "../../utils/webSocket"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -28,6 +28,8 @@ const Login: React.FC = () => {
             if (res) {
                 sessionStorage.setItem("token", res.data.token)
                 sessionStore.setState({ token: res.data.token })
+                sessionStore.setState({ userId: res.data.userId })
+                websocket(sessionStore.userId)
                 if (res.data.user === "superAdmin") {
                     sessionStore.setState({ userType: res.data.user })
                     return
@@ -125,9 +127,10 @@ const Login: React.FC = () => {
             time--
         }, 1000)
     }
+    
 
     return sessionStore.token ? (
-        <Navigate to={from ? decodeURIComponent(from) : "/"} replace={true} />
+        <Navigate to={from ? decodeURIComponent(from) : "/systemManagement"} replace={true} />
     ) : (
         <div className={c("login")}>
             <div className={c("top-part")}></div>

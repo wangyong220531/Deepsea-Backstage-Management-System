@@ -12,7 +12,8 @@ export const useSession = createStorage<Session>(
     {
         token: undefined,
         menu: [],
-        userType: ""
+        userType: "",
+        userId: ""
     },
     "user",
     "session"
