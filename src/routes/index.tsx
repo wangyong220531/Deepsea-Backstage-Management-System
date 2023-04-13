@@ -144,14 +144,14 @@ const routes: Route[] = [
         icon: <AppstoreOutlined />,
         children: [
             {
-                name: "用户管理",
-                path: "userManagement",
-                component: <UserManage />
-            },
-            {
                 name: "角色管理",
                 path: "roleManage",
                 component: <RoleManage />
+            },
+            {
+                name: "用户管理",
+                path: "userManagement",
+                component: <UserManage />
             },
             {
                 name: "日志管理",

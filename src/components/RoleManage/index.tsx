@@ -4,7 +4,7 @@ import type { ColumnsType } from "antd/es/table"
 import { ReactNode, useEffect, useState } from "react"
 import type { DataNode } from "antd/es/tree"
 import { CloseOutlined } from "@ant-design/icons"
-import { addRole, AssignMultiUsers, AssignPermission, getRolePermission, searchRole } from "../../api/roleManage"
+import { addRole, AssignMultiUsers, AssignPermission, getRolePermission, searchRole, updateRole } from "../../api/roleManage"
 import { searchUser } from "../../api/userManage"
 import { getPermissionTree } from "../../api/permisssion"
 import { useSession } from "../../store"
@@ -213,21 +213,46 @@ const RoleManage: React.FC = () => {
         setUserShow(true)
     }
 
-    const authorize = (e: TableHead) => {
-        getRolePermission({ roleId: e.id }).then(res => {
-            if(res){
-                setTreeChecked(res.data)
-                console.log(treeChecked);
+    const [allTreeNode, setAllTreeNode] = useState<string[]>([])
+
+    const authorize = async (e: TableHead) => {
+        console.log(treeData.map(e => {
+            if(e.children){
+                return e.children.map(a => {
+                    if(a.children){
+                        return a.children.map(b => {
+                            if(b.children){
+                                return b.children.map(c => c.children?.map(d =>d.key))
+                            }
+                            return b.key
+                        })
+                    }
+                    return a.key
+                })
             }
-        })
+            return e.key
+        }).flat(4).filter(e => e));
+        
+        
+        const res = await getRolePermission({ roleId: e.id })
+        if (res) {
+            setTreeChecked(res.data)
+        }
         setRoleselect(e.id)
         setModalWidth(800)
         setDrawShow(true)
     }
-
+    
     const edit = (e: TableHead) => {
         setmodalContent("角色编辑")
-        setEditRoleName(e.roleName)
+        setEditRole({
+            id: e.id,
+            roleName: e.roleName,
+            status: e.status
+        })
+        editForm.setFieldsValue({
+            roleName: e.roleName
+        })
         setUserShow(true)
     }
 
@@ -282,7 +307,13 @@ const RoleManage: React.FC = () => {
     const [tableData, setTableData] = useState<TableHead[]>([])
 
     const statusSwitch = (e: TableHead) => {
-        console.log(e)
+        e.status === 0
+            ? updateRole({ id: e.id, roleName: e.roleName, status: 1 }).then(() => {
+                  search()
+              })
+            : updateRole({ id: e.id, roleName: e.roleName, status: 0 }).then(() => {
+                  search()
+              })
     }
 
     const changePage = (pageNum: number, pageSize: number) => {
@@ -300,6 +331,7 @@ const RoleManage: React.FC = () => {
     const [modalWidth, setModalWidth] = useState(600)
 
     const [addForm] = Form.useForm()
+    const [editForm] = Form.useForm()
 
     const [modalTableData, setModalTableData] = useState<UserInfo[]>([])
 
@@ -309,7 +341,7 @@ const RoleManage: React.FC = () => {
         setSelectedRowKeys(newSelectedRowKeys)
     }
 
-    const [editRoleName, setEditRoleName] = useState("")
+    const [editRole, setEditRole] = useState<UpdateRoleData>(Object)
 
     const rowSelection = {
         selectedRowKeys,
@@ -351,7 +383,7 @@ const RoleManage: React.FC = () => {
                                 <Form.Item label="角色名称" name="roleName">
                                     <Input placeholder="请输入角色名称" className={c("form-item-input")} />
                                 </Form.Item>
-                                <Form.Item label="角色名称" name="roleComment">
+                                <Form.Item label="角色备注" name="roleComment">
                                     <Input.TextArea placeholder="请输入角色说明" className={c("form-item-input")} />
                                 </Form.Item>
                             </Form>
@@ -384,10 +416,15 @@ const RoleManage: React.FC = () => {
                     )}
                     {modalContent === "角色编辑" && (
                         <>
-                            <div className={c("roleName-edit")}>
+                            {/* <div className={c("roleName-edit")}>
                                 <div className={c("label")}>角色名称：</div>
-                                <Input placeholder="请输入角色名称" value={editRoleName} onChange={e => setEditRoleName(e.target.value)} />
-                            </div>
+                                <Input placeholder="请输入角色名称" value={editRole.roleName} onChange={e => setEditRole({ id: editRole.id, roleName: e.target.value, status: editRole.status })} />
+                            </div> */}
+                            <Form form={editForm}>
+                                <Form.Item label="角色名称" name="roleName">
+                                    <Input placeholder="请输入角色名称" className={c("form-item-input")} />
+                                </Form.Item>
+                            </Form>
                         </>
                     )}
                 </Modal>
@@ -410,6 +447,7 @@ const RoleManage: React.FC = () => {
             addRole({ roleName: res.roleName, roleComment: res.roleComment }).then(() => {
                 message.success("新增角色成功！")
                 search()
+                addForm.resetFields()
             })
             return
         }
@@ -423,6 +461,9 @@ const RoleManage: React.FC = () => {
             return
         }
         if (modalContent === "角色编辑") {
+            const res = await editForm.validateFields()
+            updateRole({ id: editRole.id, roleName: res.roleName, status: editRole.status })
+            search()
             return
         }
     }
@@ -492,31 +533,35 @@ const RoleManage: React.FC = () => {
                 </div>
             </div>
             <Table rowKey={e => e.id} columns={columns} dataSource={tableData} pagination={{ onChange: changePage, total, pageSize }} />
-            {drawShow && <Drawer
-                placement="right"
-                title="菜单授权"
-                open={drawShow}
-                onClose={() => setDrawShow(false)}
-                closable={false}
-                extra={
-                    <>
-                        <CloseOutlined onClick={() => setDrawShow(false)} />
-                    </>
-                }
-                footer={
-                    <>
-                        <div className={c("drawer-footer")}>
-                            <Button>取消</Button>
-                            <Button className={c("right")} onClick={treeSave}>
-                                保存
-                            </Button>
-                        </div>
-                    </>
-                }
-            >
-                <Button className={c("select-all-btn")} type="primary" size="small" onClick={selectALL}>全选</Button>
-                <Tree treeData={treeData} checkable defaultExpandAll defaultCheckedKeys={treeChecked} onCheck={treeChecksClick} />
-            </Drawer>}
+            {drawShow && (
+                <Drawer
+                    placement="right"
+                    title="菜单授权"
+                    open={drawShow}
+                    onClose={() => setDrawShow(false)}
+                    closable={false}
+                    extra={
+                        <>
+                            <CloseOutlined onClick={() => setDrawShow(false)} />
+                        </>
+                    }
+                    footer={
+                        <>
+                            <div className={c("drawer-footer")}>
+                                <Button>取消</Button>
+                                <Button className={c("right")} onClick={treeSave}>
+                                    保存
+                                </Button>
+                            </div>
+                        </>
+                    }
+                >
+                    <Button className={c("select-all-btn")} type="primary" size="small" onClick={selectALL}>
+                        全选
+                    </Button>
+                    <Tree treeData={treeData} checkable defaultExpandAll defaultCheckedKeys={treeChecked} onCheck={treeChecksClick} />
+                </Drawer>
+            )}
             <User />
         </>
     )

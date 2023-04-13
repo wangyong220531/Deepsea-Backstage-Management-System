@@ -62,3 +62,12 @@ export function getRolePermission(config: { roleId: string }) {
         method: "GET"
     })
 }
+
+export function updateRole(data: UpdateRoleData) {
+    return request({
+        url: "/system/role/update",
+        baseURL,
+        data,
+        method: "PUT"
+    })
+}

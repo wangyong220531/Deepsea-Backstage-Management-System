@@ -59,6 +59,7 @@ type ResponseResult = {
     "/login": LoginResult
     "/logout": { success: Boolean }
     "/system/user/getUserPathTree/:roleId": GetRolePermissionResult
+    "/system/role/update": UpdateRoleResult
 }
 type RequestQuery = {
     "/serve/ask/delAskInfo": { id: string }
@@ -118,6 +119,7 @@ type RequestData = {
     "/system/user/distributeRole2": AssignMultiUsersData
     "/system/role/distributePSet": AssignPermissionsData
     "/login": LoginData
+    "/system/role/update": UpdateRoleData
 }
 
 type RequestParams = {
@@ -1066,4 +1068,10 @@ interface OperateExcelHead {
 
 interface GetRolePermissionResult {
     data: string[]
+}
+
+interface UpdateRoleData {
+    id: string
+    roleName: string
+    status: 0 | 1
 }
