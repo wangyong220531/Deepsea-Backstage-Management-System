@@ -930,6 +930,7 @@ interface MenuChild {
     id: string
     permissionName: string
     permissionPath: string
+    parentId: string
     childList?: MenuChild[]
 }
 
@@ -1068,7 +1069,12 @@ interface OperateExcelHead {
 }
 
 interface GetRolePermissionResult {
-    data: string[]
+    data: RolePermission[]
+}
+
+interface RolePermission {
+    id: string
+    parentId: string
 }
 
 interface UpdateRoleData {

@@ -23,7 +23,7 @@ interface TableHead extends Role {
 interface TreeNode {
     key: string
     title: string
-    children?: TreeNode
+    children?: TreeNode[]
 }
 
 const RoleManage: React.FC = () => {
@@ -62,7 +62,7 @@ const RoleManage: React.FC = () => {
                                                                 if (c.childList && c.childList.length > 0) {
                                                                     return {
                                                                         key: c.id,
-                                                                        title: c.permissionName,
+                                                                        title: c.permissionName + c.id,
                                                                         children: c.childList.map(d => {
                                                                             return {
                                                                                 key: d.id,
@@ -103,9 +103,6 @@ const RoleManage: React.FC = () => {
     }
 
     const search = async () => {
-        if (sessionStore.userType === "superAdmin") {
-            setOperateId(5)
-        }
         const res = await searchRole({
             pageNum: pageNum,
             pageSize: pageSize,
@@ -123,6 +120,10 @@ const RoleManage: React.FC = () => {
                 })
             )
             setTotal(res.data.total)
+        }
+
+        if (sessionStore.userType === "superAdmin") {
+            setOperateId(5)
         }
         if (
             operates[0].item
@@ -207,7 +208,7 @@ const RoleManage: React.FC = () => {
                                     </div>
                                 </>
                             )}
-                            {operateId === 3 && (
+                            {(operateId === 3 || operateId === 5) && (
                                 <div className={c("item")} onClick={() => authorize(e)}>
                                     授权
                                 </div>
@@ -231,47 +232,45 @@ const RoleManage: React.FC = () => {
     const [modalPagenum, setModalPagenum] = useState(1)
     const [modalPagesize, setModalPagesize] = useState(5)
 
-    const userSearch = () => {
-        searchUser({
+    const userSearch = async () => {
+        const res = await searchUser({
             account: roles[0].acount,
             userUnitNo: "",
             pageNum: modalPagenum,
             pageSize: modalPagesize
-        }).then(res => {
-            if (res) {
-                setModalTableData(
-                    res.data.rows.map(e => {
-                        return {
-                            id: e.id,
-                            account: e.account,
-                            userName: e.userName,
-                            identityCode: e.identityCode,
-                            userNo: e.userNo,
-                            phone: e.phone,
-                            role: e.role,
-                            unitName: e.unitName
-                        }
-                    })
-                )
-                setModalTotal(res.data.total)
-            }
         })
+        if (res) {
+            setModalTableData(
+                res.data.rows.map(e => {
+                    return {
+                        id: e.id,
+                        account: e.account,
+                        userName: e.userName,
+                        identityCode: e.identityCode,
+                        userNo: e.userNo,
+                        phone: e.phone,
+                        role: e.role,
+                        unitName: e.unitName
+                    }
+                })
+            )
+            setModalTotal(res.data.total)
+        }
     }
 
     const userClick = (e: TableHead) => {
         setSelectedRowKeys([])
         setRoleselect(e.id)
         setModalWidth(800)
-        userSearch()
         setmodalContent("用户授权")
         setUserShow(true)
+        userSearch()
     }
 
     const authorize = async (e: TableHead) => {
         const res = await getRolePermission({ roleId: e.id })
         if (res) {
-            // console.log("test", res.data)
-            setTreeChecked(res.data)
+            setTreeChecked(res.data.map(e => e.id))
             // console.log(treeChecked)
         }
         setRoleselect(e.id)
@@ -311,24 +310,24 @@ const RoleManage: React.FC = () => {
             title: "用户姓名",
             align: "center"
         },
-        {
-            key: "identityCode",
-            dataIndex: "identityCode",
-            title: "身份证号",
-            align: "center"
-        },
+        // {
+        //     key: "identityCode",
+        //     dataIndex: "identityCode",
+        //     title: "身份证号",
+        //     align: "center"
+        // },
         {
             key: "userNo",
             dataIndex: "userNo",
             title: "警号",
             align: "center"
         },
-        {
-            key: "phone",
-            dataIndex: "phone",
-            title: "手机号码",
-            align: "center"
-        },
+        // {
+        //     key: "phone",
+        //     dataIndex: "phone",
+        //     title: "手机号码",
+        //     align: "center"
+        // },
         {
             key: "unitName",
             dataIndex: "unitName",
@@ -374,19 +373,18 @@ const RoleManage: React.FC = () => {
 
     const [modalTableData, setModalTableData] = useState<UserInfo[]>([])
 
-    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
-
-    const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-        // setSelectedRowKeys(newSelectedRowKeys)
-        roles[0].selected = newSelectedRowKeys.toString().split(",")
-    }
-
     const [editRole, setEditRole] = useState<UpdateRoleData>(Object)
 
-    const rowSelection = {
+    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
+    const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+        roles[0].selected = newSelectedRowKeys.toString().split(",")
+        setSelectedRowKeys(newSelectedRowKeys);
+      };
+    
+      const rowSelection = {
         selectedRowKeys,
-        onChange: onSelectChange
-    }
+        onChange: onSelectChange,
+      };
 
     const assignUserQuery = () => {
         userSearch()
@@ -397,85 +395,18 @@ const RoleManage: React.FC = () => {
     //     setAssignUnit("")
     // }
 
+    useAsync(() => userSearch(), [modalPagenum, modalPagesize])
+
     const modalChangePage = (pageNum: number, pageSize: number) => {
         setModalPagenum(pageNum)
         setModalPagesize(pageSize)
-        userSearch()
+        // userSearch()
     }
 
-    const User: React.FC = () => {
-        return (
-            <>
-                <Modal
-                    title={modalContent}
-                    open={userShow}
-                    onCancel={() => setUserShow(false)}
-                    onOk={() => setUserShow(false)}
-                    footer={
-                        <>
-                            <Button className={c("cancel")} onClick={() => setUserShow(false)}>
-                                取消
-                            </Button>
-                            <Button className={c("save")} onClick={save}>
-                                保存
-                            </Button>
-                        </>
-                    }
-                    width={modalWidth}
-                >
-                    {modalContent === "新增" && (
-                        <>
-                            <Form form={addForm}>
-                                <Form.Item label="角色名称" name="roleName">
-                                    <Input placeholder="请输入角色名称" className={c("form-item-input")} />
-                                </Form.Item>
-                                <Form.Item label="角色备注" name="roleComment">
-                                    <Input.TextArea placeholder="请输入角色说明" className={c("form-item-input")} />
-                                </Form.Item>
-                            </Form>
-                        </>
-                    )}
-                    {modalContent === "用户授权" && (
-                        <>
-                            <div className={c("modal-header")}>
-                                <div className={c("inputs")}>
-                                    <div className={c("query-item")}>
-                                        <div className={c("title")}>账号：</div>
-                                        <Input placeholder="请输入账号" onChange={e => (roles[0].acount = e.target.value)} />
-                                    </div>
-                                    {/* <div className={c("query-item")}>
-                                        <div className={c("title")}>单位：</div>
-                                        <Input placeholder="请输入单位" value={assignUnit} onChange={e => setAssignUnit(e.target.value)} />
-                                    </div> */}
-                                </div>
-                                <div className={c("query-reset")}>
-                                    <Button className={c("query-btn")} onClick={assignUserQuery}>
-                                        查询
-                                    </Button>
-                                    {/* <Button className={c("reset-btn")} onClick={assignUserReset}>
-                                        重置
-                                    </Button> */}
-                                </div>
-                            </div>
-                            <Table rowKey={e => e.id} rowSelection={rowSelection} columns={modalColumns} dataSource={modalTableData} pagination={{ onChange: modalChangePage, total: modalTotal, pageSize: modalPagesize, size: "small" }} />
-                        </>
-                    )}
-                    {modalContent === "角色编辑" && (
-                        <>
-                            {/* <div className={c("roleName-edit")}>
-                                <div className={c("label")}>角色名称：</div>
-                                <Input placeholder="请输入角色名称" value={editRole.roleName} onChange={e => setEditRole({ id: editRole.id, roleName: e.target.value, status: editRole.status })} />
-                            </div> */}
-                            <Form form={editForm}>
-                                <Form.Item label="角色名称" name="roleName">
-                                    <Input placeholder="请输入角色名称" className={c("form-item-input")} />
-                                </Form.Item>
-                            </Form>
-                        </>
-                    )}
-                </Modal>
-            </>
-        )
+    const modalQuery = (e: any) => {
+        roles[0].acount = e.target.value
+        setModalPagenum(1)
+        setModalPagesize(5)
     }
 
     const [drawShow, setDrawShow] = useState(false)
@@ -517,15 +448,13 @@ const RoleManage: React.FC = () => {
     const [pselcted, setPselcted] = useState<string[]>([])
 
     const treeChecksClick = (a: any, e: any) => {
-        console.log(a, e)
         setPselcted(e.checkedNodes.filter((e: TreeNode) => !e.children).map((e: TreeNode) => e.key))
     }
 
     const treeSave = () => {
-        pselcted.length > 0 ? console.log("1", pselcted) : console.log("2", treeChecked)
         AssignPermission({
             roleId: roleselect,
-            permissionIds: pselcted
+            permissionIds: pselcted.length > 0 ? pselcted : treeChecked
         }).then(() => {
             message.success("授权成功！")
             setDrawShow(false)
@@ -603,7 +532,82 @@ const RoleManage: React.FC = () => {
                     <Tree treeData={treeData} checkable defaultExpandAll defaultCheckedKeys={treeChecked} onCheck={treeChecksClick} />
                 </Drawer>
             )}
-            <User />
+            <Modal
+                title={modalContent}
+                open={userShow}
+                onCancel={() => setUserShow(false)}
+                onOk={() => setUserShow(false)}
+                footer={
+                    <>
+                        <Button className={c("cancel")} onClick={() => setUserShow(false)}>
+                            取消
+                        </Button>
+                        <Button className={c("save")} onClick={save}>
+                            保存
+                        </Button>
+                    </>
+                }
+                width={modalWidth}
+            >
+                {modalContent === "新增" && (
+                    <>
+                        <Form form={addForm}>
+                            <Form.Item label="角色名称" name="roleName">
+                                <Input placeholder="请输入角色名称" className={c("form-item-input")} />
+                            </Form.Item>
+                            <Form.Item label="角色备注" name="roleComment">
+                                <Input.TextArea placeholder="请输入角色说明" className={c("form-item-input")} />
+                            </Form.Item>
+                        </Form>
+                    </>
+                )}
+                {modalContent === "用户授权" && (
+                    <>
+                        <div className={c("modal-header")}>
+                            <div className={c("inputs")}>
+                                <div className={c("query-item")}>
+                                    <div className={c("title")}>账号：</div>
+                                    <Input placeholder="请输入账号" onChange={e => modalQuery(e)} />
+                                </div>
+                                {/* <div className={c("query-item")}>
+                                        <div className={c("title")}>单位：</div>
+                                        <Input placeholder="请输入单位" value={assignUnit} onChange={e => setAssignUnit(e.target.value)} />
+                                    </div> */}
+                            </div>
+                            <div className={c("query-reset")}>
+                                <Button className={c("query-btn")} onClick={assignUserQuery}>
+                                    查询
+                                </Button>
+                                {/* <Button className={c("reset-btn")} onClick={assignUserReset}>
+                                        重置
+                                    </Button> */}
+                            </div>
+                        </div>
+                        <Table
+                            rowKey={e => e.id}
+                            rowSelection={{
+                                ...rowSelection
+                            }}
+                            columns={modalColumns}
+                            dataSource={modalTableData}
+                            pagination={{ onChange: modalChangePage, total: modalTotal, pageSize: modalPagesize, size: "small" }}
+                        />
+                    </>
+                )}
+                {modalContent === "角色编辑" && (
+                    <>
+                        {/* <div className={c("roleName-edit")}>
+                                <div className={c("label")}>角色名称：</div>
+                                <Input placeholder="请输入角色名称" value={editRole.roleName} onChange={e => setEditRole({ id: editRole.id, roleName: e.target.value, status: editRole.status })} />
+                            </div> */}
+                        <Form form={editForm}>
+                            <Form.Item label="角色名称" name="roleName">
+                                <Input placeholder="请输入角色名称" className={c("form-item-input")} />
+                            </Form.Item>
+                        </Form>
+                    </>
+                )}
+            </Modal>
         </>
     )
 }

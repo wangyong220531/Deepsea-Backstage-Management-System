@@ -7,6 +7,8 @@ import { exportLoginLog, exportOperateLog, searchLoginLog, searchOperateLog } fr
 import dayjs from "dayjs"
 import { exportExcel } from "../../utils/index"
 import { useAsync } from "../../utils/hooks"
+import useOperates from "../../utils/operates"
+import { useSession } from "../../store"
 
 const { RangePicker } = DatePicker
 
@@ -35,6 +37,10 @@ const OperateLogs: FC = () => {
     const [queryAccount, setQueryAccount] = useState("")
     const [startTime, setStartTime] = useState<dayjs.Dayjs | null>(dayjs(Date.now()))
     const [endTime, setEndTime] = useState<dayjs.Dayjs | null>(dayjs(Date.now() - 2592000000))
+
+    const operates = useOperates()
+    const sessionStore = useSession()
+    const [operateId, setOperateId] = useState<0 | 1 | 5>(0)
 
     const search = async () => {
         if (tabActived === "登录日志") {
@@ -83,6 +89,19 @@ const OperateLogs: FC = () => {
                 })
             ),
             setLogTotal(res.data.total))
+
+        if (sessionStore.userType === "superAdmin") {
+            setOperateId(5)
+        }
+        if (
+            operates[0].item
+                .find(e => e.permissionName === "系统管理")
+                ?.children?.find(e => e.permissionName === "日志")
+                ?.children?.find(e => e.permissionName === "登录日志" || e.permissionName === "操作日志")
+                ?.children?.find(e => e.permissionName === "导出")
+        ) {
+            setOperateId(1)
+        }
     }
 
     const rangeChange = (e: any) => {
@@ -330,9 +349,7 @@ const OperateLogs: FC = () => {
                         </Button>
                     </div>
                 </div>
-                <div className={c("btn-group")}>
-                    <Button onClick={exportLog}>导出</Button>
-                </div>
+                <div className={c("btn-group")}>{(operateId === 1 || operateId === 5) && <Button onClick={exportLog}>导出</Button>}</div>
             </div>
             {tabActived === "登录日志" ? <Table rowKey={e => e.id} columns={loginColumns} dataSource={loginTableData} pagination={{ onChange: logPageChange, total: logTotal, pageSize: logPagesize }} /> : <Table rowKey={e => e.id} columns={operateColumns} dataSource={operateTableData} pagination={{ onChange: logPageChange, total: logTotal, pageSize: logPagesize }} />}
         </>

@@ -230,7 +230,7 @@ const StormThinking: React.FC = () => {
                 <Form.Item label="提出人">
                     <Input className={Styles["form-item-input"]} value={proposer} disabled={true} />
                 </Form.Item>
-                <Form.Item label="内容">
+                <Form.Item label="问题">
                     <Input.TextArea className={Styles["form-item-input"]} placeholder="请输入内容" value={propsalContent} />
                 </Form.Item>
             </>
@@ -415,7 +415,7 @@ const StormThinking: React.FC = () => {
                     </div>
                 </div>
                 <div className={c("btn-group")}>
-                    <Button className={c("add")}>新增</Button>
+                    <Button className={c("add")} onClick={() => setaddopen(true)}>新增</Button>
                 </div>
             </div>
             <Table columns={column} dataSource={tabeData} pagination={{ onChange: changePg, total, pageSize }} />
