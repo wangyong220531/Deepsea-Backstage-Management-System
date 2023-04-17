@@ -32,14 +32,18 @@ const OperateLogs: FC = () => {
 
     const [tabActived, setTabActived] = useState<"登录日志" | "操作日志">("登录日志")
 
+    const [queryAccount, setQueryAccount] = useState("")
+    const [startTime, setStartTime] = useState<dayjs.Dayjs | null>(dayjs(Date.now()))
+    const [endTime, setEndTime] = useState<dayjs.Dayjs | null>(dayjs(Date.now() - 2592000000))
+
     const search = async () => {
         if (tabActived === "登录日志") {
             const res = await searchLoginLog({
-                endTime: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+                endTime: endTime?.format("YYYY-MM-DD HH:mm:ss"),
                 pageNum: pageNum,
                 pageSize: logPagesize,
-                startTime: dayjs(Date.now() - 2592000000).format("YYYY-MM-DD HH:mm:ss"),
-                userName: ""
+                startTime: startTime?.format("YYYY-MM-DD HH:mm:ss"),
+                userName: queryAccount
             })
             res &&
                 (setTableData(
@@ -79,6 +83,23 @@ const OperateLogs: FC = () => {
                 })
             ),
             setLogTotal(res.data.total))
+    }
+
+    const rangeChange = (e: any) => {
+        if (e[0] && e[1]) {
+            setStartTime(dayjs(e[0].$d))
+            setEndTime(dayjs(e[1].$d))
+        }
+    }
+
+    const query = () => {
+        search()
+    }
+
+    const reset = () => {
+        setQueryAccount("")
+        setStartTime(dayjs(Date.now()))
+        setEndTime(dayjs(Date.now() - 2592000000))
     }
 
     useEffect(() => {
@@ -293,16 +314,20 @@ const OperateLogs: FC = () => {
                     <div className={c("inputs")}>
                         <div className={c("query-item")}>
                             <div className={c("label")}>搜索日志：</div>
-                            <Input placeholder="亲输入操作人警号" />
+                            <Input placeholder="亲输入操作人警号" value={queryAccount} onChange={e => setQueryAccount(e.target.value)} />
                         </div>
                         <div className={c("query-item")}>
                             <div className={c("label")}>创建时间：</div>
-                            <RangePicker showTime />
+                            <RangePicker showTime value={[startTime, endTime]} onCalendarChange={rangeChange} />
                         </div>
                     </div>
                     <div className={c("query-reset")}>
-                        <Button className={c("query-btn")}>查询</Button>
-                        <Button className={c("reset-btn")}>重置</Button>
+                        <Button className={c("query-btn")} onClick={query}>
+                            查询
+                        </Button>
+                        <Button className={c("reset-btn")} onClick={reset}>
+                            重置
+                        </Button>
                     </div>
                 </div>
                 <div className={c("btn-group")}>

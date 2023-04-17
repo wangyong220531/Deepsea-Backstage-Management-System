@@ -1,5 +1,5 @@
 import { Button, message } from "antd"
-import React, { useEffect, useState } from "react"
+import React, { Children, useEffect, useState } from "react"
 import { Navigate, useSearchParams } from "react-router-dom"
 import { useSession } from "../../store"
 import UsernameIcon from "../../assets/usernameIcon.png"
@@ -8,6 +8,7 @@ import Logo from "../../assets/logo.png"
 import Styles from "./index.module.less"
 import { getCaptcha, login } from "../../api/login"
 import { websocket } from "../../utils/webSocket"
+import useOperates from "../../utils/operates"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -19,6 +20,7 @@ const Login: React.FC = () => {
     const [searchParams] = useSearchParams()
     const from = searchParams.get("from")
     const [captcha, setCaptcha] = useState("")
+    const operates = useOperates()
 
     const submit = () => {
         login({
@@ -29,9 +31,10 @@ const Login: React.FC = () => {
                 sessionStorage.setItem("token", res.data.token)
                 sessionStore.setState({ token: res.data.token })
                 sessionStore.setState({ userId: res.data.userId })
-                websocket(sessionStore.userId)
                 if (res.data.user === "superAdmin") {
                     sessionStore.setState({ userType: res.data.user })
+                    console.log(1);
+                    
                     return
                 }
                 if (res.data.user instanceof Array) {
@@ -91,6 +94,57 @@ const Login: React.FC = () => {
                             }
                         })
                     })
+                    operates[0].item = res.data.user.map(e => {
+                        if (e.childList && e.childList.length > 0) {
+                            return {
+                                id: e.id,
+                                permissionName: e.permissionName,
+                                children: e.childList.map(a => {
+                                    if (a.childList && a.childList.length > 0) {
+                                        return {
+                                            id: a.id,
+                                            permissionName: a.permissionName,
+                                            children: a.childList.map(b => {
+                                                if (b.childList && b.childList.length > 0) {
+                                                    return {
+                                                        id: b.id,
+                                                        permissionName: b.permissionName,
+                                                        children: b.childList.map(c => {
+                                                            if (b.childList && b.childList.length > 0) {
+                                                                return {
+                                                                    id: c.id,
+                                                                    permissionName: c.permissionName,
+                                                                    children: c.childList
+                                                                }
+                                                            }
+                                                            return {
+                                                                id: c.id,
+                                                                permissionName: c.permissionName
+                                                            }
+                                                        })
+                                                    }
+                                                }
+                                                return {
+                                                    id: b.id,
+                                                    permissionName: b.permissionName
+                                                }
+                                            })
+                                        }
+                                    }
+                                    return {
+                                        id: a.id,
+                                        permissionName: a.permissionName
+                                    }
+                                })
+                            }
+                        }
+                        return {
+                            id: e.id,
+                            permissionName: e.permissionName
+                        }
+                    })
+                    console.log(2,operates[0].item);
+                    
                     return
                 }
             }
@@ -127,7 +181,6 @@ const Login: React.FC = () => {
             time--
         }, 1000)
     }
-    
 
     return sessionStore.token ? (
         <Navigate to={from ? decodeURIComponent(from) : "/systemManagement"} replace={true} />

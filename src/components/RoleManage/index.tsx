@@ -9,6 +9,8 @@ import { searchUser } from "../../api/userManage"
 import { getPermissionTree } from "../../api/permisssion"
 import { useSession } from "../../store"
 import { useAsync } from "../../utils/hooks"
+import useRole from "../../store/role"
+import useOperates from "../../utils/operates"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -29,6 +31,8 @@ const RoleManage: React.FC = () => {
     const [inputRolename, setInputRolename] = useState("")
     const sessionStore = useSession()
     const [isSuperAdmin, setIsSuperAdmin] = useState(false)
+    const roles = useRole()
+    const operates = useOperates()
 
     const searchPermissionTree = () => {
         getPermissionTree({
@@ -43,17 +47,17 @@ const RoleManage: React.FC = () => {
                             if (e.childList && e.childList.length > 0) {
                                 return {
                                     key: e.id,
-                                    title: e.permissionName,
+                                    title: e.permissionName + e.id,
                                     children: e.childList.map(a => {
                                         if (a.childList && a.childList.length > 0) {
                                             return {
                                                 key: a.id,
-                                                title: a.permissionName,
+                                                title: a.permissionName + a.id,
                                                 children: a.childList.map(b => {
                                                     if (b.childList && b.childList.length > 0) {
                                                         return {
                                                             key: b.id,
-                                                            title: b.permissionName,
+                                                            title: b.permissionName + b.id,
                                                             children: b.childList.map(c => {
                                                                 if (c.childList && c.childList.length > 0) {
                                                                     return {
@@ -62,35 +66,35 @@ const RoleManage: React.FC = () => {
                                                                         children: c.childList.map(d => {
                                                                             return {
                                                                                 key: d.id,
-                                                                                title: d.permissionName
+                                                                                title: d.permissionName + d.id
                                                                             }
                                                                         })
                                                                     }
                                                                 }
                                                                 return {
                                                                     key: c.id,
-                                                                    title: c.permissionName
+                                                                    title: c.permissionName + c.id
                                                                 }
                                                             })
                                                         }
                                                     }
                                                     return {
                                                         key: b.id,
-                                                        title: b.permissionName
+                                                        title: b.permissionName + b.id
                                                     }
                                                 })
                                             }
                                         }
                                         return {
                                             key: a.id,
-                                            title: a.permissionName
+                                            title: a.permissionName + a.id
                                         }
                                     })
                                 }
                             }
                             return {
                                 key: e.id,
-                                title: e.permissionName
+                                title: e.permissionName + e.id
                             }
                         })
                     }
@@ -119,6 +123,18 @@ const RoleManage: React.FC = () => {
                 })
             )
             setTotal(res.data.total)
+        }
+        
+        if (
+            operates[0].item
+                .find(e => e.permissionName === "系统管理")
+                ?.children?.find(e => e.permissionName === "角色管理")
+                ?.children?.find(e => e.permissionName === "新增")
+                
+                
+        ) {
+            console.log(1);
+            setOperateId(1)
         }
     }
 
@@ -183,17 +199,21 @@ const RoleManage: React.FC = () => {
     ]
 
     const [roleselect, setRoleselect] = useState("")
-    const [assignAccount, setAssignAccount] = useState("")
-    const [assignUnit, setAssignUnit] = useState("")
+    // const [assignAccount, setAssignAccount] = useState("")
+    // const [assignUnit, setAssignUnit] = useState("")
+    const [modalTotal, setModalTotal] = useState(100)
+    const [modalPagenum, setModalPagenum] = useState(1)
+    const [modalPagesize, setModalPagesize] = useState(5)
+    const [operateId, setOperateId] = useState<0 | 1 | 2 | 3 | 4>(0)
 
     const userSearch = () => {
         searchUser({
-            account: assignAccount,
-            userUnitNo: assignUnit,
-            pageNum: 1,
-            pageSize: 10
+            account: roles[0].acount,
+            userUnitNo: "",
+            pageNum: modalPagenum,
+            pageSize: modalPagesize
         }).then(res => {
-            res &&
+            if (res) {
                 setModalTableData(
                     res.data.rows.map(e => {
                         return {
@@ -208,6 +228,8 @@ const RoleManage: React.FC = () => {
                         }
                     })
                 )
+                setModalTotal(res.data.total)
+            }
         })
     }
 
@@ -223,9 +245,9 @@ const RoleManage: React.FC = () => {
     const authorize = async (e: TableHead) => {
         const res = await getRolePermission({ roleId: e.id })
         if (res) {
-            console.log("test", res.data)
+            // console.log("test", res.data)
             setTreeChecked(res.data)
-            console.log(treeChecked)
+            // console.log(treeChecked)
         }
         setRoleselect(e.id)
         setModalWidth(800)
@@ -318,9 +340,6 @@ const RoleManage: React.FC = () => {
 
     const [userShow, setUserShow] = useState(false)
 
-    const [modalTotal, setModalTotal] = useState(100)
-    const [modalPagesize, setModalPagesize] = useState(10)
-
     const [modalContent, setmodalContent] = useState<"新增" | "用户授权" | "角色编辑">("用户授权")
 
     const [modalWidth, setModalWidth] = useState(600)
@@ -333,7 +352,8 @@ const RoleManage: React.FC = () => {
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
 
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-        setSelectedRowKeys(newSelectedRowKeys)
+        // setSelectedRowKeys(newSelectedRowKeys)
+        roles[0].selected = newSelectedRowKeys.toString().split(",")
     }
 
     const [editRole, setEditRole] = useState<UpdateRoleData>(Object)
@@ -347,9 +367,15 @@ const RoleManage: React.FC = () => {
         userSearch()
     }
 
-    const assignUserReset = () => {
-        setAssignAccount("")
-        setAssignUnit("")
+    // const assignUserReset = () => {
+    //     setAssignAccount("")
+    //     setAssignUnit("")
+    // }
+
+    const modalChangePage = (pageNum: number, pageSize: number) => {
+        setModalPagenum(pageNum)
+        setModalPagesize(pageSize)
+        userSearch()
     }
 
     const User: React.FC = () => {
@@ -390,23 +416,23 @@ const RoleManage: React.FC = () => {
                                 <div className={c("inputs")}>
                                     <div className={c("query-item")}>
                                         <div className={c("title")}>账号：</div>
-                                        <Input placeholder="请输入账号" value={assignAccount} onChange={e => setAssignAccount(e.target.value)} />
+                                        <Input placeholder="请输入账号" onChange={e => (roles[0].acount = e.target.value)} />
                                     </div>
-                                    <div className={c("query-item")}>
+                                    {/* <div className={c("query-item")}>
                                         <div className={c("title")}>单位：</div>
                                         <Input placeholder="请输入单位" value={assignUnit} onChange={e => setAssignUnit(e.target.value)} />
-                                    </div>
+                                    </div> */}
                                 </div>
                                 <div className={c("query-reset")}>
                                     <Button className={c("query-btn")} onClick={assignUserQuery}>
                                         查询
                                     </Button>
-                                    <Button className={c("reset-btn")} onClick={assignUserReset}>
+                                    {/* <Button className={c("reset-btn")} onClick={assignUserReset}>
                                         重置
-                                    </Button>
+                                    </Button> */}
                                 </div>
                             </div>
-                            <Table rowKey={e => e.id} rowSelection={rowSelection} columns={modalColumns} dataSource={modalTableData} pagination={{ onChange: changePage, total: modalTotal, pageSize: modalPagesize, size: "small" }} />
+                            <Table rowKey={e => e.id} rowSelection={rowSelection} columns={modalColumns} dataSource={modalTableData} pagination={{ onChange: modalChangePage, total: modalTotal, pageSize: modalPagesize, size: "small" }} />
                         </>
                     )}
                     {modalContent === "角色编辑" && (
@@ -449,7 +475,7 @@ const RoleManage: React.FC = () => {
         if (modalContent === "用户授权") {
             AssignMultiUsers({
                 roleId: roleselect,
-                userIds: selectedRowKeys.filter(e => e !== "shenhai")
+                userIds: roles[0].selected
             }).then(() => {
                 message.success("赋予角色成功！")
             })
@@ -466,12 +492,12 @@ const RoleManage: React.FC = () => {
     const [pselcted, setPselcted] = useState<string[]>([])
 
     const treeChecksClick = (a: any, e: any) => {
+        console.log(a, e)
         setPselcted(e.checkedNodes.filter((e: TreeNode) => !e.children).map((e: TreeNode) => e.key))
     }
 
     const treeSave = () => {
         pselcted.length > 0 ? console.log("1", pselcted) : console.log("2", treeChecked)
-
         AssignPermission({
             roleId: roleselect,
             permissionIds: pselcted
@@ -518,7 +544,7 @@ const RoleManage: React.FC = () => {
                     </div>
                 </div>
                 <div className={c("btn-group")}>
-                    {isSuperAdmin && (
+                    {(isSuperAdmin || operateId === 1) && (
                         <Button className={c("add")} onClick={() => addNew()}>
                             新增
                         </Button>

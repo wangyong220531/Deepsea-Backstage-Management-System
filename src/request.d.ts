@@ -958,10 +958,10 @@ interface AddUserData {
 }
 
 interface SearchLoginLogData {
-    endTime: string
+    endTime: string | undefined
     pageNum: number
     pageSize: number
-    startTime: string
+    startTime: string | undefined
     userName: string
 }
 
