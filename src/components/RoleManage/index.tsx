@@ -30,9 +30,9 @@ const RoleManage: React.FC = () => {
     const [treeData, setTreeData] = useState<DataNode[]>([])
     const [inputRolename, setInputRolename] = useState("")
     const sessionStore = useSession()
-    const [isSuperAdmin, setIsSuperAdmin] = useState(false)
     const roles = useRole()
     const operates = useOperates()
+    const [operateId, setOperateId] = useState<0 | 1 | 2 | 3 | 4 | 5>(0)
 
     const searchPermissionTree = () => {
         getPermissionTree({
@@ -104,7 +104,7 @@ const RoleManage: React.FC = () => {
 
     const search = async () => {
         if (sessionStore.userType === "superAdmin") {
-            setIsSuperAdmin(true)
+            setOperateId(5)
         }
         const res = await searchRole({
             pageNum: pageNum,
@@ -124,17 +124,37 @@ const RoleManage: React.FC = () => {
             )
             setTotal(res.data.total)
         }
-        
         if (
             operates[0].item
                 .find(e => e.permissionName === "系统管理")
                 ?.children?.find(e => e.permissionName === "角色管理")
                 ?.children?.find(e => e.permissionName === "新增")
-                
-                
         ) {
-            console.log(1);
             setOperateId(1)
+        }
+        if (
+            operates[0].item
+                .find(e => e.permissionName === "系统管理")
+                ?.children?.find(e => e.permissionName === "角色管理")
+                ?.children?.find(e => e.permissionName === "编辑")
+        ) {
+            setOperateId(2)
+        }
+        if (
+            operates[0].item
+                .find(e => e.permissionName === "系统管理")
+                ?.children?.find(e => e.permissionName === "角色管理")
+                ?.children?.find(e => e.permissionName === "授权")
+        ) {
+            setOperateId(3)
+        }
+        if (
+            operates[0].item
+                .find(e => e.permissionName === "系统管理")
+                ?.children?.find(e => e.permissionName === "角色管理")
+                ?.children?.find(e => e.permissionName === "删除")
+        ) {
+            setOperateId(4)
         }
     }
 
@@ -176,22 +196,28 @@ const RoleManage: React.FC = () => {
             render: (_, e) => {
                 return (
                     <>
-                        {e.roleName !== "超级管理员" && (
-                            <div className={c("operate")}>
-                                <div className={c("item")} onClick={() => userClick(e)}>
-                                    用户
-                                </div>
+                        <div className={c("operate")}>
+                            {(operateId === 2 || operateId === 5) && (
+                                <>
+                                    <div className={c("item")} onClick={() => edit(e)}>
+                                        编辑
+                                    </div>
+                                    <div className={c("item")} onClick={() => userClick(e)}>
+                                        用户
+                                    </div>
+                                </>
+                            )}
+                            {operateId === 3 && (
                                 <div className={c("item")} onClick={() => authorize(e)}>
                                     授权
                                 </div>
-                                <div className={c("item")} onClick={() => edit(e)}>
-                                    编辑
-                                </div>
+                            )}
+                            {operateId === 4 && (
                                 <Popconfirm title="确定要删除吗？" onConfirm={() => delRoleConfirm(e)}>
                                     <div className={c("item")}>删除</div>
                                 </Popconfirm>
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </>
                 )
             }
@@ -204,7 +230,6 @@ const RoleManage: React.FC = () => {
     const [modalTotal, setModalTotal] = useState(100)
     const [modalPagenum, setModalPagenum] = useState(1)
     const [modalPagesize, setModalPagesize] = useState(5)
-    const [operateId, setOperateId] = useState<0 | 1 | 2 | 3 | 4>(0)
 
     const userSearch = () => {
         searchUser({
@@ -544,7 +569,7 @@ const RoleManage: React.FC = () => {
                     </div>
                 </div>
                 <div className={c("btn-group")}>
-                    {(isSuperAdmin || operateId === 1) && (
+                    {(operateId === 1 || operateId === 5) && (
                         <Button className={c("add")} onClick={() => addNew()}>
                             新增
                         </Button>

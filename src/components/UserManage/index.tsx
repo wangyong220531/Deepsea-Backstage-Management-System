@@ -5,6 +5,8 @@ import type { ColumnsType } from "antd/es/table"
 import { delUser, getUnitList, searchUser, updatePassword, updateUserInfo, userInfoExport } from "../../api/userManage"
 import { exportExcel } from "../../utils/index"
 import { useAsync } from "../../utils/hooks"
+import useOperates from "../../utils/operates"
+import { useSession } from "../../store"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -93,21 +95,27 @@ const UserManage: FC = () => {
                 return (
                     <>
                         <div className={c("operate")}>
-                            <div className={c("item")} onClick={() => edit(e)}>
-                                编辑
-                            </div>
+                            {(operateId === 5 || operateId === 1) && (
+                                <div className={c("item")} onClick={() => edit(e)}>
+                                    编辑
+                                </div>
+                            )}
                             {/* <div className={c("item")} onClick={() => pwdChange(e)}>
                                 密码修改
                             </div> */}
-                            <Popconfirm title="确定要删除吗？" onConfirm={() => delConfirm(e)}>
-                                <div className={c("item")}>删除</div>
-                            </Popconfirm>
+                            {(operateId === 5 || operateId === 2) && (
+                                <Popconfirm title="确定要删除吗？" onConfirm={() => delConfirm(e)}>
+                                    <div className={c("item")}>删除</div>
+                                </Popconfirm>
+                            )}
                         </div>
                     </>
                 )
             }
         }
     ]
+
+    const operates = useOperates()
 
     const statusSwitch = (e: TableHead) => {
         e.status === 1
@@ -155,6 +163,8 @@ const UserManage: FC = () => {
     const [total, setTotal] = useState(100)
     const [pageNum, setPageNum] = useState(1)
     const [pageSize, setPageSize] = useState(10)
+    const sessionStore = useSession()
+    const [operateId, setOperateId] = useState<0 | 1 | 2 | 3 | 4 | 5>(0)
 
     const changePage = (pageNum: number, pageSize: number) => {
         setPageNum(pageNum)
@@ -185,6 +195,33 @@ const UserManage: FC = () => {
                 })
             )
             setTotal(res.data.total)
+        }
+        if (sessionStore.userType === "superAdmin") {
+            setOperateId(5)
+        }
+        if (
+            operates[0].item
+                .find(e => e.permissionName === "系统管理")
+                ?.children?.find(e => e.permissionName === "用户管理")
+                ?.children?.find(e => e.permissionName === "编辑")
+        ) {
+            setOperateId(1)
+        }
+        if (
+            operates[0].item
+                .find(e => e.permissionName === "系统管理")
+                ?.children?.find(e => e.permissionName === "用户管理")
+                ?.children?.find(e => e.permissionName === "删除")
+        ) {
+            setOperateId(2)
+        }
+        if (
+            operates[0].item
+                .find(e => e.permissionName === "系统管理")
+                ?.children?.find(e => e.permissionName === "用户管理")
+                ?.children?.find(e => e.permissionName === "导出")
+        ) {
+            setOperateId(3)
         }
     }
 
@@ -381,7 +418,7 @@ const UserManage: FC = () => {
                     </Button> */}
                     {/* <Button>下载模板</Button>
                     <Button>上传</Button> */}
-                    <Button onClick={exportUserInfo}>导出</Button>
+                    {(operateId === 5 || operateId === 3) && <Button onClick={exportUserInfo}>导出</Button>}
                 </div>
             </div>
             <Table rowKey={e => e.account} columns={columns} dataSource={tableData} pagination={{ onChange: changePage, total, pageSize }} />
