@@ -1,4 +1,4 @@
-import { Button, Input, Modal, Switch, Table, Drawer, Tree, Form, message, Popconfirm } from "antd"
+import { Button, Input, Modal, Switch, Table, Drawer, Tree, Form, Popconfirm } from "antd"
 import Styles from "./index.module.less"
 import type { ColumnsType } from "antd/es/table"
 import { ReactNode, useEffect, useRef, useState } from "react"
@@ -234,9 +234,8 @@ const RoleManage: React.FC = () => {
 
     const userSearch = async () => {
         const res = await searchUser({
-            account: inputModalAccount.current,
-            unitName
-            : "",
+            account: modalQueryAccount,
+            unitName: "",
             pageNum: modalPagenum,
             pageSize: modalPagesize
         })
@@ -273,8 +272,9 @@ const RoleManage: React.FC = () => {
         if (res?.data) {
             setTreeChecked(res.data.map(e => e.id))
             // console.log(treeChecked)
-        }else {
-            setTreeChecked([])}
+        } else {
+            setTreeChecked([])
+        }
         setRoleselect(e.id)
         setModalWidth(800)
         setDrawShow(true)
@@ -380,14 +380,13 @@ const RoleManage: React.FC = () => {
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
         roles[0].selected = newSelectedRowKeys.toString().split(",")
-        setSelectedRowKeys(newSelectedRowKeys);
-      };
-    
-      const rowSelection = {
-        selectedRowKeys,
-        onChange: onSelectChange,
-      };
+        setSelectedRowKeys(newSelectedRowKeys)
+    }
 
+    const rowSelection = {
+        selectedRowKeys,
+        onChange: onSelectChange
+    }
 
     const inputModalAccount = useRef("")
 
@@ -396,10 +395,11 @@ const RoleManage: React.FC = () => {
     }
 
     const assignUserReset = () => {
-        inputModalAccount.current = ""
-        setModalPagenum(1)
-        setModalPagesize(5)
-        userSearch()
+        setModalQueryAccount("")
+        // inputModalAccount.current = ""
+        // setModalPagenum(1)
+        // setModalPagesize(5)
+        // userSearch()
     }
 
     useAsync(() => userSearch(), [modalPagenum, modalPagesize])
@@ -407,6 +407,7 @@ const RoleManage: React.FC = () => {
     const modalChangePage = (pageNum: number, pageSize: number) => {
         setModalPagenum(pageNum)
         setModalPagesize(pageSize)
+        setModalQueryAccount("")
         // userSearch()
     }
 
@@ -429,7 +430,6 @@ const RoleManage: React.FC = () => {
         if (modalContent === "新增") {
             const res = await addForm.validateFields()
             addRole({ roleName: res.roleName, roleComment: res.roleComment }).then(() => {
-                message.success("新增角色成功！")
                 search()
                 addForm.resetFields()
             })
@@ -439,8 +439,6 @@ const RoleManage: React.FC = () => {
             AssignMultiUsers({
                 roleId: roleselect,
                 userIds: roles[0].selected
-            }).then(() => {
-                message.success("赋予角色成功！")
             })
             return
         }
@@ -463,7 +461,6 @@ const RoleManage: React.FC = () => {
             roleId: roleselect,
             permissionIds: pselcted.length > 0 ? pselcted : treeChecked
         }).then(() => {
-            message.success("授权成功！")
             setDrawShow(false)
         })
     }
@@ -474,7 +471,6 @@ const RoleManage: React.FC = () => {
 
     const reset = () => {
         setInputRolename("")
-        search()
     }
 
     const [treeChecked, setTreeChecked] = useState<string[]>([])
@@ -484,6 +480,8 @@ const RoleManage: React.FC = () => {
     const [pageSize, setPageSize] = useState(10)
 
     useAsync(() => search(), [pageNum, pageSize])
+
+    const [modalQueryAccount, setModalQueryAccount] = useState("")
 
     return (
         <>
@@ -528,7 +526,7 @@ const RoleManage: React.FC = () => {
                     footer={
                         <>
                             <div className={c("drawer-footer")}>
-                                <Button>取消</Button>
+                                <Button onClick={() => setDrawShow(false)}>取消</Button>
                                 <Button className={c("right")} onClick={treeSave}>
                                     保存
                                 </Button>
@@ -574,7 +572,7 @@ const RoleManage: React.FC = () => {
                             <div className={c("inputs")}>
                                 <div className={c("query-item")}>
                                     <div className={c("title")}>账号：</div>
-                                    <Input placeholder="请输入账号" onChange={e => (inputModalAccount.current = e.target.value)} />
+                                    <Input placeholder="请输入账号" value={modalQueryAccount} onChange={e => setModalQueryAccount(e.target.value)} />
                                 </div>
                                 {/* <div className={c("query-item")}>
                                         <div className={c("title")}>单位：</div>
@@ -586,8 +584,8 @@ const RoleManage: React.FC = () => {
                                     查询
                                 </Button>
                                 <Button className={c("reset-btn")} onClick={assignUserReset}>
-                                        重置
-                                    </Button>
+                                    重置
+                                </Button>
                             </div>
                         </div>
                         <Table

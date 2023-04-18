@@ -25,6 +25,7 @@ const OperateLogs: FC = () => {
     const onChange = (key: string) => {
         setPageNum(1)
         setlogPagesize(10)
+        setQueryAccount("")
         key === "2" ? setTabActived("操作日志") : setTabActived("登录日志")
     }
 
@@ -40,7 +41,7 @@ const OperateLogs: FC = () => {
 
     const operates = useOperates()
     const sessionStore = useSession()
-    const [operateId, setOperateId] = useState<0 | 1 | 5>(0)
+    const [operateId, setOperateId] = useState<0 | 1 | 2 | 5>(0)
 
     const search = async () => {
         if (tabActived === "登录日志") {
@@ -65,6 +66,27 @@ const OperateLogs: FC = () => {
                     })
                 ),
                 setLogTotal(res.data.total))
+            if (sessionStore.userType === "superAdmin") {
+                setOperateId(5)
+            }
+            if (
+                operates[0].item
+                    .find(e => e.permissionName === "系统管理")
+                    ?.children?.find(e => e.permissionName === "日志")
+                    ?.children?.find(e => e.permissionName === "登录日志")
+                    ?.children?.find(e => e.permissionName === "导出")
+            ) {
+                setOperateId(1)
+            }
+            if (
+                operates[0].item
+                    .find(e => e.permissionName === "系统管理")
+                    ?.children?.find(e => e.permissionName === "日志")
+                    ?.children?.find(e => e.permissionName === "操作日志")
+                    ?.children?.find(e => e.permissionName === "导出")
+            ) {
+                setOperateId(2)
+            }
             return
         }
         const res = await searchOperateLog({
@@ -72,7 +94,7 @@ const OperateLogs: FC = () => {
             pageNum: pageNum,
             pageSize: logPagesize,
             startTime: startTime?.format("YYYY-MM-DD HH:mm:ss"),
-            userName: ""
+            userName: queryAccount
         })
         res &&
             (setOperateTableData(
@@ -97,10 +119,19 @@ const OperateLogs: FC = () => {
             operates[0].item
                 .find(e => e.permissionName === "系统管理")
                 ?.children?.find(e => e.permissionName === "日志")
-                ?.children?.find(e => e.permissionName === "登录日志" || e.permissionName === "操作日志")
+                ?.children?.find(e => e.permissionName === "登录日志")
                 ?.children?.find(e => e.permissionName === "导出")
         ) {
             setOperateId(1)
+        }
+        if (
+            operates[0].item
+                .find(e => e.permissionName === "系统管理")
+                ?.children?.find(e => e.permissionName === "日志")
+                ?.children?.find(e => e.permissionName === "操作日志")
+                ?.children?.find(e => e.permissionName === "导出")
+        ) {
+            setOperateId(2)
         }
     }
 
@@ -123,7 +154,7 @@ const OperateLogs: FC = () => {
 
     useEffect(() => {
         search()
-    }, [tabActived, pageNum, logPagesize])
+    }, [tabActived])
 
     const loginColumns: ColumnsType<LoginLog> = [
         {
@@ -136,8 +167,8 @@ const OperateLogs: FC = () => {
             }
         },
         {
-            key: "userName",
-            dataIndex: "userName",
+            key: "userNo",
+            dataIndex: "userNo",
             title: "警号",
             align: "center"
         },
@@ -276,7 +307,8 @@ const OperateLogs: FC = () => {
     const logPageChange = (pageNum: number, pageSize: number) => {
         setPageNum(pageNum)
         setlogPagesize(pageSize)
-        search()
+        setQueryAccount("")
+        // search()
     }
 
     // const operatePageChange = (pageNum: number, pageSize: number) => {
@@ -333,7 +365,7 @@ const OperateLogs: FC = () => {
                     <div className={c("inputs")}>
                         <div className={c("query-item")}>
                             <div className={c("label")}>搜索日志：</div>
-                            <Input placeholder="亲输入操作人警号" value={queryAccount} onChange={e => setQueryAccount(e.target.value)} />
+                            <Input placeholder="请输入操作人警号" value={queryAccount} onChange={e => setQueryAccount(e.target.value)} />
                         </div>
                         <div className={c("query-item")}>
                             <div className={c("label")}>创建时间：</div>
@@ -349,7 +381,7 @@ const OperateLogs: FC = () => {
                         </Button>
                     </div>
                 </div>
-                <div className={c("btn-group")}>{(operateId === 1 || operateId === 5) && <Button onClick={exportLog}>导出</Button>}</div>
+                <div className={c("btn-group")}>{(operateId === 1 || operateId === 2 || operateId === 5) && <Button onClick={exportLog}>导出</Button>}</div>
             </div>
             {tabActived === "登录日志" ? <Table rowKey={e => e.id} columns={loginColumns} dataSource={loginTableData} pagination={{ onChange: logPageChange, total: logTotal, pageSize: logPagesize }} /> : <Table rowKey={e => e.id} columns={operateColumns} dataSource={operateTableData} pagination={{ onChange: logPageChange, total: logTotal, pageSize: logPagesize }} />}
         </>

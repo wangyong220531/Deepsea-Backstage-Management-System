@@ -171,12 +171,14 @@ const UserManage: FC = () => {
     const changePage = (pageNum: number, pageSize: number) => {
         setPageNum(pageNum)
         setPageSize(pageSize)
+        setQueryAccount("")
+        setQueryUnit("")
     }
 
     const search = async () => {
         const res = await searchUser({
-            account: inputAccount.current,
-            unitName: inputUnit.current,
+            account: queryAccount,
+            unitName: queryUnit,
             pageNum: pageNum,
             pageSize: pageSize
         })
@@ -238,11 +240,8 @@ const UserManage: FC = () => {
     }
 
     const reset = () => {
-        inputAccount.current = ""
-        inputUnit.current = ""
-        setPageNum(1)
-        setPageSize(10)
-        search()
+        setQueryAccount("")
+        setQueryUnit("")
     }
 
     const [selectId, setSelectId] = useState("")
@@ -393,6 +392,9 @@ const UserManage: FC = () => {
         }
     }
 
+    const [queryAccount, setQueryAccount] = useState("")
+    const [queryUnit, setQueryUnit] = useState("")
+
     return (
         <>
             <div className={c("header")}>
@@ -400,11 +402,11 @@ const UserManage: FC = () => {
                     <div className={c("inputs")}>
                         <div className={c("query-item")}>
                             <div className={c("label")}>账号：</div>
-                            <Input placeholder="亲输入账号" onChange={e => inputAccount.current = e.target.value} />
+                            <Input placeholder="请输入账号" value={queryAccount} onChange={e => setQueryAccount(e.target.value)} />
                         </div>
                         <div className={c("query-item")}>
                             <div className={c("label")}>单位：</div>
-                            <Input placeholder="亲输入单位名称" onChange={e => inputUnit.current = e.target.value} />
+                            <Input placeholder="请输入单位名称" value={queryUnit} onChange={e => setQueryUnit(e.target.value)} />
                         </div>
                     </div>
                     <div className={c("query-reset")}>

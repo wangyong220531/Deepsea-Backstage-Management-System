@@ -154,7 +154,7 @@ const routes: Route[] = [
                 component: <UserManage />
             },
             {
-                name: "日志管理",
+                name: "日志",
                 path: "operateLogs",
                 component: <OperateLogs />
             }
