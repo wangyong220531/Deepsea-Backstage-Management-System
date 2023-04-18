@@ -35,8 +35,8 @@ const OperateLogs: FC = () => {
     const [tabActived, setTabActived] = useState<"登录日志" | "操作日志">("登录日志")
 
     const [queryAccount, setQueryAccount] = useState("")
-    const [startTime, setStartTime] = useState<dayjs.Dayjs | null>(dayjs(Date.now()))
-    const [endTime, setEndTime] = useState<dayjs.Dayjs | null>(dayjs(Date.now() - 2592000000))
+    const [startTime, setStartTime] = useState<dayjs.Dayjs | null>(dayjs(Date.now() - 2592000000))
+    const [endTime, setEndTime] = useState<dayjs.Dayjs | null>(dayjs(Date.now()))
 
     const operates = useOperates()
     const sessionStore = useSession()
@@ -68,10 +68,10 @@ const OperateLogs: FC = () => {
             return
         }
         const res = await searchOperateLog({
-            endTime: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+            endTime: endTime?.format("YYYY-MM-DD HH:mm:ss"),
             pageNum: pageNum,
             pageSize: logPagesize,
-            startTime: dayjs(Date.now() - 2592000000).format("YYYY-MM-DD HH:mm:ss"),
+            startTime: startTime?.format("YYYY-MM-DD HH:mm:ss"),
             userName: ""
         })
         res &&
