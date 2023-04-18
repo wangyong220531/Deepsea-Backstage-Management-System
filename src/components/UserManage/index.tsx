@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect, useState } from "react"
+import { FC, ReactNode, useEffect, useRef, useState } from "react"
 import Styles from "./index.module.less"
 import { Button, Input, Modal, Switch, Table, Form, Popconfirm, Select, message } from "antd"
 import type { ColumnsType } from "antd/es/table"
@@ -143,8 +143,10 @@ const UserManage: FC = () => {
     }
 
     const [unitList, setUnitList] = useState<OptionType[]>([])
-    const [inputAccount, setInputAccount] = useState("")
-    const [inputUnit, setInputUnit] = useState("")
+    // const [inputAccount, setInputAccount] = useState("")
+    // const [inputUnit, setInputUnit] = useState("")
+    const inputAccount = useRef("")
+    const inputUnit = useRef("")
 
     const searchUnitList = () => {
         getUnitList({}).then(res => {
@@ -173,8 +175,8 @@ const UserManage: FC = () => {
 
     const search = async () => {
         const res = await searchUser({
-            account: inputAccount,
-            userUnitNo: inputUnit,
+            account: inputAccount.current,
+            unitName: inputUnit.current,
             pageNum: pageNum,
             pageSize: pageSize
         })
@@ -236,8 +238,10 @@ const UserManage: FC = () => {
     }
 
     const reset = () => {
-        setInputAccount("")
-        setInputUnit("")
+        inputAccount.current = ""
+        inputUnit.current = ""
+        setPageNum(1)
+        setPageSize(10)
         search()
     }
 
@@ -396,11 +400,11 @@ const UserManage: FC = () => {
                     <div className={c("inputs")}>
                         <div className={c("query-item")}>
                             <div className={c("label")}>账号：</div>
-                            <Input placeholder="亲输入账号" value={inputAccount} onChange={e => setInputAccount(e.target.value)} />
+                            <Input placeholder="亲输入账号" onChange={e => inputAccount.current = e.target.value} />
                         </div>
                         <div className={c("query-item")}>
                             <div className={c("label")}>单位：</div>
-                            <Input placeholder="亲输入单位名称" value={inputUnit} onChange={e => setInputUnit(e.target.value)} />
+                            <Input placeholder="亲输入单位名称" onChange={e => inputUnit.current = e.target.value} />
                         </div>
                     </div>
                     <div className={c("query-reset")}>

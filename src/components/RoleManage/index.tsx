@@ -1,7 +1,7 @@
 import { Button, Input, Modal, Switch, Table, Drawer, Tree, Form, message, Popconfirm } from "antd"
 import Styles from "./index.module.less"
 import type { ColumnsType } from "antd/es/table"
-import { ReactNode, useEffect, useState } from "react"
+import { ReactNode, useEffect, useRef, useState } from "react"
 import type { DataNode } from "antd/es/tree"
 import { CloseOutlined } from "@ant-design/icons"
 import { addRole, AssignMultiUsers, AssignPermission, delRole, getRolePermission, searchRole, updateRole } from "../../api/roleManage"
@@ -226,16 +226,17 @@ const RoleManage: React.FC = () => {
     ]
 
     const [roleselect, setRoleselect] = useState("")
-    // const [assignAccount, setAssignAccount] = useState("")
-    // const [assignUnit, setAssignUnit] = useState("")
+    const [assignAccount, setAssignAccount] = useState("")
+    const [assignUnit, setAssignUnit] = useState("")
     const [modalTotal, setModalTotal] = useState(100)
     const [modalPagenum, setModalPagenum] = useState(1)
     const [modalPagesize, setModalPagesize] = useState(5)
 
     const userSearch = async () => {
         const res = await searchUser({
-            account: roles[0].acount,
-            userUnitNo: "",
+            account: inputModalAccount.current,
+            unitName
+            : "",
             pageNum: modalPagenum,
             pageSize: modalPagesize
         })
@@ -269,10 +270,11 @@ const RoleManage: React.FC = () => {
 
     const authorize = async (e: TableHead) => {
         const res = await getRolePermission({ roleId: e.id })
-        if (res) {
+        if (res?.data) {
             setTreeChecked(res.data.map(e => e.id))
             // console.log(treeChecked)
-        }
+        }else {
+            setTreeChecked([])}
         setRoleselect(e.id)
         setModalWidth(800)
         setDrawShow(true)
@@ -386,14 +388,19 @@ const RoleManage: React.FC = () => {
         onChange: onSelectChange,
       };
 
+
+    const inputModalAccount = useRef("")
+
     const assignUserQuery = () => {
         userSearch()
     }
 
-    // const assignUserReset = () => {
-    //     setAssignAccount("")
-    //     setAssignUnit("")
-    // }
+    const assignUserReset = () => {
+        inputModalAccount.current = ""
+        setModalPagenum(1)
+        setModalPagesize(5)
+        userSearch()
+    }
 
     useAsync(() => userSearch(), [modalPagenum, modalPagesize])
 
@@ -567,7 +574,7 @@ const RoleManage: React.FC = () => {
                             <div className={c("inputs")}>
                                 <div className={c("query-item")}>
                                     <div className={c("title")}>账号：</div>
-                                    <Input placeholder="请输入账号" onChange={e => modalQuery(e)} />
+                                    <Input placeholder="请输入账号" onChange={e => (inputModalAccount.current = e.target.value)} />
                                 </div>
                                 {/* <div className={c("query-item")}>
                                         <div className={c("title")}>单位：</div>
@@ -578,9 +585,9 @@ const RoleManage: React.FC = () => {
                                 <Button className={c("query-btn")} onClick={assignUserQuery}>
                                     查询
                                 </Button>
-                                {/* <Button className={c("reset-btn")} onClick={assignUserReset}>
+                                <Button className={c("reset-btn")} onClick={assignUserReset}>
                                         重置
-                                    </Button> */}
+                                    </Button>
                             </div>
                         </div>
                         <Table

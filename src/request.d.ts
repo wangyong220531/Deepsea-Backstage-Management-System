@@ -867,7 +867,7 @@ interface UpdateUserInfoData {
 
 interface SearchUserData {
     account: string
-    userUnitNo: string
+    unitName: string
     pageNum: number
     pageSize: number
 }
