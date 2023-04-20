@@ -70,28 +70,21 @@ const Application: React.FC = () => {
         return (
             <>
                 <Form.Item name="code" label="编码">
-                    <Input className={Styles["form-item-input"]} />
+                    <Input className={Styles["form-item-input"]} disabled />
                 </Form.Item>
                 <Form.Item label="（模型/技战）法编号">
                     <Input className={Styles["form-item-input"]} />
                 </Form.Item>
                 <Form.Item name="type" label="类型">
-                    <Select className={Styles["form-item-input"]} options={typeOptions} />
+                    {/* <Select className={Styles["form-item-input"]} options={typeOptions} /> */}
                 </Form.Item>
                 <Form.Item label="指向对象">
                     <Input className={Styles["form-item-input"]} />
                 </Form.Item>
-                <Form.Item label="智慧单元">
-                    <Select className={Styles["form-item-input"]} options={smartAppList} />
-                </Form.Item>
-                <Form.Item label="警种">
-                    <Select className={Styles["form-item-input"]} />
-                </Form.Item>
+                <Form.Item label="智慧单元">{/* <Select className={Styles["form-item-input"]} options={smartAppList} /> */}</Form.Item>
+                <Form.Item label="警种">{/* <Select className={Styles["form-item-input"]} /> */}</Form.Item>
                 <Form.Item label="辖区">
                     <Select className={Styles["form-item-input"]} />
-                </Form.Item>
-                <Form.Item label="状态">
-                    <Input className={Styles["form-item-input"]} />
                 </Form.Item>
                 <Form.Item name="content" label="内容">
                     <Input.TextArea className={Styles["form-item-input"]} />
@@ -289,6 +282,12 @@ const Application: React.FC = () => {
         setEndTime(dayjs(e[1]))
     }
 
+    const [addForm] = ad
+
+    const add = () => {
+
+    }
+
     return (
         <>
             <div className={c("header")}>
@@ -312,14 +311,14 @@ const Application: React.FC = () => {
                     </div>
                 </div>
                 <div className={c("btn-group")}>
-                    <Button className={c("add")} onClick={() => setAddOpen(true)}>
+                    <Button className={c("add")} onClick={add}>
                         新增
                     </Button>
                 </div>
             </div>
             <Table columns={column} dataSource={tableData} />
             <Modal title="新增" open={addOpen} onCancel={() => setAddOpen(false)}>
-                <Form labelCol={{ span: 8 }}>
+                <Form labelCol={{ span: 8 }} form={addForm}>
                     <ApplicationFormItem />
                 </Form>
             </Modal>
