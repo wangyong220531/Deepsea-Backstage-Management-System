@@ -31,7 +31,7 @@ const LayoutFC: React.FC = () => {
     const location = useLocation()
     const sessionStore = useSession()
 
-    const superAdminMenu: MenuProps["items"] = sessionStore.menu.map(e => {
+    const superAdminMenu: MenuProps["items"] = sessionStore.menu.map((e:PermissionMenu) => {
         if (e.children && e.children.length > 0 && e.children.find(x => x.children)) {
             return {
                 key: e.path,
@@ -184,7 +184,7 @@ const LayoutFC: React.FC = () => {
                 </Dropdown>
             </Header>
             <Layout hasSider>
-                <Sider trigger={null} style={{ width: "200px", background: local.themeColor, height: "920px" }} collapsed={collapsed} collapsible>
+                <Sider trigger={null} style={{ width: "200px", background: "#FFF", height: "920px" }} collapsed={collapsed} collapsible>
                     <Menu mode="inline" defaultOpenKeys={[location.pathname.split("/")[1]]} selectedKeys={[location.pathname.split("/").slice(-1).toString()]} items={sessionStore.menu.length > 0 ? superAdminMenu : menuList} onClick={changeRoute} />
                 </Sider>
                 <BreakMenu></BreakMenu>

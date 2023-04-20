@@ -36,6 +36,69 @@ const DutyAnalysis: React.FC = () => {
         })
     }, [])
 
+    // const tableData: DataType[] = [
+    //     {
+    //         teamName: "863一组",
+    //         carId: "苏H1250警",
+    //         lackTimes: 27,
+    //         clockTimes: 10,
+    //         stayWaringTimes: 11,
+    //         stayTimes: 363,
+    //         backTimes: 5,
+    //         unitName: "淮海路派出所"
+    //     },
+    //     {
+    //         teamName: "863二组",
+    //         carId: "苏H1688警",
+    //         lackTimes: 7,
+    //         clockTimes: 20,
+    //         stayWaringTimes: 8,
+    //         stayTimes: 440,
+    //         backTimes: 2,
+    //         unitName: "淮海路派出所"
+    //     },
+    //     {
+    //         teamName: "866一组",
+    //         carId: "苏H1986警",
+    //         lackTimes: 17,
+    //         clockTimes: 15,
+    //         stayWaringTimes: 11,
+    //         stayTimes: 396,
+    //         backTimes: 15,
+    //         unitName: "北京路派出所"
+    //     },
+    //     {
+    //         teamName: "866二组",
+    //         carId: "苏H1373警",
+    //         lackTimes: 22,
+    //         clockTimes: 19,
+    //         stayWaringTimes: 14,
+    //         stayTimes: 630,
+    //         backTimes: 6,
+    //         unitName: "北京路派出所"
+    //     },
+    //     {
+    //         teamName: "876一组",
+    //         carId: "苏H1366警",
+    //         lackTimes: 22,
+    //         clockTimes: 19,
+    //         stayWaringTimes: 12,
+    //         stayTimes: 384,
+    //         backTimes: 4,
+    //         unitName: "淮海路派出所"
+    //     },
+    //     {
+    //         teamName: "911",
+    //         carId: "苏H1776警",
+    //         lackTimes: 25,
+    //         clockTimes: 10,
+    //         stayWaringTimes: 6,
+    //         stayTimes: 384,
+    //         backTimes: 16,
+    //         unitName: "淮海路派出所"
+    //     }
+    // ]
+
     const column: ColumnsType<DataType> = [
         {
             key: "teamName",
@@ -90,7 +153,7 @@ const DutyAnalysis: React.FC = () => {
     const [form] = Form.useForm()
 
     const [pageNum, setPageNum] = useState(1)
-    const [pageSize, setPageSize] = useState(10)
+    const [pageSize, setPageSize] = useState(5)
     const [total, setTotal] = useState(100)
     const [startTime, setStartTime] = useState<dayjs.Dayjs | null>(null)
     const [endTime, setEndTime] = useState<dayjs.Dayjs | null>(null)
@@ -132,7 +195,7 @@ const DutyAnalysis: React.FC = () => {
         <>
             <div className={c("header")}>
                 <div className={Styles["query"]}>
-                    <RangePicker showTime value={[startTime, endTime]} onCalendarChange={rangeChange} />
+                    <RangePicker value={[startTime, endTime]} onCalendarChange={rangeChange} />
                     <div className={c("query-reset")}>
                         <Button onClick={search} className={c("query-btn")}>
                             查询

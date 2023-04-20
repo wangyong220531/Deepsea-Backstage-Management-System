@@ -2,6 +2,10 @@
     width: 240px !important;
 }
 
+.select {
+    width: 160px !important;
+}
+
 .header {
     display: flex;
     margin-bottom: 18px;
@@ -10,12 +14,16 @@
         .inputs {
             display: flex;
             column-gap: 20px;
+            .query-item {
+                display: flex;
+                align-items: center;
+            }
         }
         .query-reset {
             margin-left: 20px;
             display: flex;
             column-gap: 10px;
-            .query-btn {
+            .query-button {
                 background-color: #2a58ad;
                 color: white;
             }
@@ -37,6 +45,12 @@
         &:not(:first-child) {
             margin-left: 10px;
         }
+    }
+    .operate-btn {
+        background-color: #2a58ad;
+    }
+    .operate-btn:hover {
+        background-color: #2a58ad;
     }
 }
 

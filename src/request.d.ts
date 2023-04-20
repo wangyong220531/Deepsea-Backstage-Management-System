@@ -628,15 +628,12 @@ interface UpdateSmartAppData {
 }
 
 interface SearchSmartAppData {
-    applyNo: string
-    etime: string
-    managerArea: string
+    startTime: string
+    endTime: string
     pageNum: number
     pageSize: number
-    status: string
-    stime: string
-    toUser: string
-    type: string
+    appType: number // 0：全部 ，1：智慧安防小区，2：智慧安防校区。3：智慧安防CBD，4：智慧安防医院，5：智慧安防车站
+    policeType: number // 0：全部 1：治安，2：刑侦，3：经侦，4：巡防，5：围保，6：网安，7：法制，8：指挥，9：涉稳。10：集成
 }
 
 interface KeyPosition {

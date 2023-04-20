@@ -2,6 +2,9 @@ import { Button, Input, DatePicker, Table, Select, Modal, Form, Tooltip } from "
 import { ReactNode, useState } from "react"
 import type { ColumnsType } from "antd/es/table"
 import Styles from "./index.module.less"
+import dayjs, { Dayjs } from "dayjs"
+import { searchSmartApp } from "../../api/smartApp"
+import { useAsync } from "../../utils/hooks"
 
 const { RangePicker } = DatePicker
 
@@ -24,11 +27,6 @@ interface DataType {
     operate?: ReactNode
 }
 
-interface SmartApp {
-    code: string
-    name: string
-}
-
 const Application: React.FC = () => {
     const typeOptions: OptionType[] = [
         {
@@ -42,6 +40,10 @@ const Application: React.FC = () => {
     ]
 
     const smartAppList: OptionType[] = [
+        {
+            value: "0",
+            label: "全部"
+        },
         {
             value: "1",
             label: "智慧安防小区"
@@ -63,20 +65,18 @@ const Application: React.FC = () => {
             label: "智慧安防车站"
         }
     ]
+
     const ApplicationFormItem: React.FC = () => {
         return (
             <>
-                <Form.Item name="type" label="类型">
-                    <Select className={Styles["form-item-input"]} options={typeOptions} />
-                </Form.Item>
                 <Form.Item name="code" label="编码">
                     <Input className={Styles["form-item-input"]} />
                 </Form.Item>
-                <Form.Item name="time" label="时间">
-                    <DatePicker placeholder="请选择时间" className={Styles["form-item-input"]} />
-                </Form.Item>
-                <Form.Item name="content" label="内容">
+                <Form.Item label="（模型/技战）法编号">
                     <Input className={Styles["form-item-input"]} />
+                </Form.Item>
+                <Form.Item name="type" label="类型">
+                    <Select className={Styles["form-item-input"]} options={typeOptions} />
                 </Form.Item>
                 <Form.Item label="指向对象">
                     <Input className={Styles["form-item-input"]} />
@@ -93,8 +93,8 @@ const Application: React.FC = () => {
                 <Form.Item label="状态">
                     <Input className={Styles["form-item-input"]} />
                 </Form.Item>
-                <Form.Item label="（模型/技战）法编号">
-                    <Input className={Styles["form-item-input"]} />
+                <Form.Item name="content" label="内容">
+                    <Input.TextArea className={Styles["form-item-input"]} />
                 </Form.Item>
             </>
         )
@@ -124,15 +124,7 @@ const Application: React.FC = () => {
             dataIndex: "content",
             title: "内容",
             align: "center",
-            render: (_, e) => {
-                return (
-                    <>
-                        <Tooltip>
-                            <span></span>
-                        </Tooltip>
-                    </>
-                )
-            }
+            width: "200px"
         },
         {
             key: "pointObj",
@@ -179,10 +171,18 @@ const Application: React.FC = () => {
                 return (
                     <>
                         <div className={Styles["operate"]}>
-                            <Button type="primary">过滤</Button>
-                            <Button type="primary">签收</Button>
-                            <Button type="primary">反馈</Button>
-                            <Button type="primary">评估</Button>
+                            <Button className={c("operate-btn")} type="primary">
+                                过滤
+                            </Button>
+                            <Button className={c("operate-btn")} type="primary">
+                                签收
+                            </Button>
+                            <Button className={c("operate-btn")} type="primary">
+                                反馈
+                            </Button>
+                            <Button className={c("operate-btn")} type="primary">
+                                评估
+                            </Button>
                         </div>
                     </>
                 )
@@ -190,10 +190,52 @@ const Application: React.FC = () => {
         }
     ]
 
-    const show = (e: any) => {
-        setContentShow(true)
-        setContent(e.content)
-    }
+    const policeTypeList: OptionType[] = [
+        {
+            value: "0",
+            label: "全部"
+        },
+        {
+            value: "1",
+            label: "治安"
+        },
+        {
+            value: "2",
+            label: "刑侦"
+        },
+        {
+            value: "3",
+            label: "经侦"
+        },
+        {
+            value: "4",
+            label: "巡防"
+        },
+        {
+            value: "5",
+            label: "围保"
+        },
+        {
+            value: "6",
+            label: "网安"
+        },
+        {
+            value: "7",
+            label: "法制"
+        },
+        {
+            value: "8",
+            label: "指挥"
+        },
+        {
+            value: "9",
+            label: "涉稳"
+        },
+        {
+            value: "10",
+            label: "集成"
+        }
+    ]
 
     const tableData: DataType[] = [
         {
@@ -211,54 +253,62 @@ const Application: React.FC = () => {
         }
     ]
 
-    const mbOption: OptionType[] = [
-        {
-            value: "模型",
-            label: "模型"
-        },
-        {
-            value: "技战法",
-            label: "技战法"
-        }
-    ]
-
     const [addOpen, setAddOpen] = useState(false)
+    const [startTime, setStartTime] = useState<dayjs.Dayjs>(dayjs(Date.now() - 2592000000))
+    const [endTime, setEndTime] = useState<dayjs.Dayjs>(dayjs(Date.now()))
+    const [pageNum, setPageNum] = useState(1)
+    const [pageSize, setPageSize] = useState(10)
+    const [appTypeSelect, setAppTypeSelect] = useState<string | undefined>(smartAppList[0].label)
+    const [policeTypeSelect, setPoliceTypeSelect] = useState<string | undefined>(policeTypeList[0].label)
+    // const sessionStore = useSession()
 
-    const AddForm: React.FC = () => {
-        return (
-            <>
-                <Modal title="新增" open={addOpen} onCancel={() => setAddOpen(false)}>
-                    <Form labelCol={{ span: 8 }}>
-                        <ApplicationFormItem />
-                    </Form>
-                </Modal>
-            </>
-        )
+    const search = async () => {
+        const res = await searchSmartApp({
+            startTime: startTime.format("YYYY-MM-DD HH:mm:ss"),
+            endTime: endTime.format("YYYY-MM-DD HH:mm:ss"),
+            pageNum,
+            pageSize,
+            appType: Number(smartAppList.find(x => x.label === appTypeSelect)?.value),
+            policeType: Number(policeTypeList.find(x => x.label === policeTypeSelect)?.value)
+        })
+        if (res) {
+        }
     }
 
-    const [contentShow, setContentShow] = useState(false)
-    const [content, setContent] = useState("")
+    useAsync(() => search(), [pageNum, pageSize])
 
-    const ContentShow: React.FC = () => {
-        return (
-            <>
-                <Modal title="内容" open={contentShow} onCancel={() => setContentShow(false)}>
-                    {content}
-                </Modal>
-            </>
-        )
+    const reset = () => {
+        setStartTime(dayjs(Date.now() - 2592000000))
+        setEndTime(dayjs(Date.now()))
+        setAppTypeSelect("全部")
+        setPoliceTypeSelect("全部")
     }
+
+    const dateRangeChange = (e: any) => {
+        setStartTime(dayjs(e[0]))
+        setEndTime(dayjs(e[1]))
+    }
+
     return (
         <>
-            <AddForm />
             <div className={c("header")}>
                 <div className={Styles["query"]}>
                     <div className={c("inputs")}>
-                        <RangePicker />
+                        <RangePicker value={[startTime, endTime]} showTime onChange={dateRangeChange} />
+                        <div className={c("query-item")}>
+                            <div>类型：</div>
+                            <Select className={c("select")} value={appTypeSelect} options={smartAppList} onChange={e => setAppTypeSelect(smartAppList.find(x => x.value === e)?.label)} />
+                        </div>
+                        <div className={c("query-item")}>
+                            <div>警种：</div>
+                            <Select value={policeTypeSelect} options={policeTypeList} onChange={e => setPoliceTypeSelect(policeTypeList.find(x => x.value === e)?.label)} />
+                        </div>
                     </div>
                     <div className={c("query-reset")}>
-                        <Button>查询</Button>
-                        <Button>重置</Button>
+                        <Button className={c("query-button")} onClick={() => search()}>
+                            查询
+                        </Button>
+                        <Button onClick={reset}>重置</Button>
                     </div>
                 </div>
                 <div className={c("btn-group")}>
@@ -268,7 +318,11 @@ const Application: React.FC = () => {
                 </div>
             </div>
             <Table columns={column} dataSource={tableData} />
-            <ContentShow />
+            <Modal title="新增" open={addOpen} onCancel={() => setAddOpen(false)}>
+                <Form labelCol={{ span: 8 }}>
+                    <ApplicationFormItem />
+                </Form>
+            </Modal>
         </>
     )
 }

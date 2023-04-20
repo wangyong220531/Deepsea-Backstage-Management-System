@@ -13,4 +13,5 @@ type Session = {
     menu: PermissionMenu[]
     userType: string
     userId: string
+    userNo: string
 }

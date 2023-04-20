@@ -18,8 +18,8 @@ interface DataType {
     checkTime: string
     position: string
     team: string
-    mPolice: TeamUser[]
-    fPolice: TeamUser[]
+    mPolice: string
+    fPolice: string[]
     arriveTime: string
     checkCase: string
     checker: string
@@ -33,44 +33,132 @@ interface DataType {
 
 const DutyManage: React.FC = () => {
     const vagueSelect = () => {
-        searchDutyManage({
-            checkEndTime: "",
-            checkStartTime: "",
-            location: "",
-            mdutyNo: "",
-            pageNum: 1,
-            pageSize: 10
-        }).then(res => {
-            res &&
-                setTableData(
-                    res.data
-                        ? res.data.voList.map(e => {
-                              return {
-                                  id: e.id,
-                                  code: e.mdutyNo,
-                                  checkTime: e.checkTime,
-                                  position: e.location,
-                                  team: e.teamNo,
-                                  mPolice: e.teamUsers.filter(e => e.userType !== "AUXILIARYPOLICE"),
-                                  fPolice: e.teamUsers.filter(e => e.userType === "AUXILIARYPOLICE"),
-                                  arriveTime: e.toPointTime,
-                                  checkCase: e.checkSituation,
-                                  checker: e.checkUser,
-                                  createOperator: e.createOperator,
-                                  createTime: e.createTime,
-                                  updateOperator: e.updateOperator,
-                                  updateTime: e.updateTime,
-                                  status: e.status
-                              }
-                          })
-                        : []
-                )
-        })
+        // searchDutyManage({
+        //     checkEndTime: "",
+        //     checkStartTime: "",
+        //     location: "",
+        //     mdutyNo: "",
+        //     pageNum: 1,
+        //     pageSize: 10
+        // }).then(res => {
+        //     res &&
+        //         setTableData(
+        //             res.data
+        //                 ? res.data.voList.map(e => {
+        //                       return {
+        //                           id: e.id,
+        //                           code: e.mdutyNo,
+        //                           checkTime: e.checkTime,
+        //                           position: e.location,
+        //                           team: e.teamNo,
+        //                           mPolice: e.teamUsers.filter(e => e.userType !== "AUXILIARYPOLICE"),
+        //                           fPolice: e.teamUsers.filter(e => e.userType === "AUXILIARYPOLICE"),
+        //                           arriveTime: e.toPointTime,
+        //                           checkCase: e.checkSituation,
+        //                           checker: e.checkUser,
+        //                           createOperator: e.createOperator,
+        //                           createTime: e.createTime,
+        //                           updateOperator: e.updateOperator,
+        //                           updateTime: e.updateTime,
+        //                           status: e.status
+        //                       }
+        //                   })
+        //                 : []
+        //         )
+        // })
     }
     useEffect(() => {
         vagueSelect()
     }, [])
     const [position, setPosition] = useState<OptionType[]>([])
+
+    const tableData: DataType[] = [
+        {
+            id: "035116",
+            checkTime: "2023-03-05",
+            code: "056031",
+            position: "环宇路与翔宇大道交叉口",
+            team: "863一组",
+            mPolice: "吴金超",
+            fPolice: ["张飞", "刘亚传"],
+            arriveTime: "2023-03-05 10:23:12",
+            checkCase: "已到场",
+            checker: "张启",
+            createOperator: "雷峰威",
+            createTime: "2023-03-05",
+            updateOperator: "张海平",
+            updateTime: "2023-02-05",
+            status: 0
+        },
+        {
+            id: "311353",
+            checkTime: "2023-03-07",
+            code: "244553",
+            position: "水渡口大道与环宇路交叉口",
+            team: "863二组",
+            mPolice: "左福银",
+            fPolice: ["李联", "徐强", "左毅"],
+            arriveTime: "2023-03-07 10:02:02",
+            checkCase: "已到场",
+            checker: "廖家金",
+            createOperator: "金传富",
+            createTime: "2023-03-07",
+            updateOperator: "留爱军",
+            updateTime: "2023-02-07",
+            status: 0
+        },
+        {
+            id: "125315",
+            checkTime: "2023-03-08",
+            code: "894446",
+            position: "小马影城1东",
+            team: "863一组",
+            mPolice: "吴金超",
+            fPolice: ["张飞", "刘亚传"],
+            arriveTime: "2023-03-05 10:23:12",
+            checkCase: "已到场",
+            checker: "张启",
+            createOperator: "雷峰威",
+            createTime: "2023-03-05",
+            updateOperator: "张海平",
+            updateTime: "2023-02-05",
+            status: 0
+        },
+        {
+            id: "035116",
+            checkTime: "2023-03-05",
+            code: "056031",
+            position: "环宇路与翔宇大道交叉口",
+            team: "866一组",
+            mPolice: "袁凯亮",
+            fPolice: ["李正", "程宣"],
+            arriveTime: "2023-03-08 11:00:25",
+            checkCase: "已到场",
+            checker: "张启",
+            createOperator: "雷峰威",
+            createTime: "2023-03-05",
+            updateOperator: "张海平",
+            updateTime: "2023-02-05",
+            status: 0
+        },
+        {
+            id: "035116",
+            checkTime: "2023-03-12",
+            code: "135658",
+            position: "市检察院",
+            team: "876一组",
+            mPolice: "袁凯亮",
+            fPolice: ["孙卫强", "王正才", "胡小明"],
+            arriveTime: "2023-03-12 09:18:33",
+            checkCase: "已到场",
+            checker: "廖家金",
+            createOperator: "金传富",
+            createTime: "2023-03-12",
+            updateOperator: "左福银",
+            updateTime: "2023-03-12",
+            status: 0
+        }
+    ]
 
     const DutyManageFormItem: React.FC = () => {
         return (
@@ -139,9 +227,10 @@ const DutyManage: React.FC = () => {
             render: (_, e) => {
                 return (
                     <>
-                        {e.mPolice.map(e => {
+                        {/* {e.mPolice.map(e => {
                             return <div key={e.reportUserNo}>{e.userName}</div>
-                        })}
+                        })} */}
+                        {e.mPolice}
                     </>
                 )
             }
@@ -154,9 +243,10 @@ const DutyManage: React.FC = () => {
             render: (_, e) => {
                 return (
                     <>
-                        {e.fPolice.map(e => {
+                        {/* {e.fPolice.map(e => {
                             return <div key={e.reportUserNo}>{e.userName}</div>
-                        })}
+                        })} */}
+                        {e.fPolice}
                     </>
                 )
             }
@@ -229,7 +319,7 @@ const DutyManage: React.FC = () => {
         })
     }
 
-    const [tableData, setTableData] = useState<DataType[]>([])
+    // const [tableData, setTableData] = useState<DataType[]>([])
 
     const getALLPT = () => {
         getAllPoliceTeam({}).then(res => {
@@ -297,7 +387,7 @@ const DutyManage: React.FC = () => {
     }
 
     const [pageNum, setPageNum] = useState(1)
-    const [pageSize, setPageSize] = useState(10)
+    const [pageSize, setPageSize] = useState(5)
     const [total, setTotal] = useState(100)
     const changePg = (pageNum: number, pageSize: number) => {
         setPageNum(pageNum)
@@ -335,39 +425,39 @@ const DutyManage: React.FC = () => {
     }
 
     const search = () => {
-        searchDutyManage({
-            checkEndTime: dayjs(endTime).format("YYYY-MM-DD HH:mm:ss"),
-            checkStartTime: dayjs(startTime).format("YYYY-MM-DD HH:mm:ss"),
-            location: searchPosition,
-            mdutyNo: searchCode,
-            pageNum: 0,
-            pageSize: 0
-        }).then(res => {
-            res &&
-                setTableData(
-                    res.data
-                        ? res.data.voList.map(e => {
-                              return {
-                                  id: e.id,
-                                  code: e.mdutyNo,
-                                  checkTime: e.checkTime,
-                                  position: e.location,
-                                  team: e.teamNo,
-                                  mPolice: e.teamUsers.filter(e => e.userType !== "AUXILIARYPOLICE"),
-                                  fPolice: e.teamUsers.filter(e => e.userType === "AUXILIARYPOLICE"),
-                                  arriveTime: e.toPointTime,
-                                  checkCase: e.checkSituation,
-                                  checker: e.checkUser,
-                                  createOperator: e.createOperator,
-                                  createTime: e.createTime,
-                                  updateOperator: e.updateOperator,
-                                  updateTime: e.updateTime,
-                                  status: e.status
-                              }
-                          })
-                        : []
-                )
-        })
+        // searchDutyManage({
+        //     checkEndTime: dayjs(endTime).format("YYYY-MM-DD HH:mm:ss"),
+        //     checkStartTime: dayjs(startTime).format("YYYY-MM-DD HH:mm:ss"),
+        //     location: searchPosition,
+        //     mdutyNo: searchCode,
+        //     pageNum: 0,
+        //     pageSize: 0
+        // }).then(res => {
+        //     res &&
+        //         setTableData(
+        //             res.data
+        //                 ? res.data.voList.map(e => {
+        //                       return {
+        //                           id: e.id,
+        //                           code: e.mdutyNo,
+        //                           checkTime: e.checkTime,
+        //                           position: e.location,
+        //                           team: e.teamNo,
+        //                           mPolice: e.teamUsers.filter(e => e.userType !== "AUXILIARYPOLICE"),
+        //                           fPolice: e.teamUsers.filter(e => e.userType === "AUXILIARYPOLICE"),
+        //                           arriveTime: e.toPointTime,
+        //                           checkCase: e.checkSituation,
+        //                           checker: e.checkUser,
+        //                           createOperator: e.createOperator,
+        //                           createTime: e.createTime,
+        //                           updateOperator: e.updateOperator,
+        //                           updateTime: e.updateTime,
+        //                           status: e.status
+        //                       }
+        //                   })
+        //                 : []
+        //         )
+        // })
     }
     const reset = () => {
         setSearchCode("")
@@ -380,7 +470,7 @@ const DutyManage: React.FC = () => {
             <AddForm />
             <div className={c("header")}>
                 <div className={Styles["query"]}>
-                    <RangePicker showTime value={[startTime, endTime]} onCalendarChange={rangeChange} />
+                    <RangePicker value={[startTime, endTime]} onCalendarChange={rangeChange} />
                     <div className={c("query-reset")}>
                         <Button onClick={search} className={c("query-btn")}>
                             查询
@@ -390,9 +480,9 @@ const DutyManage: React.FC = () => {
                         </Button>
                     </div>
                 </div>
-                <div className={c("btn-group")}>
+                {/* <div className={c("btn-group")}>
                     <Button className={c("add")} onClick={add}>新增</Button>
-                </div>
+                </div> */}
             </div>
             <Table columns={column} rowKey={e => e.code} dataSource={tableData} pagination={{ onChange: changePg, total, pageSize }} />
         </>

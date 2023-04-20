@@ -1,5 +1,5 @@
 import { Button, message } from "antd"
-import React, { Children, useEffect, useState } from "react"
+import React, { useState } from "react"
 import { Navigate, useSearchParams } from "react-router-dom"
 import { useSession } from "../../store"
 import UsernameIcon from "../../assets/usernameIcon.png"
@@ -7,7 +7,6 @@ import Captcha from "../../assets/Login/Captcha.png"
 import Logo from "../../assets/logo.png"
 import Styles from "./index.module.less"
 import { getCaptcha, login } from "../../api/login"
-import { websocket } from "../../utils/webSocket"
 import useOperates from "../../utils/operates"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
@@ -23,132 +22,133 @@ const Login: React.FC = () => {
     const operates = useOperates()
 
     const submit = () => {
-        login({
-            code: captcha,
-            userNo: userNo
-        }).then(res => {
-            if (res) {
-                sessionStorage.setItem("token", res.data.token)
-                sessionStore.setState({ token: res.data.token })
-                sessionStore.setState({ userId: res.data.userId })
-                if (res.data.user === "superAdmin") {
-                    sessionStore.setState({ userType: res.data.user })
-                    console.log(1);
-                    
-                    return
-                }
-                if (res.data.user instanceof Array) {
-                    sessionStore.setState({
-                        menu: res.data.user.map(e => {
-                            if (e.childList && e.childList.length > 0) {
-                                return {
-                                    name: e.permissionName,
-                                    path: e.permissionPath,
-                                    children: e.childList.map(a => {
-                                        if (a.childList && a.childList.length > 0) {
-                                            return {
-                                                name: a.permissionName,
-                                                path: a.permissionPath,
-                                                children: a.childList.map(b => {
-                                                    if (b.childList && b.childList.length > 0) {
-                                                        return {
-                                                            name: b.permissionName,
-                                                            path: b.permissionPath,
-                                                            children: b.childList.map(c => {
-                                                                if (c.childList && c.childList.length > 0) {
-                                                                    return {
-                                                                        name: c.permissionName,
-                                                                        path: c.permissionPath,
-                                                                        children: c.childList.map(d => {
-                                                                            return {
-                                                                                name: d.permissionName,
-                                                                                path: d.permissionPath
-                                                                            }
-                                                                        })
-                                                                    }
-                                                                }
-                                                                return {
-                                                                    name: c.permissionName,
-                                                                    path: c.permissionPath
-                                                                }
-                                                            })
-                                                        }
-                                                    }
-                                                    return {
-                                                        name: b.permissionName,
-                                                        path: b.permissionPath
-                                                    }
-                                                })
-                                            }
-                                        }
-                                        return {
-                                            name: a.permissionName,
-                                            path: a.permissionPath
-                                        }
-                                    })
-                                }
-                            }
-                            return {
-                                name: e.permissionName,
-                                path: e.permissionPath
-                            }
-                        })
-                    })
-                    operates[0].item = res.data.user.map(e => {
-                        if (e.childList && e.childList.length > 0) {
-                            return {
-                                id: e.id,
-                                permissionName: e.permissionName,
-                                children: e.childList.map(a => {
-                                    if (a.childList && a.childList.length > 0) {
-                                        return {
-                                            id: a.id,
-                                            permissionName: a.permissionName,
-                                            children: a.childList.map(b => {
-                                                if (b.childList && b.childList.length > 0) {
-                                                    return {
-                                                        id: b.id,
-                                                        permissionName: b.permissionName,
-                                                        children: b.childList.map(c => {
-                                                            if (b.childList && b.childList.length > 0) {
-                                                                return {
-                                                                    id: c.id,
-                                                                    permissionName: c.permissionName,
-                                                                    children: c.childList
-                                                                }
-                                                            }
-                                                            return {
-                                                                id: c.id,
-                                                                permissionName: c.permissionName
-                                                            }
-                                                        })
-                                                    }
-                                                }
-                                                return {
-                                                    id: b.id,
-                                                    permissionName: b.permissionName
-                                                }
-                                            })
-                                        }
-                                    }
-                                    return {
-                                        id: a.id,
-                                        permissionName: a.permissionName
-                                    }
-                                })
-                            }
-                        }
-                        return {
-                            id: e.id,
-                            permissionName: e.permissionName
-                        }
-                    })
-                    console.log(2,operates[0].item);
-                    
-                    return
-                }
-            }
-        })
+        sessionStore.setState({ token: "123", userNo: userNo })
+        // login({
+        //     code: captcha,
+        //     userNo: userNo
+        // }).then(res => {
+        //     if (res) {
+        //         sessionStorage.setItem("token", res.data.token)
+        //         sessionStore.setState({ token: res.data.token })
+        //         sessionStore.setState({ userId: res.data.userId })
+        //         if (res.data.user === "superAdmin") {
+        //             sessionStore.setState({ userType: res.data.user })
+        //             console.log(1);
+
+        //             return
+        //         }
+        //         if (res.data.user instanceof Array) {
+        //             sessionStore.setState({
+        //                 menu: res.data.user.map(e => {
+        //                     if (e.childList && e.childList.length > 0) {
+        //                         return {
+        //                             name: e.permissionName,
+        //                             path: e.permissionPath,
+        //                             children: e.childList.map(a => {
+        //                                 if (a.childList && a.childList.length > 0) {
+        //                                     return {
+        //                                         name: a.permissionName,
+        //                                         path: a.permissionPath,
+        //                                         children: a.childList.map(b => {
+        //                                             if (b.childList && b.childList.length > 0) {
+        //                                                 return {
+        //                                                     name: b.permissionName,
+        //                                                     path: b.permissionPath,
+        //                                                     children: b.childList.map(c => {
+        //                                                         if (c.childList && c.childList.length > 0) {
+        //                                                             return {
+        //                                                                 name: c.permissionName,
+        //                                                                 path: c.permissionPath,
+        //                                                                 children: c.childList.map(d => {
+        //                                                                     return {
+        //                                                                         name: d.permissionName,
+        //                                                                         path: d.permissionPath
+        //                                                                     }
+        //                                                                 })
+        //                                                             }
+        //                                                         }
+        //                                                         return {
+        //                                                             name: c.permissionName,
+        //                                                             path: c.permissionPath
+        //                                                         }
+        //                                                     })
+        //                                                 }
+        //                                             }
+        //                                             return {
+        //                                                 name: b.permissionName,
+        //                                                 path: b.permissionPath
+        //                                             }
+        //                                         })
+        //                                     }
+        //                                 }
+        //                                 return {
+        //                                     name: a.permissionName,
+        //                                     path: a.permissionPath
+        //                                 }
+        //                             })
+        //                         }
+        //                     }
+        //                     return {
+        //                         name: e.permissionName,
+        //                         path: e.permissionPath
+        //                     }
+        //                 })
+        //             })
+        //             operates[0].item = res.data.user.map(e => {
+        //                 if (e.childList && e.childList.length > 0) {
+        //                     return {
+        //                         id: e.id,
+        //                         permissionName: e.permissionName,
+        //                         children: e.childList.map(a => {
+        //                             if (a.childList && a.childList.length > 0) {
+        //                                 return {
+        //                                     id: a.id,
+        //                                     permissionName: a.permissionName,
+        //                                     children: a.childList.map(b => {
+        //                                         if (b.childList && b.childList.length > 0) {
+        //                                             return {
+        //                                                 id: b.id,
+        //                                                 permissionName: b.permissionName,
+        //                                                 children: b.childList.map(c => {
+        //                                                     if (b.childList && b.childList.length > 0) {
+        //                                                         return {
+        //                                                             id: c.id,
+        //                                                             permissionName: c.permissionName,
+        //                                                             children: c.childList
+        //                                                         }
+        //                                                     }
+        //                                                     return {
+        //                                                         id: c.id,
+        //                                                         permissionName: c.permissionName
+        //                                                     }
+        //                                                 })
+        //                                             }
+        //                                         }
+        //                                         return {
+        //                                             id: b.id,
+        //                                             permissionName: b.permissionName
+        //                                         }
+        //                                     })
+        //                                 }
+        //                             }
+        //                             return {
+        //                                 id: a.id,
+        //                                 permissionName: a.permissionName
+        //                             }
+        //                         })
+        //                     }
+        //                 }
+        //                 return {
+        //                     id: e.id,
+        //                     permissionName: e.permissionName
+        //                 }
+        //             })
+        //             console.log(2,operates[0].item);
+
+        //             return
+        //         }
+        //     }
+        // })
     }
 
     const [captchaBtnDisable, setCaptchaBtnDisable] = useState(false)
@@ -183,7 +183,7 @@ const Login: React.FC = () => {
     }
 
     return sessionStore.token ? (
-        <Navigate to={from ? decodeURIComponent(from) : "/systemManagement"} replace={true} />
+        <Navigate to={from ? decodeURIComponent(from) : "/"} replace={true} />
     ) : (
         <div className={c("login")}>
             <div className={c("top-part")}></div>

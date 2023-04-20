@@ -1,4 +1,4 @@
-import createStorage from "../utils/storage"
+import createStorage from "../utils/persistentStorage"
 
 export const useLocal = createStorage<Local>(
     {
@@ -13,7 +13,8 @@ export const useSession = createStorage<Session>(
         token: undefined,
         menu: [],
         userType: "",
-        userId: ""
+        userId: "",
+        userNo: ""
     },
     "user",
     "session"

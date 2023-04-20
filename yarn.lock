@@ -934,7 +934,7 @@ dom-align@^1.7.0:
   resolved "https://registry.npmmirror.com/dom-align/-/dom-align-1.12.4.tgz#3503992eb2a7cfcb2ed3b2a6d21e0b9c00d54511"
   integrity sha512-R8LUSEay/68zE5c8/3BDxiTEvgb4xZTF0RKmAHfiEVN3klfIpXfi2/QCoiWPccVQ0J/ZGdz9OjzL4uJEP/MRAw==
 
-easy-zustand@^3.0.0:
+easy-zustand@^3.5.2:
   version "3.5.2"
   resolved "https://registry.npmmirror.com/easy-zustand/-/easy-zustand-3.5.2.tgz#c890a5f0a6cf067cea72096c73c420e7bd0c418d"
   integrity sha512-wVLpSoyLNPjxonrc2ZiE4wCd27c+zfkon2bEz0vMZeQMQORWqAxpfWt0mMlpCxrMFmGaJdtvU5FgG063mvPJRA==

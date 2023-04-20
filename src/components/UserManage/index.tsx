@@ -334,7 +334,6 @@ const UserManage: FC = () => {
                 status: 0
             }).then(() => {
                 search()
-                message.success("更改用户信息成功！")
             })
             editForm.resetFields()
             return
@@ -343,8 +342,6 @@ const UserManage: FC = () => {
         updatePassword({
             newPass: res.confirmPwd,
             userId: selectId
-        }).then(() => {
-            message.success("修改密码成功！")
         })
         pwdChangeForm.resetFields()
     }
