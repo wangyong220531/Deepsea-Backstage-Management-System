@@ -226,8 +226,6 @@ const RoleManage: React.FC = () => {
     ]
 
     const [roleselect, setRoleselect] = useState("")
-    const [assignAccount, setAssignAccount] = useState("")
-    const [assignUnit, setAssignUnit] = useState("")
     const [modalTotal, setModalTotal] = useState(100)
     const [modalPagenum, setModalPagenum] = useState(1)
     const [modalPagesize, setModalPagesize] = useState(5)
@@ -271,7 +269,6 @@ const RoleManage: React.FC = () => {
         const res = await getRolePermission({ roleId: e.id })
         if (res?.data) {
             setTreeChecked(res.data.map(e => e.id))
-            // console.log(treeChecked)
         } else {
             setTreeChecked([])
         }
@@ -312,24 +309,12 @@ const RoleManage: React.FC = () => {
             title: "用户姓名",
             align: "center"
         },
-        // {
-        //     key: "identityCode",
-        //     dataIndex: "identityCode",
-        //     title: "身份证号",
-        //     align: "center"
-        // },
         {
             key: "userNo",
             dataIndex: "userNo",
             title: "警号",
             align: "center"
         },
-        // {
-        //     key: "phone",
-        //     dataIndex: "phone",
-        //     title: "手机号码",
-        //     align: "center"
-        // },
         {
             key: "unitName",
             dataIndex: "unitName",
@@ -396,10 +381,6 @@ const RoleManage: React.FC = () => {
 
     const assignUserReset = () => {
         setModalQueryAccount("")
-        // inputModalAccount.current = ""
-        // setModalPagenum(1)
-        // setModalPagesize(5)
-        // userSearch()
     }
 
     useAsync(() => userSearch(), [modalPagenum, modalPagesize])
@@ -408,13 +389,6 @@ const RoleManage: React.FC = () => {
         setModalPagenum(pageNum)
         setModalPagesize(pageSize)
         setModalQueryAccount("")
-        // userSearch()
-    }
-
-    const modalQuery = (e: any) => {
-        roles[0].acount = e.target.value
-        setModalPagenum(1)
-        setModalPagesize(5)
     }
 
     const [drawShow, setDrawShow] = useState(false)
@@ -574,10 +548,6 @@ const RoleManage: React.FC = () => {
                                     <div className={c("title")}>账号：</div>
                                     <Input placeholder="请输入账号" value={modalQueryAccount} onChange={e => setModalQueryAccount(e.target.value)} />
                                 </div>
-                                {/* <div className={c("query-item")}>
-                                        <div className={c("title")}>单位：</div>
-                                        <Input placeholder="请输入单位" value={assignUnit} onChange={e => setAssignUnit(e.target.value)} />
-                                    </div> */}
                             </div>
                             <div className={c("query-reset")}>
                                 <Button className={c("query-btn")} onClick={assignUserQuery}>
@@ -601,10 +571,6 @@ const RoleManage: React.FC = () => {
                 )}
                 {modalContent === "角色编辑" && (
                     <>
-                        {/* <div className={c("roleName-edit")}>
-                                <div className={c("label")}>角色名称：</div>
-                                <Input placeholder="请输入角色名称" value={editRole.roleName} onChange={e => setEditRole({ id: editRole.id, roleName: e.target.value, status: editRole.status })} />
-                            </div> */}
                         <Form form={editForm}>
                             <Form.Item label="角色名称" name="roleName">
                                 <Input placeholder="请输入角色名称" className={c("form-item-input")} />

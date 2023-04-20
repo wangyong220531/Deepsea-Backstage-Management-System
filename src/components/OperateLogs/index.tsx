@@ -308,14 +308,7 @@ const OperateLogs: FC = () => {
         setPageNum(pageNum)
         setlogPagesize(pageSize)
         setQueryAccount("")
-        // search()
     }
-
-    // const operatePageChange = (pageNum: number, pageSize: number) => {
-    //     setPageNum(pageNum)
-    //     setlogPagesize(pageSize)
-    //     search()
-    // }
 
     const [loginTableData, setTableData] = useState<LoginLog[]>([])
     const [operateTableData, setOperateTableData] = useState<Operate[]>([])

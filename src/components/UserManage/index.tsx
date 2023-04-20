@@ -100,9 +100,6 @@ const UserManage: FC = () => {
                                     编辑
                                 </div>
                             )}
-                            {/* <div className={c("item")} onClick={() => pwdChange(e)}>
-                                密码修改
-                            </div> */}
                             {(operateId === 5 || operateId === 2) && (
                                 <Popconfirm title="确定要删除吗？" onConfirm={() => delConfirm(e)}>
                                     <div className={c("item")}>删除</div>
@@ -143,8 +140,6 @@ const UserManage: FC = () => {
     }
 
     const [unitList, setUnitList] = useState<OptionType[]>([])
-    // const [inputAccount, setInputAccount] = useState("")
-    // const [inputUnit, setInputUnit] = useState("")
     const inputAccount = useRef("")
     const inputUnit = useRef("")
 
@@ -248,7 +243,6 @@ const UserManage: FC = () => {
 
     const edit = (e: TableHead) => {
         setSelectId(e.id)
-        // e.role.roleName === "超级管理员" ? setIsGeneral(false) : setIsGeneral(true)
         setOperateShow(true)
         setModalContent("编辑")
         editForm.setFieldsValue({
@@ -261,13 +255,6 @@ const UserManage: FC = () => {
         })
     }
 
-    // const pwdChange = (e: TableHead) => {
-    //     setSelectId(e.id)
-    //     setModalContent("密码修改")
-    //     seteditAccount(e.account)
-    //     setOperateShow(true)
-    // }
-
     const [tableData, setTableData] = useState<TableHead[]>([])
 
     const [modalContent, setModalContent] = useState<"新增" | "编辑" | "密码修改">("编辑")
@@ -278,8 +265,6 @@ const UserManage: FC = () => {
     const [editForm] = Form.useForm()
 
     const [pwdChangeForm] = Form.useForm()
-
-    // const [isGeneral, setIsGeneral] = useState(true)
 
     const Operate: FC = () => {
         return (
@@ -315,7 +300,6 @@ const UserManage: FC = () => {
                                 <Input className={c("form-item-input")} />
                             </Form.Item>
                             <Form.Item label="单位" name="unitName">
-                                {/* <Select placeholder="请选择单位" options={unitList} className={c("form-item-input")} /> */}
                                 <Input className={c("form-item-input")} disabled />
                             </Form.Item>
                             <Form.Item label="角色" name="role">
@@ -365,13 +349,6 @@ const UserManage: FC = () => {
         pwdChangeForm.resetFields()
     }
 
-    // const addNew = () => {
-    //     setModalContent("新增")
-    //     setIsGeneral(false)
-    //     editForm.resetFields()
-    //     setOperateShow(true)
-    // }
-
     const exportUserInfo = async () => {
         const res = await userInfoExport({})
         if (res) {
@@ -419,11 +396,6 @@ const UserManage: FC = () => {
                     </div>
                 </div>
                 <div className={c("btn-group")}>
-                    {/* <Button className={c("add")} onClick={() => addNew()}>
-                        新增
-                    </Button> */}
-                    {/* <Button>下载模板</Button>
-                    <Button>上传</Button> */}
                     {(operateId === 5 || operateId === 3) && <Button onClick={exportUserInfo}>导出</Button>}
                 </div>
             </div>
