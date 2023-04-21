@@ -28,6 +28,38 @@ interface DataType {
     operate?: ReactNode
 }
 
+
+
+
+
+const EditFormItem: React.FC = () => {
+    return (
+        <>
+            <Form.Item label="编号" name="code">
+                <Input className={c("form-item-input")} disabled={true} />
+            </Form.Item>
+            <Form.Item label="问题" name="question">
+                <Input.TextArea className={c("form-item-input")} />
+            </Form.Item>
+            <Form.Item label="提出人" name="proper">
+                <Input className={c("form-item-input")} disabled={true} />
+            </Form.Item>
+            <Form.Item label="解决思路" name="solution">
+                <Input.TextArea className={c("form-item-input")} />
+            </Form.Item>
+            <Form.Item label="状态" name="status">
+                <Select
+                    className={c("form-item-input")}
+                    options={[
+                        { value: "运行", label: "运行" },
+                        { value: "废弃", label: "废弃" }
+                    ]}
+                />
+            </Form.Item>
+        </>
+    )
+}
+
 const StormThinking: React.FC = () => {
     const column: ColumnsType<DataType> = [
         {
@@ -198,11 +230,16 @@ const StormThinking: React.FC = () => {
         }
     ]
 
-    const edit = (e: DataType) => {
-        setEditOpen(true)
-    }
-
-    const evalSolution = (e: DataType) => {}
+    const evalTypeOpt: OptionType[] = [
+        {
+            value: "模型",
+            label: "模型"
+        },
+        {
+            value: "技战法",
+            label: "技战法"
+        }
+    ]
 
     const data: DataType[] = [
         {
@@ -223,33 +260,19 @@ const StormThinking: React.FC = () => {
         }
     ]
 
-
-
-
-
-
-    
-    const [tabeData, setTabeData] = useState<DataType[]>(data)
+    const [tabeData, setTabeData] = useState<DataType[]>([])
     const [addopen, setaddopen] = useState(false)
+    const [solutionOpen, setSolutionOpen] = useState(false)
+    const [editOpen, setEditOpen] = useState(false)
+    const [pageNum, setPageNum] = useState(1)
+    const [pageSize, setPageSize] = useState(10)
+    const [total, setTotal] = useState(0)
 
-    const STFormItem: React.FC = () => {
-        const [code, setCode] = useState(dayjs().format("YYYYMMDDHHmmss"))
-        const [proposer, setProposer] = useState("徐腾")
-        const [propsalContent, setPropsalContent] = useState("")
-        return (
-            <>
-                <Form.Item label="编号" name="code">
-                    <Input className={c("form-item-input")} value={code} disabled={true} />
-                </Form.Item>
-                <Form.Item label="提出人" name="proper">
-                    <Input className={c("form-item-input")} value={proposer} disabled={true} />
-                </Form.Item>
-                <Form.Item label="问题" name="question">
-                    <Input.TextArea className={c("form-item-input")} placeholder="请输入内容" value={propsalContent} />
-                </Form.Item>
-            </>
-        )
+    const edit = (e: DataType) => {
+        setEditOpen(true)
     }
+
+    const evalSolution = (e: DataType) => {}
 
     const AddForm: React.FC = () => {
         return (
@@ -280,8 +303,40 @@ const StormThinking: React.FC = () => {
         setSolutionOpen(true)
     }
 
-    const [solutionOpen, setSolutionOpen] = useState(false)
+    const EditForm: React.FC = () => {
+        return (
+            <>
+                <Modal title="编辑" open={editOpen} onCancel={() => setEditOpen(false)}>
+                    <Form labelCol={{ span: 6 }}>
+                        <EditFormItem />
+                    </Form>
+                </Modal>
+            </>
+        )
+    }
 
+   
+    const changePg = (pageNum: number, pageSize: number) => {
+        setPageNum(pageNum)
+        setPageSize(pageSize)
+    }
+
+    const STFormItem: React.FC = () => {
+        return (
+            <>
+                <Form.Item label="编号" name="code">
+                    <Input className={c("form-item-input")} disabled={true} />
+                </Form.Item>
+                <Form.Item label="提出人" name="proper">
+                    <Input className={c("form-item-input")} disabled={true} />
+                </Form.Item>
+                <Form.Item label="问题" name="question">
+                    <Input.TextArea className={c("form-item-input")} placeholder="请输入内容" />
+                </Form.Item>
+            </>
+        )
+    }
+    
     const SolutionFormItem: React.FC = () => {
         return (
             <>
@@ -297,7 +352,7 @@ const StormThinking: React.FC = () => {
             </>
         )
     }
-
+    
     const SolutionForm: React.FC = () => {
         return (
             <>
@@ -309,18 +364,7 @@ const StormThinking: React.FC = () => {
             </>
         )
     }
-
-    const evalTypeOpt: OptionType[] = [
-        {
-            value: "模型",
-            label: "模型"
-        },
-        {
-            value: "技战法",
-            label: "技战法"
-        }
-    ]
-
+    
     const EvalFormItem: React.FC = () => {
         return (
             <>
@@ -335,55 +379,6 @@ const StormThinking: React.FC = () => {
                 </Form.Item>
             </>
         )
-    }
-
-    const [editOpen, setEditOpen] = useState(false)
-    const EditFormItem: React.FC = () => {
-        return (
-            <>
-                <Form.Item label="编号" name="code">
-                    <Input className={c("form-item-input")} disabled={true} />
-                </Form.Item>
-                <Form.Item label="问题" name="question">
-                    <Input.TextArea className={c("form-item-input")} />
-                </Form.Item>
-                <Form.Item label="提出人" name="proper">
-                    <Input className={c("form-item-input")} disabled={true} />
-                </Form.Item>
-                <Form.Item label="解决思路" name="solution">
-                    <Input.TextArea className={c("form-item-input")} />
-                </Form.Item>
-                <Form.Item label="状态" name="status">
-                    <Select
-                        className={c("form-item-input")}
-                        options={[
-                            { value: "运行", label: "运行" },
-                            { value: "废弃", label: "废弃" }
-                        ]}
-                    />
-                </Form.Item>
-            </>
-        )
-    }
-
-    const EditForm: React.FC = () => {
-        return (
-            <>
-                <Modal title="编辑" open={editOpen} onCancel={() => setEditOpen(false)}>
-                    <Form labelCol={{ span: 6 }}>
-                        <EditFormItem />
-                    </Form>
-                </Modal>
-            </>
-        )
-    }
-
-    const [pageNum, setPageNum] = useState(1)
-    const [pageSize, setPageSize] = useState(10)
-    const [total, setTotal] = useState(100)
-    const changePg = (pageNum: number, pageSize: number) => {
-        setPageNum(pageNum)
-        setPageSize(pageSize)
     }
 
     return (
@@ -406,7 +401,7 @@ const StormThinking: React.FC = () => {
                 </div>
             </div>
             <Table columns={column} dataSource={tabeData} pagination={{ onChange: changePg, total, pageSize }} />
-            <Modal></Modal>
+            <Modal open={modalOpen}></Modal>
         </>
     )
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import { SettingOutlined } from "@ant-design/icons"
 import { Dropdown, Layout, Menu, MenuProps, message } from "antd"
 import Styles from "./index.module.less"
-import { useLocal, useSession } from "../../store/index"
+import { useSession } from "../../store/index"
 import { Outlet, useLocation, useNavigate } from "react-router-dom"
 import routes, { RouteChild } from "../../routes"
 import { getPng } from "../../utils/index"
@@ -42,12 +42,12 @@ const LayoutFC: React.FC = () => {
                             label: a.name
                         }
                     }
-                    if (a.children && a.children.length > 0 && a.children.find(x => x.children)) {
+                    if (a.children && a.children.length && a.children.find(x => x.children)) {
                         return {
                             key: a.path,
                             label: a.name,
                             children: a.children.map(b => {
-                                if (b.children && b.children.length > 0 && b.children.find(x => x.children)) {
+                                if (b.children && b.children.length && b.children.find(x => x.children)) {
                                     return {
                                         key: b.path,
                                         label: b.name
@@ -105,11 +105,7 @@ const LayoutFC: React.FC = () => {
                 .map(item => getBreak(item))
                 .flat(2) as RouteChild[]
         )
-        if (sessionStorage.getItem("isDeferIP") === "yes") {
-            message.warning("你已在别处登录！")
-            logout()
-        }
-    }, [location, sessionStorage.getItem("isDeferIP")])
+    }, [location])
 
     const BreakMenu: React.FC = () => {
         return (
