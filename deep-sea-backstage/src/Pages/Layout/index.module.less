@@ -1,0 +1,79 @@
+.logout {
+    padding: 12px;
+    font-size: 18px;
+    color: rgb(252, 74, 74);
+}
+
+.header {
+    position: relative;
+    .title {
+        color: white;
+        font-weight: 600;
+        position: absolute;
+        left: 0;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .title-text {
+            font-size: 18px;
+            line-height: 64px;
+            text-align: center;
+        }
+        img {
+            width: 26px;
+            height: 26px;
+            margin: 0 12px;
+        }
+    }
+    .setting {
+        color: white;
+        position: absolute;
+        top: 50%;
+        right: 2%;
+        transform: translateY(-50%);
+        font-size: 200%;
+        cursor: pointer;
+    }
+    .time {
+        font-size: 20px;
+        position: absolute;
+        top: 50%;
+        right: 10%;
+        transform: translateY(-50%);
+        cursor: default;
+    }
+}
+
+.breaks {
+    position: absolute;
+    left: 200px;
+    width: calc(100vw - 200px);
+    font-size: 14px;
+    color: #000000;
+    font-weight: 600;
+    background-color: rgb(255, 255, 255);
+    padding: 20px 0 20px 40px;
+    display: flex;
+    column-gap: 20px;
+    img {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+.content {
+    margin: 74px 24px 24px 24px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+:global {
+    .ant-menu-item-selected {
+        color: #2a58ad !important;
+    }
+    :where(.css-dev-only-do-not-override-1me4733).ant-menu-light .ant-menu-submenu-selected >.ant-menu-submenu-title {
+        color: #2a58ad;
+    }
+}

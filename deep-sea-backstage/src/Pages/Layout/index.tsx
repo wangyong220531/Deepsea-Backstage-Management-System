@@ -25,6 +25,7 @@ const LayoutFC: React.FC = () => {
     const [collapsed, setCollapsed] = useState(false)
     const [showTitle, setShowTitle] = useState(true)
     const [breaks, setBreaks] = useState<RouteChild[] | null>(null)
+    const local = useLocal()
     const session = useSession()
     const navigate = useNavigate()
     const location = useLocation()

@@ -17,7 +17,7 @@ interface DataType {
     proposer: string
     qptime: string
     solution: string
-    smartUnit: string
+    jurisdiction: string
     policeType: string
     ownership: string
     solveTime: string
@@ -105,8 +105,8 @@ const StormThinking: React.FC = () => {
             }
         },
         {
-            key: "smartUnit",
-            dataIndex: "smartUnit",
+            key: "jurisdiction",
+            dataIndex: "jurisdiction",
             title: "智慧单元",
             align: "center"
         },
@@ -200,9 +200,17 @@ const StormThinking: React.FC = () => {
 
     const edit = (e: DataType) => {
         setEditOpen(true)
+        setEditCode(e.code)
+        setEditQuestion(e.question)
+        setEditProposer(e.proposer)
+        setSolution(e.solution)
+        setEditStatus(e.status)
     }
 
-    const evalSolution = (e: DataType) => {}
+    const evalSolution = (e: DataType) => {
+        setEvalOpen(true)
+        setEvalContent(e.status)
+    }
 
     const data: DataType[] = [
         {
@@ -212,8 +220,8 @@ const StormThinking: React.FC = () => {
             proposer: "卜元浩",
             qptime: "2023-03-20",
             solution: "实现三维地图多数据展示,具体包括指挥调度、人像检索、视频播放...",
-            smartUnit: "北京路派出所",
-            policeType: "治安",
+            jurisdiction:"北京路派出所",
+            policeType:"治安",
             ownership: "徐腾",
             solveTime: "2023-03-20",
             type: "模型",
@@ -223,12 +231,6 @@ const StormThinking: React.FC = () => {
         }
     ]
 
-
-
-
-
-
-    
     const [tabeData, setTabeData] = useState<DataType[]>(data)
     const [addopen, setaddopen] = useState(false)
 
@@ -238,14 +240,14 @@ const StormThinking: React.FC = () => {
         const [propsalContent, setPropsalContent] = useState("")
         return (
             <>
-                <Form.Item label="编号" name="code">
-                    <Input className={c("form-item-input")} value={code} disabled={true} />
+                <Form.Item label="编号">
+                    <Input className={Styles["form-item-input"]} value={code} disabled={true} />
                 </Form.Item>
-                <Form.Item label="提出人" name="proper">
-                    <Input className={c("form-item-input")} value={proposer} disabled={true} />
+                <Form.Item label="提出人">
+                    <Input className={Styles["form-item-input"]} value={proposer} disabled={true} />
                 </Form.Item>
-                <Form.Item label="问题" name="question">
-                    <Input.TextArea className={c("form-item-input")} placeholder="请输入内容" value={propsalContent} />
+                <Form.Item label="问题">
+                    <Input.TextArea className={Styles["form-item-input"]} placeholder="请输入内容" value={propsalContent} />
                 </Form.Item>
             </>
         )
@@ -281,18 +283,21 @@ const StormThinking: React.FC = () => {
     }
 
     const [solutionOpen, setSolutionOpen] = useState(false)
+    const [solutionCode, setSolutionCode] = useState(dayjs().format("YYYYMMDDHHmmss"))
+    const [solutionContent, setSolutionContent] = useState("")
+    const [owner, setOwner] = useState("徐腾")
 
     const SolutionFormItem: React.FC = () => {
         return (
             <>
-                <Form.Item label="编号" name="code">
-                    <Input className={c("form-item-input")} disabled={true} />
+                <Form.Item label="编号">
+                    <Input className={Styles["form-item-input"]} value={solutionCode} disabled={true} />
                 </Form.Item>
-                <Form.Item label="解决方案" name="solution">
-                    <Input.TextArea className={c("form-item-input")} placeholder="请输入解决方案" />
+                <Form.Item label="解决方案">
+                    <Input.TextArea className={Styles["form-item-input"]} placeholder="请输入解决方案" value={solutionContent} />
                 </Form.Item>
-                <Form.Item label="产权人" name="owner">
-                    <Input className={c("form-item-input")} disabled={true} />
+                <Form.Item label="产权人">
+                    <Input className={Styles["form-item-input"]} value={owner} disabled={true} />
                 </Form.Item>
             </>
         )
@@ -310,6 +315,10 @@ const StormThinking: React.FC = () => {
         )
     }
 
+    const [evalCode, setEvalCode] = useState(solutionCode)
+    const [evalOpen, setEvalOpen] = useState(false)
+    const [evalContent, setEvalContent] = useState("")
+
     const evalTypeOpt: OptionType[] = [
         {
             value: "模型",
@@ -324,38 +333,55 @@ const StormThinking: React.FC = () => {
     const EvalFormItem: React.FC = () => {
         return (
             <>
-                <Form.Item label="编号" name="code">
-                    <Input className={c("form-item-input")} disabled={true} />
+                <Form.Item label="编号">
+                    <Input className={Styles["form-item-input"]} disabled={true} />
                 </Form.Item>
-                <Form.Item label="评估" name="evaluation">
-                    <Input.TextArea className={c("form-item-input")} placeholder="请输入评估内容" />
+                <Form.Item label="评估">
+                    <Input.TextArea className={Styles["form-item-input"]} placeholder="请输入评估内容" />
                 </Form.Item>
-                <Form.Item label="类型" name="type">
-                    <Select className={c("form-item-input")} options={evalTypeOpt}></Select>
+                <Form.Item label="类型">
+                    <Select className={Styles["form-item-input"]} options={evalTypeOpt}></Select>
                 </Form.Item>
             </>
         )
     }
 
+    const EvalForm: React.FC = () => {
+        return (
+            <>
+                <Modal title="请评估处置方案" open={evalOpen} onCancel={() => setEvalOpen(false)} bodyStyle={{ height: "400px" }}>
+                    <Form labelCol={{ span: 4 }}>
+                        <EvalFormItem />
+                    </Form>
+                </Modal>
+            </>
+        )
+    }
+
     const [editOpen, setEditOpen] = useState(false)
+    const [editCode, setEditCode] = useState("")
+    const [editQuestion, setEditQuestion] = useState("")
+    const [editProposer, setEditProposer] = useState("")
+    const [solution, setSolution] = useState("")
+    const [editStatus, setEditStatus] = useState("")
     const EditFormItem: React.FC = () => {
         return (
             <>
-                <Form.Item label="编号" name="code">
-                    <Input className={c("form-item-input")} disabled={true} />
+                <Form.Item label="编号">
+                    <Input className={Styles["form-item-input"]} disabled={true} />
                 </Form.Item>
-                <Form.Item label="问题" name="question">
-                    <Input.TextArea className={c("form-item-input")} />
+                <Form.Item label="问题">
+                    <Input.TextArea className={Styles["form-item-input"]} />
                 </Form.Item>
-                <Form.Item label="提出人" name="proper">
-                    <Input className={c("form-item-input")} disabled={true} />
+                <Form.Item label="提出人">
+                    <Input className={Styles["form-item-input"]} disabled={true} />
                 </Form.Item>
-                <Form.Item label="解决思路" name="solution">
-                    <Input.TextArea className={c("form-item-input")} />
+                <Form.Item label="解决思路">
+                    <Input.TextArea className={Styles["form-item-input"]} />
                 </Form.Item>
-                <Form.Item label="状态" name="status">
+                <Form.Item label="状态">
                     <Select
-                        className={c("form-item-input")}
+                        className={Styles["form-item-input"]}
                         options={[
                             { value: "运行", label: "运行" },
                             { value: "废弃", label: "废弃" }
@@ -388,6 +414,10 @@ const StormThinking: React.FC = () => {
 
     return (
         <>
+            <AddForm />
+            <SolutionForm />
+            <EvalForm />
+            <EditForm />
             <div className={c("header")}>
                 <div className={c("query")}>
                     <div className={c("inputs")}>
@@ -406,7 +436,6 @@ const StormThinking: React.FC = () => {
                 </div>
             </div>
             <Table columns={column} dataSource={tabeData} pagination={{ onChange: changePg, total, pageSize }} />
-            <Modal></Modal>
         </>
     )
 }
