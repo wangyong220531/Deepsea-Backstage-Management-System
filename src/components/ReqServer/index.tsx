@@ -6,29 +6,13 @@ import { addReqServer, dowloadFile, queryReqServer } from "../../api/reqserver"
 import Styles from "./index.module.less"
 import { FileInput } from "gskj-components"
 import dayjs from "dayjs"
+import { useAsync } from "../../utils/hooks"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
 }
 
 const { RangePicker } = DatePicker
-
-interface DataType {
-    askFile: string
-    askFileName: string
-    askInfo: string
-    askNo: string
-    askTime: string
-    askUser: string
-    remark: string
-    replyFile: string
-    replyFileName: string
-    replyOrNot: 0 | 1
-    respondent: string
-    status: string
-    resAnnex?: ReactNode
-    operate?: ReactNode
-}
 
 const ReqServer: React.FC = () => {
     const isPubReply: OptionType[] = [
@@ -189,7 +173,7 @@ const ReqServer: React.FC = () => {
     const [resFileName, setresFileName] = useState("")
     const [pageNum, setPageNum] = useState(1)
     const [pageSize, setPageSize] = useState(10)
-    const [total, setTotal] = useState(100)
+    const [total, setTotal] = useState(0)
     const [startTime, setStartTime] = useState<dayjs.Dayjs>(dayjs(Date.now() - 2592000000))
     const [endTime, setEndTime] = useState<dayjs.Dayjs>(dayjs(Date.now()))
     const [addOpen, setAddOpen] = useState(false)
@@ -197,8 +181,8 @@ const ReqServer: React.FC = () => {
     const [tableData, setTableData] = useState<QueryReqServer[]>([])
     const [reqStatus, setReqStatus] = useState("是")
 
-    const search = () => {
-        queryReqServer({
+    const search = async () => {
+        const res = await queryReqServer({
             askNo: "",
             askUser: "",
             endTime: endTime.format("YYYY-MM-DD HH:mm:sss"),
@@ -206,13 +190,9 @@ const ReqServer: React.FC = () => {
             startTime: startTime.format("YYYY-MM-DD HH:mm:sss"),
             pageNum: 1,
             pageSize: 10
-        }).then(res => {
-            res && setTableData(res.data.voList)
         })
+        res && setTableData(res.data.voList)
     }
-    useEffect(() => {
-        vegaSelect()
-    }, [])
 
     const downloadReq = (e: string) => {
         dowloadFile({ askId: e, type: 1 })
@@ -239,29 +219,55 @@ const ReqServer: React.FC = () => {
         setPageSize(pageSize)
     }
 
+    const rangeChange = (e: any) => {
+        setStartTime(dayjs(e[0]))
+        setEndTime(dayjs(e[1]))
+    }
+
     const reset = () => {
         setStartTime(dayjs(Date.now() - 2592000000))
         setEndTime(dayjs(Date.now()))
     }
+
+    const add = () => {
+        setAddOpen(true)
+    }
+
+    useAsync(() => search(), [pageNum, pageSize])
 
     return (
         <>
             <div className={c("header")}>
                 <div className={c("query")}>
                     <div className={c("inputs")}>
-                        <RangePicker />
+                        <RangePicker value={[startTime, endTime]} onCalendarChange={rangeChange} />
                     </div>
                     <div className={c("query-reset")}>
-                        <Button className={c("query-btn")} onClick={search}>查询</Button>
-                        <Button className={c("reset-btn")} onClick={reset}>重置</Button>
+                        <Button className={c("query-btn")} onClick={search}>
+                            查询
+                        </Button>
+                        <Button className={c("reset-btn")} onClick={reset}>
+                            重置
+                        </Button>
                     </div>
                 </div>
                 <div className={c("btn-group")}>
-                    <Button className={c("add")}>新增</Button>
+                    <Button className={c("add")} onClick={add}>
+                        新增
+                    </Button>
                 </div>
             </div>
             <Table rowKey={e => e.askTime} columns={column} dataSource={tableData} pagination={{ onChange: changePg, total, pageSize }} />
-            <Modal title="新增" open={addOpen} onCancel={() => setAddOpen(false)} onOk={confirm}>
+            <Modal title="新增" open={addOpen} onCancel={() => setAddOpen(false)} footer={
+                <>
+                    <Button className={c("cancel")} onClick={() => setAddOpen(false)}>
+                        取消
+                    </Button>
+                    <Button className={c("save")} onClick={confirm}>
+                        保存
+                    </Button>
+                </>
+            }>
                 <Form labelCol={{ span: 6 }} form={form}>
                     <ReqServerFormItem />
                 </Form>

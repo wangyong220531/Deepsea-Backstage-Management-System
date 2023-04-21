@@ -81,40 +81,6 @@ const School: React.FC = () => {
         )
     }
 
-    const veguSelect = () => {
-        SearchCampus({
-            communityPolice: "",
-            introduction: "",
-            name: "",
-            remark: "",
-            type: "",
-            pageNum: 1,
-            pageSize: 10
-        }).then(res => {
-            res &&
-                setTableData(
-                    res.data.voList.map(e => {
-                        return {
-                            name: e.name,
-                            type: e.type,
-                            guards: e.securityNum,
-                            scrtyChief: e.securityManageName,
-                            cmntyMP: e.communityPolice,
-                            infrared: e.deviceInfrared,
-                            portrait: e.devicePortrait,
-                            carCard: e.deviceTag,
-                            ETC: e.deviceEtc,
-                            ballMachine: e.deviceBall
-                        }
-                    })
-                )
-        })
-    }
-
-    useEffect(() => {
-        veguSelect()
-    }, [])
-
     const column: ColumnsType<DataType> = [
         {
             key: "name",
@@ -183,22 +149,43 @@ const School: React.FC = () => {
         }
     ]
 
+    const [pageNum, setPageNum] = useState(1)
+    const [pageSize, setPageSize] = useState(10)
+    const [total, setTotal] = useState(0)
+    const [name, setName] = useState("")
+    const [type, setType] = useState("")
     const [tableData, setTableData] = useState<DataType[]>([])
-
     const [addOpen, setAddOpen] = useState(false)
-
     const [form] = Form.useForm()
 
-    const AddForm: React.FC = () => {
-        return (
-            <>
-                <Modal title="新增" open={addOpen} onCancel={() => setAddOpen(false)} onOk={() => addConfirm()}>
-                    <Form labelCol={{ span: 4 }} form={form}>
-                        <SchoolFormItem />
-                    </Form>
-                </Modal>
-            </>
-        )
+    const search = async () => {
+        const res = await SearchCampus({
+            communityPolice: "",
+            introduction: "",
+            name,
+            remark: "",
+            type,
+            pageNum,
+            pageSize
+        })
+        res &&
+            (setTableData(
+                res.data.voList.map(e => {
+                    return {
+                        name: e.name,
+                        type: e.type,
+                        guards: e.securityNum,
+                        scrtyChief: e.securityManageName,
+                        cmntyMP: e.communityPolice,
+                        infrared: e.deviceInfrared,
+                        portrait: e.devicePortrait,
+                        carCard: e.deviceTag,
+                        ETC: e.deviceEtc,
+                        ballMachine: e.deviceBall
+                    }
+                })
+            ),
+            setTotal(res.data.size))
     }
 
     const addConfirm = async () => {
@@ -219,100 +206,63 @@ const School: React.FC = () => {
         })
     }
 
-    const [pageNum, setPageNum] = useState(1)
-    const [pageSize, setPageSize] = useState(10)
-    const [total, setTotal] = useState(100)
     const changePg = (pageNum: number, pageSize: number) => {
         setPageNum(pageNum)
         setPageSize(pageSize)
-        SearchCampus({
-            communityPolice: "",
-            introduction: "",
-            name: "",
-            remark: "",
-            type: "",
-            pageNum,
-            pageSize
-        }).then(res => {
-            res &&
-                setTableData(
-                    res.data.voList.map(e => {
-                        return {
-                            name: e.name,
-                            type: e.type,
-                            guards: e.securityNum,
-                            scrtyChief: "",
-                            cmntyMP: e.communityPolice,
-                            infrared: e.deviceInfrared,
-                            portrait: e.devicePortrait,
-                            carCard: e.deviceTag,
-                            ETC: e.deviceEtc,
-                            ballMachine: e.deviceBall
-                        }
-                    })
-                )
-        })
     }
-
-    const [nameInputed, setNameInputed] = useState("")
-    const [typeSelected, setTypeSelected] = useState("")
 
     const nameInput = (e: any) => {
-        setNameInputed(e.target.value)
-    }
-    const typeSelect = (e: string) => {
-        setTypeSelected(e)
+        setName(e.target.value)
     }
 
-    const search = () => {
-        SearchCampus({
-            communityPolice: "",
-            introduction: "",
-            name: nameInputed,
-            remark: "",
-            type: typeSelected,
-            pageNum: 1,
-            pageSize: 10
-        }).then(res => {
-            res &&
-                setTableData(
-                    res.data.voList.map(e => {
-                        return {
-                            name: e.name,
-                            type: e.type,
-                            guards: e.securityNum,
-                            scrtyChief: "",
-                            cmntyMP: e.communityPolice,
-                            infrared: e.deviceInfrared,
-                            portrait: e.devicePortrait,
-                            carCard: e.deviceTag,
-                            ETC: e.deviceEtc,
-                            ballMachine: e.deviceBall
-                        }
-                    })
-                )
-        })
+    const typeSelect = (e: string) => {
+        setType(e)
+    }
+
+    const reset = () => {
+        setName("")
+        setType("")
     }
 
     return (
         <>
-            <AddForm />
             <div className={c("header")}>
                 <div className={c("query")}>
                     <div className={c("inputs")}>
-                        <Input placeholder="请输入学校名称" onChange={nameInput} />
+                        <Input placeholder="请输入学校名称" value={name} onChange={nameInput} />
                         <Select placeholder="请选择类型" options={schoolType} onSelect={typeSelect} />
                     </div>
                     <div className={c("query-reset")}>
-                        <Button className={c("query-btn")}>查询</Button>
-                        <Button className={c("reset-btn")}>重置</Button>
+                        <Button className={c("query-btn")} onClick={search}>
+                            查询
+                        </Button>
+                        <Button className={c("reset-btn")} onClick={reset}>
+                            重置
+                        </Button>
                     </div>
                 </div>
                 <div className={c("btn-group")}>
-                    <Button className={c("add")}>新增</Button>
+                    <Button className={c("add")} onClick={() => setAddOpen(true)}>
+                        新增
+                    </Button>
                 </div>
             </div>
             <Table columns={column} dataSource={tableData} pagination={{ onChange: changePg, total, pageSize }} />
+            <Modal title="新增" open={addOpen} onCancel={() => setAddOpen(false)} 
+            footer={
+                <>
+                    <Button className={c("cancel")} onClick={() => setAddOpen(false)}>
+                        取消
+                    </Button>
+                    <Button className={c("save")} onClick={addConfirm}>
+                        保存
+                    </Button>
+                </>
+            }>
+                <Form labelCol={{ span: 4 }} form={form}>
+                    <SchoolFormItem />
+                </Form>
+            </Modal>
         </>
     )
 }

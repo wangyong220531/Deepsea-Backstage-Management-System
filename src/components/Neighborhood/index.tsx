@@ -3,6 +3,8 @@ import type { ColumnsType } from "antd/es/table"
 import { useEffect, useState } from "react"
 import { getAllNeighbor } from "../../api/smartUnit"
 import Styles from "./index.module.less"
+import { useAsync } from "../../utils/hooks"
+import dayjs from "dayjs"
 
 const { RangePicker } = DatePicker
 
@@ -75,44 +77,6 @@ const NeighbFormItem: React.FC = () => {
 }
 
 const Neighborhood: React.FC = () => {
-    const vegaSelect = () => {
-        getAllNeighbor({
-            jurisdiction: "",
-            name: "",
-            pageNum: 0,
-            pageSize: 0,
-            plId: "",
-            societyName: "",
-            status: ""
-        }).then(res => {
-            res &&
-                setTableData(
-                    res.data.list.map(e => {
-                        return {
-                            neibName: e.name,
-                            infrared: e.deviceInfrared,
-                            portrait: e.devicePortrait,
-                            carCard: e.deviceTag,
-                            ETC: e.deviceEtc,
-                            ballMachine: e.deviceBall,
-                            address: e.addressAmount,
-                            residentPpl: e.dailyLivePopulation,
-                            migration: e.flowLivePopulation,
-                            keyPpl: e.importPopulation,
-                            keyFocus: e.focusPopulation,
-                            jurisdiction: e.jurisdiction,
-                            community: "",
-                            cmtyPolice: e.societyPoliceman
-                        }
-                    })
-                )
-        })
-    }
-
-    useEffect(() => {
-        vegaSelect()
-    }, [])
-
     const column: ColumnsType<DataType> = [
         {
             key: "neibName",
@@ -210,52 +174,106 @@ const Neighborhood: React.FC = () => {
         }
     ]
 
-    const [tableData, setTableData] = useState<DataType[]>([])
-
-    const [addOpen, setaddOpen] = useState(false)
-
-    const AddForm: React.FC = () => {
-        return (
-            <>
-                <Modal title="新增" open={addOpen} onCancel={() => setaddOpen(false)} bodyStyle={{ height: "400px", overflowY: "scroll" }}>
-                    <Form labelCol={{ span: 6 }}>
-                        <NeighbFormItem />
-                    </Form>
-                </Modal>
-            </>
-        )
-    }
-
-    const add = () => {
-        setaddOpen(true)
-    }
-
     const [pageNum, setPageNum] = useState(1)
     const [pageSize, setPageSize] = useState(10)
-    const [total, setTotal] = useState(100)
+    const [total, setTotal] = useState(0)
+    const [startTime, setStartTime] = useState<dayjs.Dayjs | null>(dayjs(Date.now() - 2592000000))
+    const [endTime, setEndTime] = useState<dayjs.Dayjs | null>(dayjs(Date.now()))
+    const [tableData, setTableData] = useState<DataType[]>([])
+    const [addOpen, setaddOpen] = useState(false)
+
+    const search = async () => {
+        const res = await getAllNeighbor({
+            jurisdiction: "",
+            name: "",
+            pageNum,
+            pageSize,
+            plId: "",
+            societyName: "",
+            status: ""
+        })
+        res &&
+            (setTableData(
+                res.data.list.map(e => {
+                    return {
+                        neibName: e.name,
+                        infrared: e.deviceInfrared,
+                        portrait: e.devicePortrait,
+                        carCard: e.deviceTag,
+                        ETC: e.deviceEtc,
+                        ballMachine: e.deviceBall,
+                        address: e.addressAmount,
+                        residentPpl: e.dailyLivePopulation,
+                        migration: e.flowLivePopulation,
+                        keyPpl: e.importPopulation,
+                        keyFocus: e.focusPopulation,
+                        jurisdiction: e.jurisdiction,
+                        community: "",
+                        cmtyPolice: e.societyPoliceman
+                    }
+                })
+            ),
+            setTotal(res.data.total))
+    }
+
+    const rangeChange = (e: any) => {
+        setStartTime(dayjs(e[0]))
+        setEndTime(dayjs(e[1]))
+    }
+
     const changePg = (pageNum: number, pageSize: number) => {
         setPageNum(pageNum)
         setPageSize(pageSize)
     }
 
+    const reset = () => {
+        setStartTime(dayjs(Date.now()))
+        setEndTime(dayjs(Date.now() - 2592000000))
+    }
+
+    const save = () => {
+        
+    }
+
+    useAsync(() => search(), [pageNum, pageSize])
+
     return (
         <>
-            <AddForm />
             <div className={c("header")}>
                 <div className={c("query")}>
                     <div className={c("inputs")}>
-                        <RangePicker />
+                        <RangePicker value={[startTime, endTime]} onCalendarChange={rangeChange} />
                     </div>
                     <div className={c("query-reset")}>
-                        <Button className={c("query-btn")}>查询</Button>
-                        <Button className={c("reset-btn")}>重置</Button>
+                        <Button className={c("query-btn")} onClick={search}>
+                            查询
+                        </Button>
+                        <Button className={c("reset-btn")} onClick={reset}>
+                            重置
+                        </Button>
                     </div>
                 </div>
                 <div className={c("btn-group")}>
-                    <Button className={c("add")}>新增</Button>
+                    <Button className={c("add")} onClick={() => setaddOpen(true)}>
+                        新增
+                    </Button>
                 </div>
             </div>
             <Table columns={column} dataSource={tableData} pagination={{ onChange: changePg, total, pageSize }} />
+            <Modal title="新增" open={addOpen} onCancel={() => setaddOpen(false)} bodyStyle={{ height: "400px", overflowY: "scroll" }} footer={
+                <>
+                    <Button className={c("cancel")} onClick={() => setaddOpen(false)}>
+                        取消
+                    </Button>
+                    <Button className={c("save")} onClick={save}>
+                        保存
+                    </Button>
+                </>
+            }>
+                <Form labelCol={{ span: 6 }}>
+                    <NeighbFormItem />
+                </Form>
+            </Modal>
         </>
     )
 }

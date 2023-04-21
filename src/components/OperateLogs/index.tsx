@@ -22,23 +22,13 @@ interface OperationType {
 }
 
 const OperateLogs: FC = () => {
-    const onChange = (key: string) => {
-        setPageNum(1)
-        setlogPagesize(10)
-        setQueryAccount("")
-        key === "2" ? setTabActived("操作日志") : setTabActived("登录日志")
-    }
-
     const [pageNum, setPageNum] = useState(1)
     const [logPagesize, setlogPagesize] = useState(10)
     const [logTotal, setLogTotal] = useState(100)
-
     const [tabActived, setTabActived] = useState<"登录日志" | "操作日志">("登录日志")
-
     const [queryAccount, setQueryAccount] = useState("")
     const [startTime, setStartTime] = useState<dayjs.Dayjs | null>(dayjs(Date.now() - 2592000000))
     const [endTime, setEndTime] = useState<dayjs.Dayjs | null>(dayjs(Date.now()))
-
     const operates = useOperates()
     const sessionStore = useSession()
     const [operateId, setOperateId] = useState<0 | 1 | 2 | 5>(0)
@@ -66,27 +56,7 @@ const OperateLogs: FC = () => {
                     })
                 ),
                 setLogTotal(res.data.total))
-            if (sessionStore.userType === "superAdmin") {
-                setOperateId(5)
-            }
-            if (
-                operates[0].item
-                    .find(e => e.permissionName === "系统管理")
-                    ?.children?.find(e => e.permissionName === "日志")
-                    ?.children?.find(e => e.permissionName === "登录日志")
-                    ?.children?.find(e => e.permissionName === "导出")
-            ) {
-                setOperateId(1)
-            }
-            if (
-                operates[0].item
-                    .find(e => e.permissionName === "系统管理")
-                    ?.children?.find(e => e.permissionName === "日志")
-                    ?.children?.find(e => e.permissionName === "操作日志")
-                    ?.children?.find(e => e.permissionName === "导出")
-            ) {
-                setOperateId(2)
-            }
+            judge()
             return
         }
         const res = await searchOperateLog({
@@ -111,7 +81,10 @@ const OperateLogs: FC = () => {
                 })
             ),
             setLogTotal(res.data.total))
+        judge()
+    }
 
+    const judge = () => {
         if (sessionStore.userType === "superAdmin") {
             setOperateId(5)
         }
@@ -135,11 +108,16 @@ const OperateLogs: FC = () => {
         }
     }
 
+    const onChange = (key: string) => {
+        setPageNum(1)
+        setlogPagesize(10)
+        setQueryAccount("")
+        key === "2" ? setTabActived("操作日志") : setTabActived("登录日志")
+    }
+
     const rangeChange = (e: any) => {
-        if (e[0] && e[1]) {
-            setStartTime(dayjs(e[0].$d))
-            setEndTime(dayjs(e[1].$d))
-        }
+        setStartTime(dayjs(e[0]))
+        setEndTime(dayjs(e[1]))
     }
 
     const query = () => {
