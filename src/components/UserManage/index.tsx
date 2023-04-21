@@ -256,73 +256,11 @@ const UserManage: FC = () => {
     }
 
     const [tableData, setTableData] = useState<TableHead[]>([])
-
     const [modalContent, setModalContent] = useState<"新增" | "编辑" | "密码修改">("编辑")
     const [operateShow, setOperateShow] = useState(false)
-
     const [editAccount, seteditAccount] = useState("")
-
     const [editForm] = Form.useForm()
-
     const [pwdChangeForm] = Form.useForm()
-
-    const Operate: FC = () => {
-        return (
-            <>
-                <Modal
-                    title={modalContent}
-                    open={operateShow}
-                    onOk={() => setOperateShow(false)}
-                    onCancel={() => setOperateShow(false)}
-                    footer={
-                        <>
-                            <Button className={c("cancel")} onClick={() => setOperateShow(false)}>
-                                取消
-                            </Button>
-                            <Button className={c("save")} onClick={save}>
-                                保存
-                            </Button>
-                        </>
-                    }
-                >
-                    {modalContent === "新增" || modalContent === "编辑" ? (
-                        <Form labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} form={editForm}>
-                            <Form.Item label="用户账号" name="account">
-                                <Input className={c("form-item-input")} disabled addonAfter="同警号" />
-                            </Form.Item>
-                            <Form.Item label="用户姓名" name="userName">
-                                <Input className={c("form-item-input")} disabled />
-                            </Form.Item>
-                            <Form.Item label="警号" name="userNo">
-                                <Input className={c("form-item-input")} disabled />
-                            </Form.Item>
-                            <Form.Item label="手机号" name="phone">
-                                <Input className={c("form-item-input")} />
-                            </Form.Item>
-                            <Form.Item label="单位" name="unitName">
-                                <Input className={c("form-item-input")} disabled />
-                            </Form.Item>
-                            <Form.Item label="角色" name="role">
-                                <Input className={c("form-item-input")} disabled />
-                            </Form.Item>
-                        </Form>
-                    ) : (
-                        <Form labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} form={pwdChangeForm}>
-                            <Form.Item label="账号">
-                                <Input value={editAccount} disabled className={c("form-item-input")} />
-                            </Form.Item>
-                            <Form.Item label="密码" name="password" rules={[{ required: true, message: "请输入密码!" }]}>
-                                <Input className={c("form-item-input")} />
-                            </Form.Item>
-                            <Form.Item label="再次输入" name="confirmPwd" rules={[{ required: true, message: "请再次确认!" }]}>
-                                <Input className={c("form-item-input")} />
-                            </Form.Item>
-                        </Form>
-                    )}
-                </Modal>
-            </>
-        )
-    }
 
     const save = async () => {
         setOperateShow(false)
@@ -392,12 +330,60 @@ const UserManage: FC = () => {
                         </Button>
                     </div>
                 </div>
-                <div className={c("btn-group")}>
-                    {(operateId === 5 || operateId === 3) && <Button onClick={exportUserInfo}>导出</Button>}
-                </div>
+                <div className={c("btn-group")}>{(operateId === 5 || operateId === 3) && <Button onClick={exportUserInfo}>导出</Button>}</div>
             </div>
             <Table rowKey={e => e.account} columns={columns} dataSource={tableData} pagination={{ onChange: changePage, total, pageSize }} />
-            <Operate />
+            <Modal
+                title={modalContent}
+                open={operateShow}
+                onOk={() => setOperateShow(false)}
+                onCancel={() => setOperateShow(false)}
+                footer={
+                    <>
+                        <Button className={c("cancel")} onClick={() => setOperateShow(false)}>
+                            取消
+                        </Button>
+                        <Button className={c("save")} onClick={save}>
+                            保存
+                        </Button>
+                    </>
+                }
+            >
+                {modalContent === "新增" || modalContent === "编辑" ? (
+                    <Form labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} form={editForm}>
+                        <Form.Item label="用户账号" name="account">
+                            <Input className={c("form-item-input")} disabled addonAfter="同警号" />
+                        </Form.Item>
+                        <Form.Item label="用户姓名" name="userName">
+                            <Input className={c("form-item-input")} disabled />
+                        </Form.Item>
+                        <Form.Item label="警号" name="userNo">
+                            <Input className={c("form-item-input")} disabled />
+                        </Form.Item>
+                        <Form.Item label="手机号" name="phone">
+                            <Input className={c("form-item-input")} />
+                        </Form.Item>
+                        <Form.Item label="单位" name="unitName">
+                            <Input className={c("form-item-input")} disabled />
+                        </Form.Item>
+                        <Form.Item label="角色" name="role">
+                            <Input className={c("form-item-input")} disabled />
+                        </Form.Item>
+                    </Form>
+                ) : (
+                    <Form labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} form={pwdChangeForm}>
+                        <Form.Item label="账号">
+                            <Input value={editAccount} disabled className={c("form-item-input")} />
+                        </Form.Item>
+                        <Form.Item label="密码" name="password" rules={[{ required: true, message: "请输入密码!" }]}>
+                            <Input className={c("form-item-input")} />
+                        </Form.Item>
+                        <Form.Item label="再次输入" name="confirmPwd" rules={[{ required: true, message: "请再次确认!" }]}>
+                            <Input className={c("form-item-input")} />
+                        </Form.Item>
+                    </Form>
+                )}
+            </Modal>
         </>
     )
 }

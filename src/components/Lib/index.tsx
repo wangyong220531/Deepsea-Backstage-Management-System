@@ -1,9 +1,10 @@
 import { Table, Button, DatePicker, Select, Tooltip, Tabs, TabsProps } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import { getAllPS } from "../../api/command"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import dayjs from "dayjs"
 import Styles from "./index.module.less"
+import { useAsync } from "../../utils/hooks"
 
 const { RangePicker } = DatePicker
 
@@ -206,70 +207,59 @@ const Lib: React.FC = () => {
         }
     ]
 
-    const [activedBtn, setActivedBtn] = useState<"all" | "latest" | "history">("all")
     const [pageNum, setPageNum] = useState(1)
     const [pageSize, setPageSize] = useState(10)
-    const [total, setTotal] = useState(100)
+    const [total, setTotal] = useState(0)
     const [tableData, setTableData] = useState<APSRListItem[]>([])
-    const [startTime, setStartTime] = useState<dayjs.Dayjs | null>(null)
-    const [endTime, setEndTime] = useState<dayjs.Dayjs | null>(null)
-    const [status, setStatus] = useState("")
-    const [queryType, setQueryType] = useState<"NEW" | "HISTORY" | "">("")
-
-    useEffect(() => {
-        search()
-    }, [queryType])
-
-    const showAll = () => {
-        setActivedBtn("all")
-        setQueryType("")
-        search()
-    }
-    const showLatest = () => {
-        setActivedBtn("latest")
-        setQueryType("NEW")
-    }
-    const showHistory = () => {
-        setActivedBtn("history")
-        setQueryType("HISTORY")
-    }
-    const rangeChange = (e: any) => {
-        if (e[0] && e[1]) {
-            setStartTime(dayjs(e[0].$d))
-            setEndTime(dayjs(e[1].$d))
-        }
-    }
-    const statusSelect = (e: any) => {
-        setStatus(e)
-    }
-    const reset = () => {
-        setStartTime(null)
-        setEndTime(null)
-    }
-    const changePg = (pageNum: number, pageSize: number) => {
-        setPageNum(pageNum)
-        setPageSize(pageSize)
-        search()
-    }
+    const [startTime, setStartTime] = useState<dayjs.Dayjs>(dayjs(Date.now() - 2592000000))
+    const [endTime, setEndTime] = useState<dayjs.Dayjs>(dayjs(Date.now()))
+    const [queryType, setQueryType] = useState<"" | "NEW" | "HISTORY">("")
+    const [psStatus, setPsStatus] = useState<string | undefined>(statusOpt[0].label)
 
     const search = async () => {
         const res = await getAllPS({
             pageNum,
             pageSize,
-            psReportTimeStart: dayjs("2023-03-01").unix().toString(),
-            psReportTimeStartEnd: dayjs("2023-03-30").unix().toString(),
-            psStatus: status,
+            psReportTimeStart: startTime.format("YYYY-MM-DD HH:mm:ss"),
+            psReportTimeStartEnd: endTime.format("YYYY-MM-DD HH:mm:ss"),
+            psStatus,
             queryType
         })
-        if (res) {
-            setTableData(res.data.list)
-        }
-        setTableData([{ appointTeamVos: [{ ptPresentTime: "2023-03-06", ptTeamNo: "00001" }], psStatus: "待处置", psNo: "02131", psType: "最新警情", psDiscription: "xxx", psPlace: "淮海路601号", psFirstDispatchTime: "2023-02-05", psSecondDispatchTime: "2023-02-06", psEndTime: "2023-03-06" }])
+        res && (setTableData(res.data.list), setTotal(res.data.total))
     }
 
     const onChange = (key: string) => {
-        console.log(key)
+        if (key === "1") {
+            setQueryType("")
+            return
+        }
+        if (key === "2") {
+            setQueryType("NEW")
+            return
+        }
+        if (key === "3") {
+            setQueryType("HISTORY")
+            return
+        }
     }
+
+    const rangeChange = (e: any) => {
+        setStartTime(dayjs(e[0]))
+        setEndTime(dayjs(e[1]))
+    }
+
+    const changePg = (pageNum: number, pageSize: number) => {
+        setPageNum(pageNum)
+        setPageSize(pageSize)
+    }
+
+    const reset = () => {
+        setStartTime(dayjs(Date.now() - 2592000000))
+        setEndTime(dayjs(Date.now()))
+        setPsStatus("全部")
+    }
+
+    useAsync(() => search(), [pageNum, pageSize, queryType])
 
     return (
         <>
@@ -278,10 +268,10 @@ const Lib: React.FC = () => {
                     <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
                 </div>
                 <div className={c("query")}>
-                    {(activedBtn === "all" || activedBtn === "history") && (
+                    {(queryType === "" || queryType === "HISTORY") && (
                         <>
                             <div className={c("selector")}>
-                                <Select style={{ width: "120px" }} options={statusOpt} defaultValue={statusOpt[0]} onSelect={statusSelect} />
+                                <Select style={{ width: "120px" }} options={statusOpt} value={psStatus} onChange={e => setPsStatus(statusOpt.find(x => x.value === e)?.label)} />
                             </div>
                         </>
                     )}

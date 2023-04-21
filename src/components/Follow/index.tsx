@@ -1,11 +1,12 @@
 import { Button, DatePicker, Table, Tabs } from "antd"
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import type { ColumnsType } from "antd/es/table"
 import type { TabsProps } from "antd"
 import { ReactNode } from "react"
 import { forceFollowList, caseFollowList } from "../../api/command"
 import Styles from "./index.module.less"
 import dayjs from "dayjs"
+import { useAsync } from "../../utils/hooks"
 
 const { RangePicker } = DatePicker
 
@@ -158,10 +159,6 @@ const Follow: React.FC = () => {
         }
     ]
 
-    const onChange = (key: string) => {
-        console.log(key)
-    }
-
     const items: TabsProps["items"] = [
         {
             key: "1",
@@ -173,49 +170,40 @@ const Follow: React.FC = () => {
         }
     ]
 
-    const [pageNum, setPageNum] = useState(0)
-    const [pageSize, setPageSize] = useState(0)
-    const [total, setTotal] = useState(0)
-
-    const foreSearch = () => {
-        forceFollowList({
-            pageNum,
-            pageSize,
-            sortType: "",
-            teamNo: "",
-            teamStatus: ""
-        }).then(res => {
-            res && setForceData(res.data.myFollowUpAppointTeamVos)
-        })
-    }
-    const caseSearch = () => {
-        caseFollowList({
-            endTime: "",
-            pageNum,
-            pageSize,
-            psStatus: "",
-            startTime: ""
-        }).then(res => {
-            res && setCaseData(res.data.situtationVos)
-        })
-    }
-    useEffect(() => {
-        foreSearch()
-    }, [])
-
     const [table, setTable] = useState<0 | 1>(0)
     const [forceData, setForceData] = useState<ForceType[]>([])
     const [caseData, setCaseData] = useState<CaseType[]>([])
-    const [startTime, setStartTime] = useState<dayjs.Dayjs | null>(null)
-    const [endTime, setEndTime] = useState<dayjs.Dayjs | null>(null)
+    const [startTime, setStartTime] = useState<dayjs.Dayjs>(dayjs(Date.now() - 2592000000))
+    const [endTime, setEndTime] = useState<dayjs.Dayjs>(dayjs(Date.now()))
+    const [pageNum, setPageNum] = useState(1)
+    const [pageSize, setPageSize] = useState(10)
+    const [forceTotal, setForceTotal] = useState(0)
+    const [caseTotal, setCaseTotal] = useState(0)
 
-    const forceClick = () => {
-        setTable(0)
-        caseSearch()
+    const onChange = (key: string) => {
+        key === "1" ? setTable(0) : setTable(1)
     }
 
-    const caseClick = () => {
-        setTable(1)
+    const search = async () => {
+        if (table === 0) {
+            const res = await forceFollowList({
+                pageNum,
+                pageSize,
+                sortType: "",
+                teamNo: "",
+                teamStatus: ""
+            })
+            res && (setForceData(res.data.myFollowUpAppointTeamVos), setForceTotal(res.data.size))
+            return
+        }
+        const res = await caseFollowList({
+            startTime: startTime.format("YYYY-MM-DD HH:mm:ss"),
+            endTime: endTime.format("YYYY-MM-DD HH:mm:ss"),
+            pageNum,
+            pageSize,
+            psStatus: ""
+        })
+        res && (setCaseData(res.data.situtationVos), setCaseTotal(res.data.size))
     }
 
     const changeForcePg = (pageNum: number, pageSize: number) => {
@@ -229,15 +217,16 @@ const Follow: React.FC = () => {
     }
 
     const rangeChange = (e: any) => {
-        if (e[0] && e[1]) {
-            setStartTime(dayjs(e[0].$d))
-            setEndTime(dayjs(e[1].$d))
-        }
+        setStartTime(dayjs(e[0]))
+        setEndTime(dayjs(e[1]))
     }
 
     const reset = () => {
-        // set
+        setStartTime(dayjs(Date.now() - 2592000000))
+        setEndTime(dayjs(Date.now()))
     }
+
+    useAsync(() => search(), [pageNum, pageSize, table])
 
     return (
         <>
@@ -250,14 +239,16 @@ const Follow: React.FC = () => {
                         <RangePicker value={[startTime, endTime]} onCalendarChange={rangeChange} />
                     </div>
                     <div className={c("query-reset")}>
-                        <Button className={c("query-btn")}>查询</Button>
+                        <Button className={c("query-btn")} onClick={search}>
+                            查询
+                        </Button>
                         <Button className={c("reset-btn")} onClick={reset}>
                             重置
                         </Button>
                     </div>
                 </div>
             </div>
-            {table === 0 ? <Table rowKey={e => e.psNo} columns={ForceColumn} dataSource={forceData} pagination={{ onChange: changeForcePg, total, pageSize }} /> : <Table columns={CaseColumn} pagination={{ onChange: changeCasePg, total, pageSize }} />}
+            {table === 0 ? <Table rowKey={e => e.psNo} columns={ForceColumn} dataSource={forceData} pagination={{ onChange: changeForcePg, total: forceTotal, pageSize }} /> : <Table columns={CaseColumn} dataSource={caseData} pagination={{ onChange: changeCasePg, total: caseTotal, pageSize }} />}
         </>
     )
 }

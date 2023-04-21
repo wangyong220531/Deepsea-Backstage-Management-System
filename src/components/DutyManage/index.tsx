@@ -4,6 +4,7 @@ import { getAllKeyPositions, addDutyManage, getAllPoliceTeam, searchDutyManage, 
 import type { ColumnsType } from "antd/lib/table/InternalTable"
 import Styles from "./index.module.less"
 import dayjs from "dayjs"
+import { useAsync } from "../../utils/hooks"
 
 const { RangePicker } = DatePicker
 
@@ -18,8 +19,8 @@ interface DataType {
     checkTime: string
     position: string
     team: string
-    mPolice: string
-    fPolice: string[]
+    mPolice: TeamUser[]
+    fPolice: TeamUser[]
     arriveTime: string
     checkCase: string
     checker: string
@@ -32,139 +33,11 @@ interface DataType {
 }
 
 const DutyManage: React.FC = () => {
-    const vagueSelect = () => {
-        // searchDutyManage({
-        //     checkEndTime: "",
-        //     checkStartTime: "",
-        //     location: "",
-        //     mdutyNo: "",
-        //     pageNum: 1,
-        //     pageSize: 10
-        // }).then(res => {
-        //     res &&
-        //         setTableData(
-        //             res.data
-        //                 ? res.data.voList.map(e => {
-        //                       return {
-        //                           id: e.id,
-        //                           code: e.mdutyNo,
-        //                           checkTime: e.checkTime,
-        //                           position: e.location,
-        //                           team: e.teamNo,
-        //                           mPolice: e.teamUsers.filter(e => e.userType !== "AUXILIARYPOLICE"),
-        //                           fPolice: e.teamUsers.filter(e => e.userType === "AUXILIARYPOLICE"),
-        //                           arriveTime: e.toPointTime,
-        //                           checkCase: e.checkSituation,
-        //                           checker: e.checkUser,
-        //                           createOperator: e.createOperator,
-        //                           createTime: e.createTime,
-        //                           updateOperator: e.updateOperator,
-        //                           updateTime: e.updateTime,
-        //                           status: e.status
-        //                       }
-        //                   })
-        //                 : []
-        //         )
-        // })
-    }
-    useEffect(() => {
-        vagueSelect()
-    }, [])
-    const [position, setPosition] = useState<OptionType[]>([])
-
-    const tableData: DataType[] = [
-        {
-            id: "035116",
-            checkTime: "2023-03-05",
-            code: "056031",
-            position: "环宇路与翔宇大道交叉口",
-            team: "863一组",
-            mPolice: "吴金超",
-            fPolice: ["张飞", "刘亚传"],
-            arriveTime: "2023-03-05 10:23:12",
-            checkCase: "已到场",
-            checker: "张启",
-            createOperator: "雷峰威",
-            createTime: "2023-03-05",
-            updateOperator: "张海平",
-            updateTime: "2023-02-05",
-            status: 0
-        },
-        {
-            id: "311353",
-            checkTime: "2023-03-07",
-            code: "244553",
-            position: "水渡口大道与环宇路交叉口",
-            team: "863二组",
-            mPolice: "左福银",
-            fPolice: ["李联", "徐强", "左毅"],
-            arriveTime: "2023-03-07 10:02:02",
-            checkCase: "已到场",
-            checker: "廖家金",
-            createOperator: "金传富",
-            createTime: "2023-03-07",
-            updateOperator: "留爱军",
-            updateTime: "2023-02-07",
-            status: 0
-        },
-        {
-            id: "125315",
-            checkTime: "2023-03-08",
-            code: "894446",
-            position: "小马影城1东",
-            team: "863一组",
-            mPolice: "吴金超",
-            fPolice: ["张飞", "刘亚传"],
-            arriveTime: "2023-03-05 10:23:12",
-            checkCase: "已到场",
-            checker: "张启",
-            createOperator: "雷峰威",
-            createTime: "2023-03-05",
-            updateOperator: "张海平",
-            updateTime: "2023-02-05",
-            status: 0
-        },
-        {
-            id: "035116",
-            checkTime: "2023-03-05",
-            code: "056031",
-            position: "环宇路与翔宇大道交叉口",
-            team: "866一组",
-            mPolice: "袁凯亮",
-            fPolice: ["李正", "程宣"],
-            arriveTime: "2023-03-08 11:00:25",
-            checkCase: "已到场",
-            checker: "张启",
-            createOperator: "雷峰威",
-            createTime: "2023-03-05",
-            updateOperator: "张海平",
-            updateTime: "2023-02-05",
-            status: 0
-        },
-        {
-            id: "035116",
-            checkTime: "2023-03-12",
-            code: "135658",
-            position: "市检察院",
-            team: "876一组",
-            mPolice: "袁凯亮",
-            fPolice: ["孙卫强", "王正才", "胡小明"],
-            arriveTime: "2023-03-12 09:18:33",
-            checkCase: "已到场",
-            checker: "廖家金",
-            createOperator: "金传富",
-            createTime: "2023-03-12",
-            updateOperator: "左福银",
-            updateTime: "2023-03-12",
-            status: 0
-        }
-    ]
-
     const DutyManageFormItem: React.FC = () => {
         return (
             <>
-                <Form.Item name="code" label="编码">
-                    <Input className={Styles["form-item-input"]} />
+                <Form.Item name="code" label="编号">
+                    <Input className={Styles["form-item-input"]} disabled />
                 </Form.Item>
                 <Form.Item name="checkTime" label="检查时间">
                     <DatePicker showTime placeholder="请选择检查时间" className={Styles["form-item-input"]} />
@@ -185,7 +58,7 @@ const DutyManage: React.FC = () => {
                     <DatePicker showTime placeholder="请选择到点时间" className={Styles["form-item-input"]} />
                 </Form.Item>
                 <Form.Item name="checkCase" label="检查情况">
-                    <Input className={Styles["form-item-input"]} />
+                    <Input.TextArea className={Styles["form-item-input"]} />
                 </Form.Item>
                 <Form.Item name="checker" label="检查人">
                     <Input className={Styles["form-item-input"]} />
@@ -227,10 +100,9 @@ const DutyManage: React.FC = () => {
             render: (_, e) => {
                 return (
                     <>
-                        {/* {e.mPolice.map(e => {
+                        {e.mPolice.map(e => {
                             return <div key={e.reportUserNo}>{e.userName}</div>
-                        })} */}
-                        {e.mPolice}
+                        })}
                     </>
                 )
             }
@@ -243,10 +115,9 @@ const DutyManage: React.FC = () => {
             render: (_, e) => {
                 return (
                     <>
-                        {/* {e.fPolice.map(e => {
+                        {e.fPolice.map(e => {
                             return <div key={e.reportUserNo}>{e.userName}</div>
-                        })} */}
-                        {e.fPolice}
+                        })}
                     </>
                 )
             }
@@ -277,20 +148,96 @@ const DutyManage: React.FC = () => {
             render: (_, e) => {
                 return (
                     <div className={Styles["operate"]}>
-                        <Button type="primary" onClick={() => launch(e)}>
+                        <Button type="primary" className={c("operate-btn")} onClick={() => launch(e)}>
                             启动
                         </Button>
                         <Popconfirm title="确定要删除吗？" onConfirm={() => condirmDel(e)}>
-                            <Button type="primary">删除</Button>
+                            <Button type="primary" className={c("operate-btn")}>
+                                删除
+                            </Button>
                         </Popconfirm>
                     </div>
                 )
             }
         }
     ]
-    const [launchCode, setLaunchCode] = useState("")
-    const launch = (e: DataType) => {
+
+    const [pageNum, setPageNum] = useState(1)
+    const [pageSize, setPageSize] = useState(10)
+    const [total, setTotal] = useState(0)
+    const [startTime, setStartTime] = useState<dayjs.Dayjs>(dayjs(Date.now() - 2592000000))
+    const [endTime, setEndTime] = useState<dayjs.Dayjs>(dayjs(Date.now()))
+    const [form] = Form.useForm()
+    const [addModalOpen, setAddModalOpen] = useState(false)
+    const [policeTeamLIst, setPoliceTeamLIst] = useState<OptionType[]>([])
+    const [position, setPosition] = useState<OptionType[]>([])
+    const [tableData, setTableData] = useState<DataType[]>([])
+
+    const getALLPT = () => {
+        getAllPoliceTeam({}).then(res => {
+            res &&
+                setPoliceTeamLIst(
+                    res.data.map(e => {
+                        return {
+                            value: e.reportTeamNo,
+                            label: e.reportTeamName
+                        }
+                    })
+                )
+        })
+    }
+
+    const getPositions = () => {
+        getAllKeyPositions({}).then(res => {
+            res &&
+                setPosition(
+                    res.data.map(e => {
+                        return {
+                            value: e.address,
+                            label: e.address
+                        }
+                    })
+                )
+        })
+    }
+
+    const search = async () => {
+        const res = await searchDutyManage({
+            checkEndTime: endTime.format("YYYY-MM-DD HH:mm:ss"),
+            checkStartTime: startTime.format("YYYY-MM-DD HH:mm:ss"),
+            location: "",
+            mdutyNo: "",
+            pageNum,
+            pageSize
+        })
+        res &&
+            (setTableData(
+                res.data.voList.map(e => {
+                    return {
+                        id: e.id,
+                        code: e.mdutyNo,
+                        checkTime: e.checkTime,
+                        position: e.location,
+                        team: e.teamNo,
+                        mPolice: e.teamUsers.filter(e => e.userType !== "AUXILIARYPOLICE"),
+                        fPolice: e.teamUsers.filter(e => e.userType === "AUXILIARYPOLICE"),
+                        arriveTime: e.toPointTime,
+                        checkCase: e.checkSituation,
+                        checker: e.checkUser,
+                        createOperator: e.createOperator,
+                        createTime: e.createTime,
+                        updateOperator: e.updateOperator,
+                        updateTime: e.updateTime,
+                        status: e.status
+                    }
+                })
+            ),
+            setTotal(res.data.size))
         getALLPT()
+        getPositions()
+    }
+
+    const launch = (e: DataType) => {
         const tName = policeTeamLIst.find(t => t.value === e.team)?.label
         updateDutyManage({
             checkSituation: e.checkCase,
@@ -308,56 +255,42 @@ const DutyManage: React.FC = () => {
             updateOperator: e.updateOperator,
             updateTime: e.updateTime
         }).then(() => {
-            setLaunchCode(e.code)
+            search()
+        })
+    }
+
+    const rangeChange = (e: any) => {
+        setStartTime(dayjs(e[0]))
+        setEndTime(dayjs(e[1]))
+    }
+
+    const add = () => {
+        setAddModalOpen(true)
+        form.setFieldsValue({
+            code: Date.now()
         })
     }
 
     const condirmDel = (e: DataType) => {
         const id = e.id
         delDutyManage({ id }).then(() => {
-            vagueSelect()
+            search()
         })
     }
 
-    // const [tableData, setTableData] = useState<DataType[]>([])
-
-    const getALLPT = () => {
-        getAllPoliceTeam({}).then(res => {
-            res &&
-                setPoliceTeamLIst(
-                    res.data.map(e => {
-                        return {
-                            value: e.reportTeamNo,
-                            label: e.reportTeamName
-                        }
-                    })
-                )
-        })
+    const reset = () => {
+        setStartTime(dayjs(Date.now() - 2592000000))
+        setEndTime(dayjs(Date.now()))
     }
 
-    const [policeTeamLIst, setPoliceTeamLIst] = useState<OptionType[]>([])
-    const add = () => {
-        setAddModalOpen(true)
-        getAllKeyPositions({}).then(res => {
-            res &&
-                setPosition(
-                    res.data.map(e => {
-                        return {
-                            value: e.address,
-                            label: e.address
-                        }
-                    })
-                )
-        })
-        getALLPT()
+    const changePg = (pageNum: number, pageSize: number) => {
+        setPageNum(pageNum)
+        setPageSize(pageSize)
     }
-
-    const [addModalOpen, setAddModalOpen] = useState(false)
 
     const finish = async () => {
         const res = await form.validateFields()
         const tName = policeTeamLIst.find(t => t.value === res.policeTeam)?.label
-
         addDutyManage({
             checkSituation: res.checkCase,
             checkTime: dayjs(res.checkTime).format("YYYY-MM-DD HH:mm:ss"),
@@ -370,104 +303,14 @@ const DutyManage: React.FC = () => {
         }).then(() => {
             setAddModalOpen(false)
             form.resetFields()
-            vagueSelect()
+            search()
         })
     }
 
-    const [form] = Form.useForm()
+    useAsync(() => search(), [pageNum, pageSize])
 
-    const AddForm: React.FC = () => {
-        return (
-            <Modal title="新增勤务" open={addModalOpen} onCancel={() => setAddModalOpen(false)} onOk={finish}>
-                <Form labelCol={{ span: 4 }} form={form}>
-                    <DutyManageFormItem />
-                </Form>
-            </Modal>
-        )
-    }
-
-    const [pageNum, setPageNum] = useState(1)
-    const [pageSize, setPageSize] = useState(5)
-    const [total, setTotal] = useState(100)
-    const changePg = (pageNum: number, pageSize: number) => {
-        setPageNum(pageNum)
-        setPageSize(pageSize)
-        searchDutyManage({
-            checkEndTime: null,
-            checkStartTime: null,
-            location: "",
-            mdutyNo: "",
-            pageNum,
-            pageSize
-        }).then(() => {
-            vagueSelect()
-        })
-    }
-
-    const [searchCode, setSearchCode] = useState("")
-    const [searchPosition, setSearchPosition] = useState("")
-    const [startTime, setStartTime] = useState<dayjs.Dayjs | null>(dayjs())
-    const [endTime, setEndTime] = useState<dayjs.Dayjs | null>(dayjs())
-
-    const inputCodeChange = (e: any) => {
-        setSearchCode(e.target.value)
-    }
-
-    const inputPositionChange = (e: any) => {
-        setSearchPosition(e.target.value)
-    }
-
-    const rangeChange = (e: any) => {
-        if (e[0] && e[1]) {
-            setStartTime(dayjs(e[0].$d))
-            setEndTime(dayjs(e[1].$d))
-        }
-    }
-
-    const search = () => {
-        // searchDutyManage({
-        //     checkEndTime: dayjs(endTime).format("YYYY-MM-DD HH:mm:ss"),
-        //     checkStartTime: dayjs(startTime).format("YYYY-MM-DD HH:mm:ss"),
-        //     location: searchPosition,
-        //     mdutyNo: searchCode,
-        //     pageNum: 0,
-        //     pageSize: 0
-        // }).then(res => {
-        //     res &&
-        //         setTableData(
-        //             res.data
-        //                 ? res.data.voList.map(e => {
-        //                       return {
-        //                           id: e.id,
-        //                           code: e.mdutyNo,
-        //                           checkTime: e.checkTime,
-        //                           position: e.location,
-        //                           team: e.teamNo,
-        //                           mPolice: e.teamUsers.filter(e => e.userType !== "AUXILIARYPOLICE"),
-        //                           fPolice: e.teamUsers.filter(e => e.userType === "AUXILIARYPOLICE"),
-        //                           arriveTime: e.toPointTime,
-        //                           checkCase: e.checkSituation,
-        //                           checker: e.checkUser,
-        //                           createOperator: e.createOperator,
-        //                           createTime: e.createTime,
-        //                           updateOperator: e.updateOperator,
-        //                           updateTime: e.updateTime,
-        //                           status: e.status
-        //                       }
-        //                   })
-        //                 : []
-        //         )
-        // })
-    }
-    const reset = () => {
-        setSearchCode("")
-        setSearchPosition("")
-        setStartTime(null)
-        setEndTime(null)
-    }
     return (
         <>
-            <AddForm />
             <div className={c("header")}>
                 <div className={Styles["query"]}>
                     <RangePicker value={[startTime, endTime]} onCalendarChange={rangeChange} />
@@ -480,11 +323,32 @@ const DutyManage: React.FC = () => {
                         </Button>
                     </div>
                 </div>
-                {/* <div className={c("btn-group")}>
-                    <Button className={c("add")} onClick={add}>新增</Button>
-                </div> */}
+                <div className={c("btn-group")}>
+                    <Button className={c("add")} onClick={add}>
+                        新增
+                    </Button>
+                </div>
             </div>
             <Table columns={column} rowKey={e => e.code} dataSource={tableData} pagination={{ onChange: changePg, total, pageSize }} />
+            <Modal
+                title="新增勤务"
+                open={addModalOpen}
+                onCancel={() => setAddModalOpen(false)}
+                footer={
+                    <>
+                        <Button className={c("cancel")} onClick={() => setAddModalOpen(false)}>
+                            取消
+                        </Button>
+                        <Button className={c("save")} onClick={finish}>
+                            保存
+                        </Button>
+                    </>
+                }
+            >
+                <Form labelCol={{ span: 4 }} form={form}>
+                    <DutyManageFormItem />
+                </Form>
+            </Modal>
         </>
     )
 }

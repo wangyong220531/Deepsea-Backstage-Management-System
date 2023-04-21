@@ -31,30 +31,6 @@ interface DataType {
 }
 
 const ReqServer: React.FC = () => {
-    const vegaSelect = () => {
-        queryReqServer({
-            askNo: "",
-            askUser: "",
-            endTime: dayjs(Date.now()).format("YYYY-MM-DD HH:mm:sss"),
-            respondent: "",
-            startTime: dayjs(Date.now() - 60 * 60 * 24 * 30 * 1000).format("YYYY-MM-DD HH:mm:sss"),
-            pageNum: 1,
-            pageSize: 10
-        }).then(res => {
-            res && setTableData(res.data.voList)
-        })
-    }
-    useEffect(() => {
-        vegaSelect()
-    }, [])
-
-    const [reqBase64, setReqBase64] = useState<string | undefined | null>("")
-    const [reqFileName, setReqFileName] = useState("")
-    const [resBase64, setResBase64] = useState<string | undefined | null>("")
-    const [resFileName, setresFileName] = useState("")
-
-    const [reqStatus, setReqStatus] = useState("是")
-
     const isPubReply: OptionType[] = [
         {
             value: "是",
@@ -207,23 +183,39 @@ const ReqServer: React.FC = () => {
         }
     ]
 
+    const [reqBase64, setReqBase64] = useState<string | undefined | null>("")
+    const [reqFileName, setReqFileName] = useState("")
+    const [resBase64, setResBase64] = useState<string | undefined | null>("")
+    const [resFileName, setresFileName] = useState("")
+    const [pageNum, setPageNum] = useState(1)
+    const [pageSize, setPageSize] = useState(10)
+    const [total, setTotal] = useState(100)
+    const [startTime, setStartTime] = useState<dayjs.Dayjs>(dayjs(Date.now() - 2592000000))
+    const [endTime, setEndTime] = useState<dayjs.Dayjs>(dayjs(Date.now()))
+    const [addOpen, setAddOpen] = useState(false)
+    const [form] = Form.useForm()
+    const [tableData, setTableData] = useState<QueryReqServer[]>([])
+    const [reqStatus, setReqStatus] = useState("是")
+
+    const search = () => {
+        queryReqServer({
+            askNo: "",
+            askUser: "",
+            endTime: endTime.format("YYYY-MM-DD HH:mm:sss"),
+            respondent: "",
+            startTime: startTime.format("YYYY-MM-DD HH:mm:sss"),
+            pageNum: 1,
+            pageSize: 10
+        }).then(res => {
+            res && setTableData(res.data.voList)
+        })
+    }
+    useEffect(() => {
+        vegaSelect()
+    }, [])
+
     const downloadReq = (e: string) => {
         dowloadFile({ askId: e, type: 1 })
-    }
-    const [addOpen, setAddOpen] = useState(false)
-
-    const [form] = Form.useForm()
-
-    const AddForm: React.FC = () => {
-        return (
-            <>
-                <Modal title="新增" open={addOpen} onCancel={() => setAddOpen(false)} onOk={confirm}>
-                    <Form labelCol={{ span: 6 }} form={form}>
-                        <ReqServerFormItem />
-                    </Form>
-                </Modal>
-            </>
-        )
     }
 
     const confirm = async () => {
@@ -242,30 +234,26 @@ const ReqServer: React.FC = () => {
         }).then(res => {})
     }
 
-    const [pageNum, setPageNum] = useState(1)
-    const [pageSize, setPageSize] = useState(10)
-    const [total, setTotal] = useState(100)
-    const [startTime, setStartTime] = useState<dayjs.Dayjs | null>(null)
-    const [endTime, setEndTime] = useState<dayjs.Dayjs | null>(null)
-
     const changePg = (pageNum: number, pageSize: number) => {
         setPageNum(pageNum)
         setPageSize(pageSize)
     }
 
-    const [tableData, setTableData] = useState<QueryReqServer[]>([])
+    const reset = () => {
+        setStartTime(dayjs(Date.now() - 2592000000))
+        setEndTime(dayjs(Date.now()))
+    }
 
     return (
         <>
-            <AddForm />
             <div className={c("header")}>
                 <div className={c("query")}>
                     <div className={c("inputs")}>
                         <RangePicker />
                     </div>
                     <div className={c("query-reset")}>
-                        <Button className={c("query-btn")}>查询</Button>
-                        <Button className={c("reset-btn")}>重置</Button>
+                        <Button className={c("query-btn")} onClick={search}>查询</Button>
+                        <Button className={c("reset-btn")} onClick={reset}>重置</Button>
                     </div>
                 </div>
                 <div className={c("btn-group")}>
@@ -273,6 +261,11 @@ const ReqServer: React.FC = () => {
                 </div>
             </div>
             <Table rowKey={e => e.askTime} columns={column} dataSource={tableData} pagination={{ onChange: changePg, total, pageSize }} />
+            <Modal title="新增" open={addOpen} onCancel={() => setAddOpen(false)} onOk={confirm}>
+                <Form labelCol={{ span: 6 }} form={form}>
+                    <ReqServerFormItem />
+                </Form>
+            </Modal>
         </>
     )
 }

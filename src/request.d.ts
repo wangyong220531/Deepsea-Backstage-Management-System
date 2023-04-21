@@ -173,10 +173,10 @@ interface SearchMindResult {
 interface QueryAllPS {
     pageNum: number
     pageSize: number
-    psReportTimeStart: string | undefined
-    psReportTimeStartEnd: string | undefined
-    psStatus: string
-    queryType: "NEW" | "HISTORY" | ""
+    psReportTimeStart: string
+    psReportTimeStartEnd: string
+    psStatus: string | undefined
+    queryType: "" | "NEW" | "HISTORY"
 }
 
 interface AllPSResult {
@@ -252,8 +252,8 @@ interface DutyStatisticsData {
     assignPerName: string
     pageNum: number
     pageSize: number
-    totalEndTime: string | undefined
-    totalStartTime: string | undefined
+    totalEndTime: string
+    totalStartTime: string
     type: DSDtype
 }
 

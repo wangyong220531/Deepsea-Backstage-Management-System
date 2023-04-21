@@ -1,8 +1,8 @@
-import { Button, Input, DatePicker, Table, Select, Modal, Form, Tooltip } from "antd"
+import { Button, Input, DatePicker, Table, Select, Modal, Form } from "antd"
 import { ReactNode, useState } from "react"
 import type { ColumnsType } from "antd/es/table"
 import Styles from "./index.module.less"
-import dayjs, { Dayjs } from "dayjs"
+import dayjs from "dayjs"
 import { searchSmartApp } from "../../api/smartApp"
 import { useAsync } from "../../utils/hooks"
 
@@ -282,7 +282,7 @@ const Application: React.FC = () => {
         setEndTime(dayjs(e[1]))
     }
 
-    const [addForm] = ad
+    // const [addForm] = ad
 
     const add = () => {
 
@@ -318,7 +318,7 @@ const Application: React.FC = () => {
             </div>
             <Table columns={column} dataSource={tableData} />
             <Modal title="新增" open={addOpen} onCancel={() => setAddOpen(false)}>
-                <Form labelCol={{ span: 8 }} form={addForm}>
+                <Form labelCol={{ span: 8 }} >
                     <ApplicationFormItem />
                 </Form>
             </Modal>
