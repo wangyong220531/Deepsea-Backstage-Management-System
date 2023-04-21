@@ -817,7 +817,10 @@ interface GetAllDuty {
 
 interface AllDutyResult {
     code: string
-    data: DutyAnalysis[]
+    data: {
+        total: number
+        infoList: DutyAnalysis[]
+    }
     message: string
     success: boolean
     timestamp: string

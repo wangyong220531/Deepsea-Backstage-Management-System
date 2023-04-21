@@ -180,7 +180,8 @@ const Neighborhood: React.FC = () => {
     const [startTime, setStartTime] = useState<dayjs.Dayjs | null>(dayjs(Date.now() - 2592000000))
     const [endTime, setEndTime] = useState<dayjs.Dayjs | null>(dayjs(Date.now()))
     const [tableData, setTableData] = useState<DataType[]>([])
-    const [addOpen, setaddOpen] = useState(false)
+    const [addOpen, setAddOpen] = useState(false)
+    const [addForm] = Form.useForm()
 
     const search = async () => {
         const res = await getAllNeighbor({
@@ -231,8 +232,13 @@ const Neighborhood: React.FC = () => {
         setEndTime(dayjs(Date.now() - 2592000000))
     }
 
-    const save = () => {
-        
+    const addCancel = () => {
+        setAddOpen(false)
+        addForm.resetFields()
+    }
+
+    const save = async () => {
+        const res = await addForm.validateFields()
     }
 
     useAsync(() => search(), [pageNum, pageSize])
@@ -254,23 +260,29 @@ const Neighborhood: React.FC = () => {
                     </div>
                 </div>
                 <div className={c("btn-group")}>
-                    <Button className={c("add")} onClick={() => setaddOpen(true)}>
+                    <Button className={c("add")} onClick={() => setAddOpen(true)}>
                         新增
                     </Button>
                 </div>
             </div>
             <Table columns={column} dataSource={tableData} pagination={{ onChange: changePg, total, pageSize }} />
-            <Modal title="新增" open={addOpen} onCancel={() => setaddOpen(false)} bodyStyle={{ height: "400px", overflowY: "scroll" }} footer={
-                <>
-                    <Button className={c("cancel")} onClick={() => setaddOpen(false)}>
-                        取消
-                    </Button>
-                    <Button className={c("save")} onClick={save}>
-                        保存
-                    </Button>
-                </>
-            }>
-                <Form labelCol={{ span: 6 }}>
+            <Modal
+                title="新增"
+                open={addOpen}
+                onCancel={addCancel}
+                bodyStyle={{ height: "400px", overflowY: "scroll" }}
+                footer={
+                    <>
+                        <Button className={c("cancel")} onClick={addCancel}>
+                            取消
+                        </Button>
+                        <Button className={c("save")} onClick={save}>
+                            保存
+                        </Button>
+                    </>
+                }
+            >
+                <Form labelCol={{ span: 6 }} form={addForm}>
                     <NeighbFormItem />
                 </Form>
             </Modal>

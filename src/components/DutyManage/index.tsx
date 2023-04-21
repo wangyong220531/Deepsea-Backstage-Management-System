@@ -168,7 +168,7 @@ const DutyManage: React.FC = () => {
     const [startTime, setStartTime] = useState<dayjs.Dayjs>(dayjs(Date.now() - 2592000000))
     const [endTime, setEndTime] = useState<dayjs.Dayjs>(dayjs(Date.now()))
     const [form] = Form.useForm()
-    const [addModalOpen, setAddModalOpen] = useState(false)
+    const [addOpen, setAddOpen] = useState(false)
     const [policeTeamLIst, setPoliceTeamLIst] = useState<OptionType[]>([])
     const [position, setPosition] = useState<OptionType[]>([])
     const [tableData, setTableData] = useState<DataType[]>([])
@@ -264,13 +264,6 @@ const DutyManage: React.FC = () => {
         setEndTime(dayjs(e[1]))
     }
 
-    const add = () => {
-        setAddModalOpen(true)
-        form.setFieldsValue({
-            code: Date.now()
-        })
-    }
-
     const condirmDel = (e: DataType) => {
         const id = e.id
         delDutyManage({ id }).then(() => {
@@ -288,7 +281,7 @@ const DutyManage: React.FC = () => {
         setPageSize(pageSize)
     }
 
-    const finish = async () => {
+    const save = async () => {
         const res = await form.validateFields()
         const tName = policeTeamLIst.find(t => t.value === res.policeTeam)?.label
         addDutyManage({
@@ -301,10 +294,22 @@ const DutyManage: React.FC = () => {
             teamNo: res.policeTeam,
             toPointTime: res.arrivalTime
         }).then(() => {
-            setAddModalOpen(false)
+            setAddOpen(false)
             form.resetFields()
             search()
         })
+    }
+
+    const add = () => {
+        setAddOpen(true)
+        form.setFieldsValue({
+            code: Date.now()
+        })
+    }
+
+    const addCancel = () => {
+        setAddOpen(false)
+        form.resetFields()
     }
 
     useAsync(() => search(), [pageNum, pageSize])
@@ -332,14 +337,14 @@ const DutyManage: React.FC = () => {
             <Table columns={column} rowKey={e => e.code} dataSource={tableData} pagination={{ onChange: changePg, total, pageSize }} />
             <Modal
                 title="新增勤务"
-                open={addModalOpen}
-                onCancel={() => setAddModalOpen(false)}
+                open={addOpen}
+                onCancel={addCancel}
                 footer={
                     <>
-                        <Button className={c("cancel")} onClick={() => setAddModalOpen(false)}>
+                        <Button className={c("cancel")} onClick={addCancel}>
                             取消
                         </Button>
-                        <Button className={c("save")} onClick={finish}>
+                        <Button className={c("save")} onClick={save}>
                             保存
                         </Button>
                     </>

@@ -1,7 +1,7 @@
 import createStore from "easy-zustand"
 
 interface Operate {
-    item: Item[]
+    item: PermissionResult[]
 }
 
 interface Item {

@@ -24,7 +24,7 @@ interface OperationType {
 const OperateLogs: FC = () => {
     const [pageNum, setPageNum] = useState(1)
     const [logPagesize, setlogPagesize] = useState(10)
-    const [logTotal, setLogTotal] = useState(100)
+    const [logTotal, setLogTotal] = useState(0)
     const [tabActived, setTabActived] = useState<"登录日志" | "操作日志">("登录日志")
     const [queryAccount, setQueryAccount] = useState("")
     const [startTime, setStartTime] = useState<dayjs.Dayjs | null>(dayjs(Date.now() - 2592000000))
@@ -90,19 +90,19 @@ const OperateLogs: FC = () => {
         }
         if (
             operates[0].item
-                .find(e => e.permissionName === "系统管理")
-                ?.children?.find(e => e.permissionName === "日志")
-                ?.children?.find(e => e.permissionName === "登录日志")
-                ?.children?.find(e => e.permissionName === "导出")
+                .find(e => e.name === "系统管理")
+                ?.children?.find(e => e.name === "日志")
+                ?.children?.find(e => e.name === "登录日志")
+                ?.children?.find(e => e.name === "导出")
         ) {
             setOperateId(1)
         }
         if (
             operates[0].item
-                .find(e => e.permissionName === "系统管理")
-                ?.children?.find(e => e.permissionName === "日志")
-                ?.children?.find(e => e.permissionName === "操作日志")
-                ?.children?.find(e => e.permissionName === "导出")
+                .find(e => e.name === "系统管理")
+                ?.children?.find(e => e.name === "日志")
+                ?.children?.find(e => e.name === "操作日志")
+                ?.children?.find(e => e.name === "导出")
         ) {
             setOperateId(2)
         }

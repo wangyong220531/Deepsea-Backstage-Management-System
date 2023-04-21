@@ -5,7 +5,7 @@ import Styles from "./index.module.less"
 import { useLocal, useSession } from "../../store/index"
 import { Outlet, useLocation, useNavigate } from "react-router-dom"
 import routes, { RouteChild } from "../../routes"
-import { getPng } from "../../utils"
+import { getPng } from "../../utils/index"
 import BreadcrumbIcon from "../../assets/SystemManagement/BreadcrumbIcon.png"
 import { logoutQuery } from "../../api/login"
 
@@ -31,7 +31,7 @@ const LayoutFC: React.FC = () => {
     const location = useLocation()
     const sessionStore = useSession()
 
-    const superAdminMenu: MenuProps["items"] = sessionStore.menu.map((e:PermissionMenu) => {
+    const superAdminMenu: MenuProps["items"] = sessionStore.menu.map(e => {
         if (e.children && e.children.length > 0 && e.children.find(x => x.children)) {
             return {
                 key: e.path,

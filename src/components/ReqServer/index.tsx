@@ -29,17 +29,17 @@ const ReqServer: React.FC = () => {
     const ReqServerFormItem: React.FC = () => {
         return (
             <>
-                <Form.Item name="askNo" label="编码">
-                    <Input className={Styles["form-item-input"]} />
+                <Form.Item name="askNo" label="编号">
+                    <Input className={c("form-item-input")} disabled />
                 </Form.Item>
                 <Form.Item name="askTime" label="时间">
-                    <DatePicker placeholder="请选择时间" className={Styles["form-item-input"]} />
+                    <DatePicker placeholder="请选择时间" className={c("form-item-input")} />
                 </Form.Item>
                 <Form.Item name="askInfo" label="内容">
-                    <Input className={Styles["form-item-input"]} />
+                    <Input.TextArea className={c("form-item-input")} />
                 </Form.Item>
                 <Form.Item name="askUser" label="请求人">
-                    <Input className={Styles["form-item-input"]} />
+                    <Input className={c("form-item-input")} />
                 </Form.Item>
                 <Form.Item label="请求附件">
                     {reqBase64 ? (
@@ -52,13 +52,13 @@ const ReqServer: React.FC = () => {
                     )}
                 </Form.Item>
                 <Form.Item name="status" label="状态">
-                    <Select className={Styles["form-item-input"]} />
+                    <Select className={c("form-item-input")} />
                 </Form.Item>
                 <Form.Item name="replyOrNot" label="是否公开回复">
-                    <Select className={Styles["form-item-input"]} options={isPubReply} value={reqStatus} />
+                    <Select className={c("form-item-input")} defaultValue={isPubReply[0].label} options={isPubReply} value={reqStatus} />
                 </Form.Item>
                 <Form.Item name="respondent" label="回复人">
-                    <Input className={Styles["form-item-input"]} />
+                    <Input className={c("form-item-input")} />
                 </Form.Item>
             </>
         )
@@ -231,6 +231,9 @@ const ReqServer: React.FC = () => {
 
     const add = () => {
         setAddOpen(true)
+        form.setFieldsValue({
+            askNo: Date.now()
+        })
     }
 
     useAsync(() => search(), [pageNum, pageSize])
@@ -258,16 +261,21 @@ const ReqServer: React.FC = () => {
                 </div>
             </div>
             <Table rowKey={e => e.askTime} columns={column} dataSource={tableData} pagination={{ onChange: changePg, total, pageSize }} />
-            <Modal title="新增" open={addOpen} onCancel={() => setAddOpen(false)} footer={
-                <>
-                    <Button className={c("cancel")} onClick={() => setAddOpen(false)}>
-                        取消
-                    </Button>
-                    <Button className={c("save")} onClick={confirm}>
-                        保存
-                    </Button>
-                </>
-            }>
+            <Modal
+                title="新增"
+                open={addOpen}
+                onCancel={() => setAddOpen(false)}
+                footer={
+                    <>
+                        <Button className={c("cancel")} onClick={() => setAddOpen(false)}>
+                            取消
+                        </Button>
+                        <Button className={c("save")} onClick={confirm}>
+                            保存
+                        </Button>
+                    </>
+                }
+            >
                 <Form labelCol={{ span: 6 }} form={form}>
                     <ReqServerFormItem />
                 </Form>

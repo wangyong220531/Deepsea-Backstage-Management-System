@@ -5,25 +5,19 @@ interface Permission {
     children?: Permission[]
 }
 
-interface PermissionResult {
-    name: string
-    path?: string
-    children?: PermissionResult[]
-}
-
 interface TreeNode {
-    key?: string
+    key: string
     title: string
     children?: TreeNode[]
 }
 
-export const handlePermission = (data: Permission[]): PermissionResult[] => {
-    return data.map((e: Permission) => {
-        if (e.children && e.children.length) {
+export const handlePermission = (data: MenuChild[]): PermissionResult[] => {
+    return data.map((e: MenuChild) => {
+        if (e.childList && e.childList.length) {
             return {
                 name: e.permissionName,
                 path: e.permissionPath,
-                children: handlePermission(e.children)
+                children: handlePermission(e.childList)
             }
         }
         return {
@@ -33,29 +27,31 @@ export const handlePermission = (data: Permission[]): PermissionResult[] => {
     })
 }
 
-export const handleOperates = (data: Permission[]): PermissionResult[] => {
-    return data.map((e: Permission) => {
-        if (e.children && e.children.length) {
+export const handleOperates = (data: MenuChild[]): PermissionResult[] => {
+    return data.map((e: MenuChild) => {
+        if (e.childList && e.childList.length) {
             return {
                 id: e.id,
                 name: e.permissionName,
-                children: handleOperates(e.children)
+                path:"",
+                children: handleOperates(e.childList)
             }
         }
         return {
             id: e.id,
-            name: e.permissionName
+            name: e.permissionName,
+            path:""
         }
     })
 }
 
-export const handleTree = (data: Permission[]): TreeNode[] => {
-    return data.map((e: Permission) => {
-        if (e.children && e.children.length) {
+export const handleTree = (data: MenuChild[]): TreeNode[] => {
+    return data.map((e: MenuChild) => {
+        if (e.childList && e.childList.length) {
             return {
                 key: e.id,
                 title: e.permissionName,
-                children: handleTree(e.children)
+                children: handleTree(e.childList)
             }
         }
         return {

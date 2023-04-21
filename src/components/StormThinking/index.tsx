@@ -17,6 +17,8 @@ interface DataType {
     proposer: string
     qptime: string
     solution: string
+    jurisdiction: string
+    policeType: string
     ownership: string
     solveTime: string
     type: string
@@ -103,6 +105,18 @@ const StormThinking: React.FC = () => {
             }
         },
         {
+            key: "jurisdiction",
+            dataIndex: "jurisdiction",
+            title: "智慧单元",
+            align: "center"
+        },
+        {
+            key: "policeType",
+            dataIndex: "policeType",
+            title: "警种",
+            align: "center"
+        },
+        {
             key: "ownership",
             dataIndex: "ownership",
             title: "产权人",
@@ -168,13 +182,13 @@ const StormThinking: React.FC = () => {
                 return (
                     <>
                         <div className={Styles["operate"]}>
-                            <Button type="primary" onClick={() => setSolutionOpen(true)}>
+                            <Button type="primary" className={c("operate-btn")} onClick={() => setSolutionOpen(true)}>
                                 方案
                             </Button>
-                            <Button type="primary" onClick={() => evalSolution(e)}>
+                            <Button type="primary" className={c("operate-btn")} onClick={() => evalSolution(e)}>
                                 评估
                             </Button>
-                            <Button type="primary" onClick={() => edit(e)}>
+                            <Button type="primary" className={c("operate-btn")} onClick={() => edit(e)}>
                                 编辑
                             </Button>
                         </div>
@@ -206,6 +220,8 @@ const StormThinking: React.FC = () => {
             proposer: "卜元浩",
             qptime: "2023-03-20",
             solution: "实现三维地图多数据展示,具体包括指挥调度、人像检索、视频播放...",
+            jurisdiction:"北京路派出所",
+            policeType:"治安",
             ownership: "徐腾",
             solveTime: "2023-03-20",
             type: "模型",
@@ -318,10 +334,10 @@ const StormThinking: React.FC = () => {
         return (
             <>
                 <Form.Item label="编号">
-                    <Input className={Styles["form-item-input"]} value={evalCode} disabled={true} />
+                    <Input className={Styles["form-item-input"]} disabled={true} />
                 </Form.Item>
                 <Form.Item label="评估">
-                    <Input.TextArea className={Styles["form-item-input"]} placeholder="请输入评估内容" value={evalContent} />
+                    <Input.TextArea className={Styles["form-item-input"]} placeholder="请输入评估内容" />
                 </Form.Item>
                 <Form.Item label="类型">
                     <Select className={Styles["form-item-input"]} options={evalTypeOpt}></Select>
@@ -352,21 +368,20 @@ const StormThinking: React.FC = () => {
         return (
             <>
                 <Form.Item label="编号">
-                    <Input className={Styles["form-item-input"]} value={editCode} disabled={true} />
+                    <Input className={Styles["form-item-input"]} disabled={true} />
                 </Form.Item>
                 <Form.Item label="问题">
-                    <Input.TextArea className={Styles["form-item-input"]} value={editQuestion} />
+                    <Input.TextArea className={Styles["form-item-input"]} />
                 </Form.Item>
                 <Form.Item label="提出人">
-                    <Input className={Styles["form-item-input"]} value={editProposer} disabled={true} />
+                    <Input className={Styles["form-item-input"]} disabled={true} />
                 </Form.Item>
                 <Form.Item label="解决思路">
-                    <Input.TextArea className={Styles["form-item-input"]} value={solution} />
+                    <Input.TextArea className={Styles["form-item-input"]} />
                 </Form.Item>
                 <Form.Item label="状态">
                     <Select
                         className={Styles["form-item-input"]}
-                        value={editStatus}
                         options={[
                             { value: "运行", label: "运行" },
                             { value: "废弃", label: "废弃" }
@@ -415,7 +430,9 @@ const StormThinking: React.FC = () => {
                     </div>
                 </div>
                 <div className={c("btn-group")}>
-                    <Button className={c("add")} onClick={() => setaddopen(true)}>新增</Button>
+                    <Button className={c("add")} onClick={() => setaddopen(true)}>
+                        新增
+                    </Button>
                 </div>
             </div>
             <Table columns={column} dataSource={tabeData} pagination={{ onChange: changePg, total, pageSize }} />

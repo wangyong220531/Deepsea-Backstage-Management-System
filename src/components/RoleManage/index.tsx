@@ -11,6 +11,7 @@ import { useSession } from "../../store"
 import { useAsync } from "../../utils/hooks"
 import useRole from "../../store/role"
 import useOperates from "../../utils/operates"
+import { handleTree } from "../../utils/recursive"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -43,60 +44,7 @@ const RoleManage: React.FC = () => {
                     {
                         key: "shenhai",
                         title: "深海后台管理系统",
-                        children: res.data.map(e => {
-                            if (e.childList && e.childList.length > 0) {
-                                return {
-                                    key: e.id,
-                                    title: e.permissionName + e.id,
-                                    children: e.childList.map(a => {
-                                        if (a.childList && a.childList.length > 0) {
-                                            return {
-                                                key: a.id,
-                                                title: a.permissionName + a.id,
-                                                children: a.childList.map(b => {
-                                                    if (b.childList && b.childList.length > 0) {
-                                                        return {
-                                                            key: b.id,
-                                                            title: b.permissionName + b.id,
-                                                            children: b.childList.map(c => {
-                                                                if (c.childList && c.childList.length > 0) {
-                                                                    return {
-                                                                        key: c.id,
-                                                                        title: c.permissionName + c.id,
-                                                                        children: c.childList.map(d => {
-                                                                            return {
-                                                                                key: d.id,
-                                                                                title: d.permissionName + d.id
-                                                                            }
-                                                                        })
-                                                                    }
-                                                                }
-                                                                return {
-                                                                    key: c.id,
-                                                                    title: c.permissionName + c.id
-                                                                }
-                                                            })
-                                                        }
-                                                    }
-                                                    return {
-                                                        key: b.id,
-                                                        title: b.permissionName + b.id
-                                                    }
-                                                })
-                                            }
-                                        }
-                                        return {
-                                            key: a.id,
-                                            title: a.permissionName + a.id
-                                        }
-                                    })
-                                }
-                            }
-                            return {
-                                key: e.id,
-                                title: e.permissionName + e.id
-                            }
-                        })
+                        children:handleTree(res.data)
                     }
                 ])
         })
@@ -127,33 +75,33 @@ const RoleManage: React.FC = () => {
         }
         if (
             operates[0].item
-                .find(e => e.permissionName === "系统管理")
-                ?.children?.find(e => e.permissionName === "角色管理")
-                ?.children?.find(e => e.permissionName === "新增")
+                .find(e => e.name === "系统管理")
+                ?.children?.find(e => e.name === "角色管理")
+                ?.children?.find(e => e.name === "新增")
         ) {
             setOperateId(1)
         }
         if (
             operates[0].item
-                .find(e => e.permissionName === "系统管理")
-                ?.children?.find(e => e.permissionName === "角色管理")
-                ?.children?.find(e => e.permissionName === "编辑")
+                .find(e => e.name === "系统管理")
+                ?.children?.find(e => e.name === "角色管理")
+                ?.children?.find(e => e.name === "编辑")
         ) {
             setOperateId(2)
         }
         if (
             operates[0].item
-                .find(e => e.permissionName === "系统管理")
-                ?.children?.find(e => e.permissionName === "角色管理")
-                ?.children?.find(e => e.permissionName === "授权")
+                .find(e => e.name === "系统管理")
+                ?.children?.find(e => e.name === "角色管理")
+                ?.children?.find(e => e.name === "授权")
         ) {
             setOperateId(3)
         }
         if (
             operates[0].item
-                .find(e => e.permissionName === "系统管理")
-                ?.children?.find(e => e.permissionName === "角色管理")
-                ?.children?.find(e => e.permissionName === "删除")
+                .find(e => e.name === "系统管理")
+                ?.children?.find(e => e.name === "角色管理")
+                ?.children?.find(e => e.name === "删除")
         ) {
             setOperateId(4)
         }
@@ -226,7 +174,7 @@ const RoleManage: React.FC = () => {
     ]
 
     const [roleselect, setRoleselect] = useState("")
-    const [modalTotal, setModalTotal] = useState(100)
+    const [modalTotal, setModalTotal] = useState(0)
     const [modalPagenum, setModalPagenum] = useState(1)
     const [modalPagesize, setModalPagesize] = useState(5)
 

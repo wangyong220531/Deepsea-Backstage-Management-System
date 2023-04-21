@@ -90,7 +90,7 @@ const DutyAnalysis: React.FC = () => {
             pageNum,
             pageSize
         })
-        res && setTableData(res.data)
+        res && (setTableData(res.data.infoList), setTotal(res.data.total))
     }
 
     const changePg = (pageNum: number, pageSize: number) => {

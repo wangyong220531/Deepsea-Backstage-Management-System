@@ -3,14 +3,14 @@ type Local = {
 }
 
 interface PermissionMenu {
-    name: string
-    path: string
+    permissionName: string
+    permissionPath: string
     children?: PermissionMenu[]
 }
 
 type Session = {
     token: string | undefined
-    menu: PermissionMenu[]
+    menu: PermissionResult[]
     userType: string
     userId: string
     userNo: string

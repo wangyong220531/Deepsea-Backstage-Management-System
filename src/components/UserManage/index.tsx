@@ -157,7 +157,7 @@ const UserManage: FC = () => {
         })
     }
 
-    const [total, setTotal] = useState(100)
+    const [total, setTotal] = useState(0)
     const [pageNum, setPageNum] = useState(1)
     const [pageSize, setPageSize] = useState(10)
     const sessionStore = useSession()
@@ -200,25 +200,25 @@ const UserManage: FC = () => {
         }
         if (
             operates[0].item
-                .find(e => e.permissionName === "系统管理")
-                ?.children?.find(e => e.permissionName === "用户管理")
-                ?.children?.find(e => e.permissionName === "编辑")
+                .find(e => e.name === "系统管理")
+                ?.children?.find(e => e.name === "用户管理")
+                ?.children?.find(e => e.name === "编辑")
         ) {
             setOperateId(1)
         }
         if (
             operates[0].item
-                .find(e => e.permissionName === "系统管理")
-                ?.children?.find(e => e.permissionName === "用户管理")
-                ?.children?.find(e => e.permissionName === "删除")
+                .find(e => e.name === "系统管理")
+                ?.children?.find(e => e.name === "用户管理")
+                ?.children?.find(e => e.name === "删除")
         ) {
             setOperateId(2)
         }
         if (
             operates[0].item
-                .find(e => e.permissionName === "系统管理")
-                ?.children?.find(e => e.permissionName === "用户管理")
-                ?.children?.find(e => e.permissionName === "导出")
+                .find(e => e.name === "系统管理")
+                ?.children?.find(e => e.name === "用户管理")
+                ?.children?.find(e => e.name === "导出")
         ) {
             setOperateId(3)
         }

@@ -27,6 +27,10 @@ function c(...classNameList: (string | undefined | null | boolean)[]) {
 const School: React.FC = () => {
     const schoolType: OptionType[] = [
         {
+            value: "全部",
+            label: "全部"
+        },
+        {
             value: "幼儿园",
             label: "幼儿园"
         },
@@ -43,43 +47,6 @@ const School: React.FC = () => {
             label: "高中"
         }
     ]
-
-    const SchoolFormItem: React.FC = () => {
-        return (
-            <>
-                <Form.Item name="name" label="学校名称">
-                    <Input className={Styles["form-item-input"]} />
-                </Form.Item>
-                <Form.Item name="type" label="类型">
-                    <Select className={Styles["form-item-input"]} options={schoolType} />
-                </Form.Item>
-                <Form.Item name="guardsCount" label="保安">
-                    <Input className={Styles["form-item-input"]} />
-                </Form.Item>
-                <Form.Item name="securityChef" label="安保负责人">
-                    <Input className={Styles["form-item-input"]} />
-                </Form.Item>
-                <Form.Item name="communityPolice" label="社区民警">
-                    <Input className={Styles["form-item-input"]} />
-                </Form.Item>
-                <Form.Item name="infrared" label="红外">
-                    <Input className={Styles["form-item-input"]} />
-                </Form.Item>
-                <Form.Item name="portrait" label="人像">
-                    <Input className={Styles["form-item-input"]} />
-                </Form.Item>
-                <Form.Item name="carCard" label="车卡">
-                    <Input className={Styles["form-item-input"]} />
-                </Form.Item>
-                <Form.Item name="etc" label="ETC">
-                    <Input className={Styles["form-item-input"]} />
-                </Form.Item>
-                <Form.Item name="ballMachine" label="球机">
-                    <Input className={Styles["form-item-input"]} />
-                </Form.Item>
-            </>
-        )
-    }
 
     const column: ColumnsType<DataType> = [
         {
@@ -153,7 +120,7 @@ const School: React.FC = () => {
     const [pageSize, setPageSize] = useState(10)
     const [total, setTotal] = useState(0)
     const [name, setName] = useState("")
-    const [type, setType] = useState("")
+    const [type, setType] = useState(schoolType[0].label)
     const [tableData, setTableData] = useState<DataType[]>([])
     const [addOpen, setAddOpen] = useState(false)
     const [form] = Form.useForm()
@@ -203,6 +170,9 @@ const School: React.FC = () => {
             name: res.name,
             remark: "",
             type: res.type
+        }).then(() => {
+            setAddOpen(false)
+            form.resetFields()
         })
     }
 
@@ -215,13 +185,51 @@ const School: React.FC = () => {
         setName(e.target.value)
     }
 
-    const typeSelect = (e: string) => {
-        setType(e)
-    }
-
     const reset = () => {
         setName("")
         setType("")
+    }
+
+    const SchoolFormItem: React.FC = () => {
+        return (
+            <>
+                <Form.Item name="name" label="学校名称">
+                    <Input className={Styles["form-item-input"]} />
+                </Form.Item>
+                <Form.Item name="type" label="类型">
+                    <Select className={Styles["form-item-input"]} options={schoolType} />
+                </Form.Item>
+                <Form.Item name="guardsCount" label="保安">
+                    <Input className={Styles["form-item-input"]} />
+                </Form.Item>
+                <Form.Item name="securityChef" label="安保负责人">
+                    <Input className={Styles["form-item-input"]} />
+                </Form.Item>
+                <Form.Item name="communityPolice" label="社区民警">
+                    <Input className={Styles["form-item-input"]} />
+                </Form.Item>
+                <Form.Item name="infrared" label="红外">
+                    <Input className={Styles["form-item-input"]} />
+                </Form.Item>
+                <Form.Item name="portrait" label="人像">
+                    <Input className={Styles["form-item-input"]} />
+                </Form.Item>
+                <Form.Item name="carCard" label="车卡">
+                    <Input className={Styles["form-item-input"]} />
+                </Form.Item>
+                <Form.Item name="etc" label="ETC">
+                    <Input className={Styles["form-item-input"]} />
+                </Form.Item>
+                <Form.Item name="ballMachine" label="球机">
+                    <Input className={Styles["form-item-input"]} />
+                </Form.Item>
+            </>
+        )
+    }
+
+    const addCancel = () => {
+        setAddOpen(false)
+        form.resetFields()
     }
 
     return (
@@ -230,7 +238,7 @@ const School: React.FC = () => {
                 <div className={c("query")}>
                     <div className={c("inputs")}>
                         <Input placeholder="请输入学校名称" value={name} onChange={nameInput} />
-                        <Select placeholder="请选择类型" options={schoolType} onSelect={typeSelect} />
+                        <Select placeholder="请选择类型" value={type} options={schoolType} onChange={e => setType(e)} />
                     </div>
                     <div className={c("query-reset")}>
                         <Button className={c("query-btn")} onClick={search}>
@@ -248,17 +256,21 @@ const School: React.FC = () => {
                 </div>
             </div>
             <Table columns={column} dataSource={tableData} pagination={{ onChange: changePg, total, pageSize }} />
-            <Modal title="新增" open={addOpen} onCancel={() => setAddOpen(false)} 
-            footer={
-                <>
-                    <Button className={c("cancel")} onClick={() => setAddOpen(false)}>
-                        取消
-                    </Button>
-                    <Button className={c("save")} onClick={addConfirm}>
-                        保存
-                    </Button>
-                </>
-            }>
+            <Modal
+                title="新增"
+                open={addOpen}
+                onCancel={addCancel}
+                footer={
+                    <>
+                        <Button className={c("cancel")} onClick={addCancel}>
+                            取消
+                        </Button>
+                        <Button className={c("save")} onClick={addConfirm}>
+                            保存
+                        </Button>
+                    </>
+                }
+            >
                 <Form labelCol={{ span: 4 }} form={form}>
                     <SchoolFormItem />
                 </Form>

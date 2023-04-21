@@ -27,6 +27,67 @@ interface DataType {
     operate?: ReactNode
 }
 
+const AddFormItem: React.FC = () => {
+    return (
+        <>
+            <Form.Item name="code" label="编码">
+                <Input className={c("form-item-input")} disabled />
+            </Form.Item>
+            <Form.Item label="（模型/技战）法编号">
+                <Input className={c("form-item-input")} />
+            </Form.Item>
+            <Form.Item name="type" label="类型">
+                <Input className={c("form-item-input")} disabled />
+            </Form.Item>
+            <Form.Item label="指向对象">
+                <Input className={c("form-item-input")} />
+            </Form.Item>
+            <Form.Item label="智慧单元">
+                <Input className={c("form-item-input")} disabled />
+            </Form.Item>
+            <Form.Item label="警种">
+                <Input className={c("form-item-input")} disabled />
+            </Form.Item>
+            <Form.Item label="辖区">
+                <Select className={c("form-item-input")} />
+            </Form.Item>
+            <Form.Item name="content" label="内容">
+                <Input.TextArea className={c("form-item-input")} />
+            </Form.Item>
+        </>
+    )
+}
+
+const FilterFormItem: React.FC = () => {
+    return (
+        <>
+            <Form.Item name="filterReason" label="过滤原因">
+                <Input.TextArea className={c("form-item-input-textarea")} />
+            </Form.Item>
+        </>
+    )
+}
+
+const FeedbackFormItem: React.FC = () => {
+    return (
+        <>
+            <Form.Item name="feedback" label="反馈">
+                <Input.TextArea className={c("form-item-input-textarea")} />
+            </Form.Item>
+        </>
+    )
+}
+
+const EvaluateFormItem: React.FC = () => {
+    return (
+        <>
+            <Form.Item name="evaluate" label="评估">
+                <Input.TextArea className={c("form-item-input-textarea")} />
+            </Form.Item>
+        </>
+    )
+}
+
 const Application: React.FC = () => {
     const typeOptions: OptionType[] = [
         {
@@ -65,33 +126,6 @@ const Application: React.FC = () => {
             label: "智慧安防车站"
         }
     ]
-
-    const ApplicationFormItem: React.FC = () => {
-        return (
-            <>
-                <Form.Item name="code" label="编码">
-                    <Input className={Styles["form-item-input"]} disabled />
-                </Form.Item>
-                <Form.Item label="（模型/技战）法编号">
-                    <Input className={Styles["form-item-input"]} />
-                </Form.Item>
-                <Form.Item name="type" label="类型">
-                    {/* <Select className={Styles["form-item-input"]} options={typeOptions} /> */}
-                </Form.Item>
-                <Form.Item label="指向对象">
-                    <Input className={Styles["form-item-input"]} />
-                </Form.Item>
-                <Form.Item label="智慧单元">{/* <Select className={Styles["form-item-input"]} options={smartAppList} /> */}</Form.Item>
-                <Form.Item label="警种">{/* <Select className={Styles["form-item-input"]} /> */}</Form.Item>
-                <Form.Item label="辖区">
-                    <Select className={Styles["form-item-input"]} />
-                </Form.Item>
-                <Form.Item name="content" label="内容">
-                    <Input.TextArea className={Styles["form-item-input"]} />
-                </Form.Item>
-            </>
-        )
-    }
 
     const column: ColumnsType<DataType> = [
         {
@@ -160,20 +194,20 @@ const Application: React.FC = () => {
             dataIndex: "operate",
             title: "操作",
             align: "center",
-            render: () => {
+            render: (_, e) => {
                 return (
                     <>
                         <div className={Styles["operate"]}>
-                            <Button className={c("operate-btn")} type="primary">
+                            <Button className={c("operate-btn")} onClick={() => filter(e)}>
                                 过滤
                             </Button>
-                            <Button className={c("operate-btn")} type="primary">
+                            <Button className={c("operate-btn")} onClick={() => sign(e)}>
                                 签收
                             </Button>
-                            <Button className={c("operate-btn")} type="primary">
+                            <Button className={c("operate-btn")} onClick={() => feedback(e)}>
                                 反馈
                             </Button>
-                            <Button className={c("operate-btn")} type="primary">
+                            <Button className={c("operate-btn")} onClick={() => evaluate(e)}>
                                 评估
                             </Button>
                         </div>
@@ -209,7 +243,7 @@ const Application: React.FC = () => {
             label: "围保"
         },
         {
-            value: "6",
+            value: "4",
             label: "网安"
         },
         {
@@ -246,13 +280,17 @@ const Application: React.FC = () => {
         }
     ]
 
-    const [addOpen, setAddOpen] = useState(false)
+    const [modalOpen, setModalOpen] = useState(false)
     const [startTime, setStartTime] = useState<dayjs.Dayjs>(dayjs(Date.now() - 2592000000))
     const [endTime, setEndTime] = useState<dayjs.Dayjs>(dayjs(Date.now()))
     const [pageNum, setPageNum] = useState(1)
     const [pageSize, setPageSize] = useState(10)
+    const [total, setTotal] = useState(0)
     const [appTypeSelect, setAppTypeSelect] = useState<string | undefined>(smartAppList[0].label)
     const [policeTypeSelect, setPoliceTypeSelect] = useState<string | undefined>(policeTypeList[0].label)
+    const [addForm] = Form.useForm()
+    const [modalTitle, setModalTitle] = useState<"新增" | "过滤原因" | "反馈" | "评估">("新增")
+    const [formSpan, setFormSpan] = useState<4 | 8>(8)
     // const sessionStore = useSession()
 
     const search = async () => {
@@ -268,8 +306,6 @@ const Application: React.FC = () => {
         }
     }
 
-    useAsync(() => search(), [pageNum, pageSize])
-
     const reset = () => {
         setStartTime(dayjs(Date.now() - 2592000000))
         setEndTime(dayjs(Date.now()))
@@ -282,11 +318,66 @@ const Application: React.FC = () => {
         setEndTime(dayjs(e[1]))
     }
 
-    // const [addForm] = ad
-
     const add = () => {
-
+        setModalTitle("新增")
+        setFormSpan(8)
+        setModalOpen(true)
+        addForm.setFieldsValue({
+            code: Date.now()
+        })
     }
+
+    const addCancel = () => {
+        setModalOpen(false)
+        addForm.resetFields()
+    }
+
+    const filter = (e: DataType) => {
+        setModalTitle("过滤原因")
+        setFormSpan(4)
+        setModalOpen(true)
+    }
+
+    const sign = (e: DataType) => {}
+
+    const feedback = (e: DataType) => {
+        setModalTitle("反馈")
+        setFormSpan(4)
+        setModalOpen(true)
+    }
+
+    const evaluate = (e: DataType) => {
+        setModalTitle("评估")
+        setFormSpan(4)
+        setModalOpen(true)
+    }
+
+    const save = async () => {
+        const res = await addForm.validateFields()
+        if (modalTitle === "新增") {
+            console.log("1", res)
+            return
+        }
+        if (modalTitle === "过滤原因") {
+            console.log("2", res)
+            return
+        }
+        if (modalTitle === "反馈") {
+            console.log("3", res)
+            return
+        }
+        if (modalTitle === "评估") {
+            console.log("4", res)
+            return
+        }
+    }
+
+    const pageChange = (pageNum: number, pageSize: number) => {
+        setPageNum(pageNum)
+        setPageSize(pageSize)
+    }
+
+    useAsync(() => search(), [pageNum, pageSize])
 
     return (
         <>
@@ -316,10 +407,27 @@ const Application: React.FC = () => {
                     </Button>
                 </div>
             </div>
-            <Table columns={column} dataSource={tableData} />
-            <Modal title="新增" open={addOpen} onCancel={() => setAddOpen(false)}>
-                <Form labelCol={{ span: 8 }} >
-                    <ApplicationFormItem />
+            <Table columns={column} dataSource={tableData} pagination={{ onChange: pageChange, total, pageSize }} />
+            <Modal
+                title={modalTitle}
+                open={modalOpen}
+                onCancel={addCancel}
+                footer={
+                    <>
+                        <Button className={c("cancel")} onClick={addCancel}>
+                            取消
+                        </Button>
+                        <Button className={c("save")} onClick={save}>
+                            保存
+                        </Button>
+                    </>
+                }
+            >
+                <Form labelCol={{ span: formSpan }} form={addForm}>
+                    {modalTitle === "新增" && <AddFormItem />}
+                    {modalTitle === "过滤原因" && <FilterFormItem />}
+                    {modalTitle === "反馈" && <FeedbackFormItem />}
+                    {modalTitle === "评估" && <EvaluateFormItem />}
                 </Form>
             </Modal>
         </>
