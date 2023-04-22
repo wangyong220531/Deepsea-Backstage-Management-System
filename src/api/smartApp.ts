@@ -35,3 +35,21 @@ export function searchSmartApp(data: SearchSmartAppData) {
         method: "POST"
     })
 }
+
+export function appOperate(data: AppOperateData) {
+    return request({
+        url: "/wisdom/apply/feedback",
+        baseURL,
+        data,
+        method: "POST"
+    })
+}
+
+export function delOperate(config: { id: string }) {
+    return request({
+        url: "/wisdom/apply/deleteFeedback",
+        baseURL,
+        query: config,
+        method: "GET"
+    })
+}

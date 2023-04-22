@@ -3,6 +3,8 @@ import type { ColumnsType } from "antd/es/table"
 import React, { ReactNode, useState } from "react"
 import dayjs from "dayjs"
 import Styles from "./index.module.less"
+import { useAsync } from "../../utils/hooks"
+import { searchMind } from "../../api/stormMind"
 
 const { RangePicker } = DatePicker
 
@@ -27,10 +29,6 @@ interface DataType {
     status: string
     operate?: ReactNode
 }
-
-
-
-
 
 const EditFormItem: React.FC = () => {
     return (
@@ -241,7 +239,7 @@ const StormThinking: React.FC = () => {
         }
     ]
 
-    const data: DataType[] = [
+    const tableData: DataType[] = [
         {
             key: "0",
             code: "123",
@@ -260,13 +258,16 @@ const StormThinking: React.FC = () => {
         }
     ]
 
-    const [tabeData, setTabeData] = useState<DataType[]>([])
+    // const [tabeData, setTabeData] = useState<DataType[]>([])
     const [addopen, setaddopen] = useState(false)
     const [solutionOpen, setSolutionOpen] = useState(false)
     const [editOpen, setEditOpen] = useState(false)
     const [pageNum, setPageNum] = useState(1)
     const [pageSize, setPageSize] = useState(10)
+    const [title, setTitle] = useState<"请提出你的问题" | "编辑" | "请说出你的方案" | "">("请提出你的问题")
+    const [modalOpen, setModalOpen] = useState(false)
     const [total, setTotal] = useState(0)
+    const [form] = Form.useForm()
 
     const edit = (e: DataType) => {
         setEditOpen(true)
@@ -315,7 +316,6 @@ const StormThinking: React.FC = () => {
         )
     }
 
-   
     const changePg = (pageNum: number, pageSize: number) => {
         setPageNum(pageNum)
         setPageSize(pageSize)
@@ -336,7 +336,7 @@ const StormThinking: React.FC = () => {
             </>
         )
     }
-    
+
     const SolutionFormItem: React.FC = () => {
         return (
             <>
@@ -352,7 +352,7 @@ const StormThinking: React.FC = () => {
             </>
         )
     }
-    
+
     const SolutionForm: React.FC = () => {
         return (
             <>
@@ -364,7 +364,7 @@ const StormThinking: React.FC = () => {
             </>
         )
     }
-    
+
     const EvalFormItem: React.FC = () => {
         return (
             <>
@@ -381,6 +381,37 @@ const StormThinking: React.FC = () => {
         )
     }
 
+    const search = async () => {
+        const res = await searchMind({
+            content: "",
+            pageNum: 0,
+            pageSize: 0,
+            policeKind: "",
+            putMan: "",
+            queNo: "",
+            wisdomUnit: ""
+        })
+    }
+
+    const reset = () => {
+        
+    }
+
+    const add = () => {
+        setTitle("请提出你的问题")
+        setModalOpen(true)
+    }
+
+    const cancel = () => {
+        setModalOpen(false)
+    }
+
+    const save = () => {
+        setModalOpen(false)
+    }
+
+    useAsync(() => search(), [pageNum, pageSize])
+
     return (
         <>
             <div className={c("header")}>
@@ -390,18 +421,49 @@ const StormThinking: React.FC = () => {
                         <RangePicker />
                     </div>
                     <div className={c("query-reset")}>
-                        <Button className={c("query-btn")}>查询</Button>
-                        <Button className={c("reset-btn")}>重置</Button>
+                        <Button className={c("query-btn")} onClick={search}>
+                            查询
+                        </Button>
+                        <Button className={c("reset-btn")} onClick={reset}>
+                            重置
+                        </Button>
                     </div>
                 </div>
                 <div className={c("btn-group")}>
-                    <Button className={c("add")} onClick={() => setaddopen(true)}>
+                    <Button className={c("add")} onClick={add}>
                         新增
                     </Button>
                 </div>
             </div>
-            <Table columns={column} dataSource={tabeData} pagination={{ onChange: changePg, total, pageSize }} />
-            <Modal open={modalOpen}></Modal>
+            <Table columns={column} dataSource={tableData} pagination={{ onChange: changePg, total, pageSize }} />
+            <Modal
+                title={title}
+                open={modalOpen}
+                onOk={save}
+                onCancel={cancel}
+                footer={
+                    title === "请提出你的问题" ? (
+                        <>
+                            <Popconfirm title icon okText="有好的想法" cancelText="结束" onConfirm={propConfirm} onCancel={() => setaddopen(false)}>
+                                <Button type="primary">提交</Button>
+                            </Popconfirm>
+                        </>
+                    ) : (
+                        <>
+                            <Button className={c("cancel")} onClick={cancel}>
+                                取消
+                            </Button>
+                            <Button className={c("save")} onClick={save}>
+                                保存
+                            </Button>
+                        </>
+                    )
+                }
+            >
+                <Form labelCol={{ span: 4 }} form={form}>
+                    {title === "请提出你的问题" && <STFormItem />}
+                </Form>
+            </Modal>
         </>
     )
 }

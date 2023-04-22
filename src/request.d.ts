@@ -22,10 +22,10 @@ type ResponseResult = {
     "/duty/manage/deleteDutyManage": string
     "/duty/manage/updateDutyManage": string
     "/duty/manage/vagueSelect": SearchManageResult
-    "/wisdom/apply/addWisdomApply": string
+    "/wisdom/apply/addWisdomApply": { success: Boolean }
     "/wisdom/apply/deleteWisdomApply": string
-    "/wisdom/apply/updateWisdomApply": string
-    "/wisdom/apply/vagueSelect": string
+    "/wisdom/apply/updateWisdomApply": { success: Boolean }
+    "/wisdom/apply/vagueSelect": SearchAppResult
     "/pointAreas/getPointAreaList": KeyPosition
     "/policeSituation/selectAllTeam": GetAllPoliceTeamResult
     "/OneStandAndManyFacts/queryCommunitys": GetAllNeighborsResult
@@ -60,6 +60,16 @@ type ResponseResult = {
     "/logout": { success: Boolean }
     "/system/user/getUserPathTree/:roleId": GetRolePermissionResult
     "/system/role/update": UpdateRoleResult
+    "/duty/stormMind/selectStormMindQuestion": SearchMindResult
+    "/duty/stormMind/updateStormMindQuestion": { success: Boolean }
+    "/duty/stormMind/updateStormMindPlan": { success: Boolean }
+    "/duty/stormMind/addStormMindEvaluate": { success: Boolean }
+    "/duty/stormMind/updateStormMindEvaluate": { success: Boolean }
+    "/duty/stormMind/delStormMindEvaluate": { success: Boolean }
+    "/duty/stormMind/delStormMindPlan": { success: Boolean }
+    "/duty/stormMind/delStormMindQuestion": { success: Boolean }
+    "/wisdom/apply/feedback": { success: Boolean }
+    "/wisdom/apply/deleteFeedback": { success: Boolean }
 }
 type RequestQuery = {
     "/serve/ask/delAskInfo": { id: string }
@@ -80,6 +90,7 @@ type RequestQuery = {
     "/monitor/operationLog/export": {}
     "/system/user/export": {}
     "/logout": {}
+    "/wisdom/apply/deleteFeedback": { id: string }
 }
 type RequestData = {
     "/policeSituation/selectNewAlarm": QueryLatestPS
@@ -119,6 +130,15 @@ type RequestData = {
     "/system/role/distributePSet": AssignPermissionsData
     "/login": LoginData
     "/system/role/update": UpdateRoleData
+    "/duty/stormMind/selectStormMindQuestion": SearchMindData
+    "/duty/stormMind/updateStormMindQuestion": UpdateMindQuestionData
+    "/duty/stormMind/updateStormMindPlan": UpdateMindSolution
+    "/duty/stormMind/addStormMindEvaluate": AddMindEvalutaionData
+    "/duty/stormMind/updateStormMindEvaluate": UpdateMindEvaluationData
+    "/duty/stormMind/delStormMindEvaluate": { id: string }
+    "/duty/stormMind/delStormMindPlan": { id: string }
+    "/duty/stormMind/delStormMindQuestion": { id: string }
+    "/wisdom/apply/feedback": AppOperateData
 }
 
 type RequestParams = {
@@ -136,39 +156,6 @@ type IsParams<T extends string> = T extends `${infer First}:${infer Rest}` ? tru
 type GetFirstParams<T extends string> = T extends `${infer First}/${infer Rest}` ? First : T
 
 type GetParamsList<T extends string, K = never> = T extends `${infer First}/:${infer Rest}` ? GetParamsList<Rest, K | GetFirstParams<Rest>> : K
-
-type MindType = "MODEL" | "BATTLE"
-
-type Mind = {
-    content: string
-    createPerson: string
-    mindNo: string
-    model: string
-    name: string
-    remark: string
-    target: string
-    time: string
-    type: MindType
-    unitName: string
-    unitNo?: string
-    status?: string
-}
-
-interface SearchMind {
-    createPerson?: string
-    mindNo?: string
-    model?: string
-    name?: string
-    pageNum: number
-    pageSize: number
-    type: MindType
-    unitNo?: string
-}
-
-interface SearchMindResult {
-    list: Mind[]
-    total: number
-}
 
 interface QueryAllPS {
     pageNum: number
@@ -607,38 +594,77 @@ interface AddSmartAppData {
     policeKind: string
     remark: string
     status: string
-    time: string
     toUser: string
-    type: string
+    type: "模型" | "技战法"
     wisdomUnit: string
 }
 
 interface UpdateSmartAppData {
     applyNo: string
     bmNo: string
-    createOperator: string
-    createTime: string
     id: string
     info: string
     managerArea: string
     policeKind: string
     remark: string
     status: string
-    time: string
     toUser: string
-    type: string
-    updateOperator: string
-    updateTime: string
+    type: "模型" | "技战法"
     wisdomUnit: string
 }
 
 interface SearchSmartAppData {
-    startTime: string
-    endTime: string
+    applyNo: string
+    stime: string
+    etime: string
+    manageArea: string
     pageNum: number
     pageSize: number
-    appType: number // 0：全部 ，1：智慧安防小区，2：智慧安防校区。3：智慧安防CBD，4：智慧安防医院，5：智慧安防车站
-    policeType: number // 0：全部 1：治安，2：刑侦，3：经侦，4：巡防，5：围保，6：网安，7：法制，8：指挥，9：涉稳。10：集成
+    // appType: number // 0：全部 ，1：智慧安防小区，2：智慧安防校区。3：智慧安防CBD，4：智慧安防医院，5：智慧安防车站
+    policeKind: number // 0：全部 1：治安，2：刑侦，3：经侦，4：巡防，5：围保，6：网安，7：法制，8：指挥，9：涉稳。10：集成
+    toUser: string
+    status: string
+}
+
+interface SearchAppResult {
+    success: Boolean
+    data: {
+        size: number
+        voList: App[]
+    }
+}
+
+interface App {
+    id: string
+    type: string
+    applyNo: string
+    info: string
+    toUser: string
+    wisdomUnit: string
+    policeKind: string
+    manageArea: string
+    status: string
+    bmNo: string
+    remark: string
+    createTime: string
+    createOperator: string
+    feedbackVos: []
+}
+
+interface Feedback {
+    id: string
+    wpId: string
+    context: string
+    type: string
+    remark: string
+    createTime: string
+    createOperator: string
+}
+
+interface AppOperateData {
+    context: string
+    type: string
+    wpId: string
 }
 
 interface KeyPosition {
@@ -789,27 +815,22 @@ interface AddMindQuestionData {
 }
 
 interface AddMindQuestionResult {
-    code: string
+    success: Boolean
     data: string
-    message: string
-    success: boolean
-    timestamp: string
 }
 
 interface AddMindSolutionData {
     doneMan: string
     planNo: string
+    policeKind: string
     queId: string
     solutions: string
     status: string
+    wisdomUnit: string
 }
 
 interface AddMindSolutionResult {
-    code: string
-    data: string
-    message: string
-    success: boolean
-    timestamp: string
+    success: Boolean
 }
 
 interface GetAllDuty {
@@ -1086,4 +1107,79 @@ interface UpdateRoleData {
     id: string
     roleName: string
     status: 0 | 1
+}
+
+interface AddMindEvalutaionData {
+    content: string
+    planId: string
+    type: "模型" | "技战法"
+}
+
+interface UpdateMindQuestionData {
+    id: string
+    content: string
+    putMan: string
+    queNo: string
+}
+
+interface UpdateMindSolution {
+    id: string
+    policeKind: string
+    solutions: string
+    status: string
+    wisdomUnit: string
+}
+
+interface UpdateMindEvaluationData {
+    content: string
+    id: string
+    type: "模型" | "技战法"
+}
+
+interface SearchMindData {
+    content: string
+    pageNum: number
+    pageSize: number
+    policeKind: string
+    putMan: string
+    queNo: string
+    wisdomUnit: string
+}
+
+interface SearchMindResult {
+    success: Boolean
+    data: {
+        size: number
+        voList: []
+    }
+}
+
+interface Mind {
+    id: string
+    queNo: string
+    content: string
+    createTime: string
+    createOperator: string
+    planVoList: Plan[]
+}
+
+interface Plan {
+    id: string
+    queId: string
+    planNo: string
+    solutions: string
+    status: string
+    wisdomUnit: string
+    policeKind: string
+    createTime: string
+    createOperator: string
+    evaluateVo: {
+        id: string
+        planId: string
+        planNo: string
+        content: string
+        type: "模型" | "技战法"
+        createTime: string
+        createOperator: string
+    }
 }
