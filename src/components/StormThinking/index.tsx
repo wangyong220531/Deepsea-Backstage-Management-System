@@ -230,8 +230,8 @@ const StormThinking: React.FC = () => {
             <>
                 {solutionList.map((e, index) => {
                     return (
-                        <Form.Item label={`解决思路${index+1}`} name={`question${index}`}>
-                            <Input.TextArea className={c("form-item-input-textarea")} value={e.solutions} disabled/>
+                        <Form.Item label={`解决思路${index + 1}`} name={`question${index}`}>
+                            <Input.TextArea className={c("form-item-input-textarea")} value={e.solutions} disabled />
                         </Form.Item>
                     )
                 })}
@@ -245,8 +245,8 @@ const StormThinking: React.FC = () => {
                 {evaluationList.map((e, index) => {
                     return (
                         <>
-                            <Form.Item label={`评估内容${index}`} name={`evaluation${index}`}>
-                                <Input.TextArea className={c("form-item-input-textarea")} value={e.content} />
+                            <Form.Item label={`评估内容${index + 1}`} name={`evaluation${index}`}>
+                                <Input.TextArea className={c("form-item-input-textarea")} value={e.content} disabled />
                             </Form.Item>
                         </>
                     )
