@@ -3,7 +3,7 @@ import { ReactNode, useState } from "react"
 import type { ColumnsType } from "antd/es/table"
 import Styles from "./index.module.less"
 import dayjs from "dayjs"
-import { addSmartApp, searchSmartApp } from "../../api/smartApp"
+import { addSmartApp, searchSmartApp, updateSmartApp } from "../../api/smartApp"
 import { useAsync } from "../../utils/hooks"
 
 const { RangePicker } = DatePicker
@@ -12,7 +12,7 @@ function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
 }
 
-interface DataType extends AddSmartAppData {
+interface DataType extends UpdateSmartAppData {
     operate?: ReactNode
 }
 
@@ -124,45 +124,39 @@ const Application: React.FC = () => {
             align: "center"
         },
         {
-            key: "code",
-            dataIndex: "code",
+            key: "applyNo",
+            dataIndex: "applyNo",
             title: "编码",
             align: "center"
         },
         {
-            key: "time",
-            dataIndex: "time",
-            title: "时间",
-            align: "center"
-        },
-        {
-            key: "content",
-            dataIndex: "content",
+            key: "info",
+            dataIndex: "info",
             title: "内容",
             align: "center",
             width: "200px"
         },
         {
-            key: "pointObj",
-            dataIndex: "pointObj",
+            key: "toUser",
+            dataIndex: "toUser",
             title: "指向对象",
             align: "center"
         },
         {
-            key: "smartUnit",
-            dataIndex: "smartUnit",
+            key: "wisdomUnit",
+            dataIndex: "wisdomUnit",
             title: "智慧单元",
             align: "center"
         },
         {
-            key: "policeType",
-            dataIndex: "policeType",
+            key: "policeKind",
+            dataIndex: "policeKind",
             title: "警种",
             align: "center"
         },
         {
-            key: "jurisdiction",
-            dataIndex: "jurisdiction",
+            key: "managerArea",
+            dataIndex: "managerArea",
             title: "辖区",
             align: "center"
         },
@@ -173,8 +167,8 @@ const Application: React.FC = () => {
             align: "center"
         },
         {
-            key: "morbCode",
-            dataIndex: "morbCode",
+            key: "bmNo",
+            dataIndex: "bmNo",
             title: "（模型/技战）法编号",
             align: "center"
         },
@@ -253,21 +247,21 @@ const Application: React.FC = () => {
         }
     ]
 
-    // const tableData: DataType[] = [
-    //     {
-    //         key: "0",
-    //         type: "模型",
-    //         code: "123",
-    //         time: "2023-03-11",
-    //         content: "xxx",
-    //         pointObj: "卜元浩",
-    //         smartUnit: "智慧安防小区",
-    //         policeType: "治安",
-    //         jurisdiction: "开发区",
-    //         status: "待过滤",
-    //         morbCode: "xxx"
-    //     }
-    // ]
+    const data: DataType[] = [
+        {
+            id: "0",
+            applyNo: "00",
+            bmNo: "000",
+            info: "我是智慧应用1",
+            managerArea: "辖区1",
+            policeKind: "维稳",
+            remark: "备注1",
+            status: "待过滤",
+            toUser: "蔡徐腾",
+            type: "技战法",
+            wisdomUnit: "xxx"
+        }
+    ]
 
     const [modalOpen, setModalOpen] = useState(false)
     const [startTime, setStartTime] = useState<dayjs.Dayjs>(dayjs(Date.now() - 2592000000))
@@ -281,6 +275,8 @@ const Application: React.FC = () => {
     const [modalTitle, setModalTitle] = useState<"新增" | "过滤原因" | "反馈" | "评估">("新增")
     const [formSpan, setFormSpan] = useState<4 | 8>(8)
     // const sessionStore = useSession()
+    const [selectApp, setSelectApp] = useState<UpdateSmartAppData>(Object)
+    const [tableData, setTableData] = useState<DataType[]>([])
 
     const search = async () => {
         const res = await searchSmartApp({
@@ -297,6 +293,7 @@ const Application: React.FC = () => {
         })
         if (res) {
         }
+        setTableData(data)
     }
 
     const reset = () => {
@@ -327,20 +324,39 @@ const Application: React.FC = () => {
 
     const filter = (e: DataType) => {
         setModalTitle("过滤原因")
+        setSelectApp(e)
         setFormSpan(4)
         setModalOpen(true)
     }
 
-    const sign = (e: DataType) => {}
+    const sign = (e: DataType) => {
+        updateSmartApp({
+            applyNo: e.applyNo,
+            bmNo: e.bmNo,
+            id: e.id,
+            info: e.info,
+            managerArea: e.managerArea,
+            policeKind: e.policeKind,
+            remark: e.remark,
+            status: "已签收",
+            toUser: e.toUser,
+            type: e.type,
+            wisdomUnit: e.wisdomUnit
+        }).then(() => {
+            search()
+        })
+    }
 
     const feedback = (e: DataType) => {
         setModalTitle("反馈")
+        setSelectApp(e)
         setFormSpan(4)
         setModalOpen(true)
     }
 
     const evaluate = (e: DataType) => {
         setModalTitle("评估")
+        setSelectApp(e)
         setFormSpan(4)
         setModalOpen(true)
     }
@@ -361,17 +377,69 @@ const Application: React.FC = () => {
                 wisdomUnit: res.wisdomUnit
             }).then(() => {
                 setModalOpen(false)
+                search()
                 form.resetFields()
             })
             return
         }
         if (modalTitle === "过滤原因") {
+            updateSmartApp({
+                applyNo: selectApp.applyNo,
+                bmNo: selectApp.bmNo,
+                id: selectApp.id,
+                info: res.filterReason,
+                managerArea: selectApp.managerArea,
+                policeKind: selectApp.policeKind,
+                remark: selectApp.remark,
+                status: "已过滤",
+                toUser: selectApp.toUser,
+                type: selectApp.type,
+                wisdomUnit: selectApp.wisdomUnit
+            }).then(() => {
+                setModalOpen(false)
+                search()
+                form.resetFields()
+            })
             return
         }
         if (modalTitle === "反馈") {
+            updateSmartApp({
+                applyNo: selectApp.applyNo,
+                bmNo: selectApp.bmNo,
+                id: selectApp.id,
+                info: res.feedback,
+                managerArea: selectApp.managerArea,
+                policeKind: selectApp.policeKind,
+                remark: selectApp.remark,
+                status: selectApp.status,
+                toUser: selectApp.toUser,
+                type: selectApp.type,
+                wisdomUnit: selectApp.wisdomUnit
+            }).then(() => {
+                setModalOpen(false)
+                search()
+                form.resetFields()
+            })
             return
         }
         if (modalTitle === "评估") {
+            updateSmartApp({
+                applyNo: selectApp.applyNo,
+                bmNo: selectApp.bmNo,
+                id: selectApp.id,
+                info: res.evaluate,
+                managerArea: selectApp.managerArea,
+                policeKind: selectApp.policeKind,
+                remark: selectApp.remark,
+                status: selectApp.status,
+                toUser: selectApp.toUser,
+                type: selectApp.type,
+                wisdomUnit: selectApp.wisdomUnit
+            }).then(() => {
+                setModalOpen(false)
+                search()
+                form.resetFields()
+            })
             return
         }
     }
@@ -411,7 +479,7 @@ const Application: React.FC = () => {
                     </Button>
                 </div>
             </div>
-            <Table columns={column} pagination={{ onChange: pageChange, total, pageSize }} />
+            <Table dataSource={tableData} columns={column} pagination={{ onChange: pageChange, total, pageSize }} />
             <Modal
                 title={modalTitle}
                 open={modalOpen}

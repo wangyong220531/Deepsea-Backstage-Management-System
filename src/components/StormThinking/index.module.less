@@ -1,3 +1,12 @@
+::-webkit-scrollbar {
+    background-color: transparent;
+    width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #8484849e;
+}
+
 .form-item-input {
     width: 320px !important;
 }
@@ -17,7 +26,6 @@
 .solution-and-evaluation {
     display: flex;
 }
-
 
 .header {
     display: flex;
@@ -77,11 +85,26 @@
     background-color: #2a58ad;
 }
 
-.evaluate-btn {
-    color: white;
-    background-color: #2a58ad;
-    padding: 0 20px;
-    transform: translateX(20%) translateY(90%);
+.solution-eval-container {
+    height: 600px;
+    overflow-y: scroll;
+}
+
+.add-evaluate-btn,
+.del-evaluate-btn {
+    color: rgb(102, 102, 102);
+    width: 320px;
+    margin-left: 146px;
+    margin-bottom: 20px;
+}
+
+.del-evaluate-btn {
+    color: #fff;
+    background-color: rgb(213, 63, 63);
+}
+
+.del-evaluate-btn:hover {
+    color: #fff !important;
 }
 
 :global {
