@@ -239,20 +239,22 @@ const StormThinking: React.FC = () => {
                                     </Form.Item>
                                 ) : (
                                     <>
-                                        {isEvaling ? (
-                                            <div>
-                                                <Form.Item label={`评估${index + 1}`} name={`evaluation${index}`}>
-                                                    <Input.TextArea className={c("form-item-input-textarea")} placeholder="请输入您的评估"></Input.TextArea>
-                                                </Form.Item>
-                                                <Button className={c("del-evaluate-btn")} onClick={() => delMindEvaluation(e)}>
-                                                    删除评估+
+                                        <>
+                                            {evalingId === e.id ? (
+                                                <div>
+                                                    <Form.Item label={`评估${index + 1}`} name={`evaluation${index}`}>
+                                                        <Input.TextArea className={c("form-item-input-textarea")} placeholder="请输入您的评估"></Input.TextArea>
+                                                    </Form.Item>
+                                                    <Button className={c("del-evaluate-btn")} onClick={() => delMindEvaluation(e)}>
+                                                        删除评估+
+                                                    </Button>
+                                                </div>
+                                            ) : (
+                                                <Button className={c("add-evaluate-btn")} onClick={() => evaluate(e)}>
+                                                    添加评估+
                                                 </Button>
-                                            </div>
-                                        ) : (
-                                            <Button className={c("add-evaluate-btn")} onClick={() => evaluate(e)}>
-                                                添加评估+
-                                            </Button>
-                                        )}
+                                            )}
+                                        </>
                                     </>
                                 )}
                             </div>
@@ -404,7 +406,7 @@ const StormThinking: React.FC = () => {
     const sessionStore = useSession()
     const [solutionList, setSolutionList] = useState<Plan[]>([])
     const [selectItem, setSelectItem] = useState<DataType>(Object)
-    const [isEvaling, setIsEvaling] = useState(false)
+    const [evalingId, setEvalingId] = useState("")
 
     const search = async () => {
         // const res = await searchMind({
@@ -441,13 +443,13 @@ const StormThinking: React.FC = () => {
 
     const evaluate = (e: Plan) => {
         // setTitle("评估")
-        setIsEvaling(true)
+        setEvalingId(e.id)
         setModalOpen(true)
         // form.setFieldsValue({ type: e.type })
     }
 
     const delMindEvaluation = (e: Plan) => {
-        setIsEvaling(false)
+        setEvalingId("")
     }
 
     const edit = (e: DataType) => {
@@ -491,7 +493,7 @@ const StormThinking: React.FC = () => {
             return
         }
         if (title == "解决思路") {
-            setIsEvaling(false)
+            setEvalingId("")
         }
         form.resetFields()
     }
