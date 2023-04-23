@@ -3,7 +3,7 @@ import { ReactNode, useState } from "react"
 import type { ColumnsType } from "antd/es/table"
 import Styles from "./index.module.less"
 import dayjs from "dayjs"
-import { searchSmartApp } from "../../api/smartApp"
+import { addSmartApp, searchSmartApp } from "../../api/smartApp"
 import { useAsync } from "../../utils/hooks"
 
 const { RangePicker } = DatePicker
@@ -12,46 +12,35 @@ function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
 }
 
-interface DataType {
-    key: string
-    type: string
-    code: string
-    time: string
-    content: string
-    pointObj: string
-    smartUnit: string
-    policeType: string
-    jurisdiction: string
-    status: string
-    morbCode: string
+interface DataType extends AddSmartAppData {
     operate?: ReactNode
 }
 
 const AddFormItem: React.FC = () => {
     return (
         <>
-            <Form.Item name="code" label="编码">
+            <Form.Item name="applyNo" label="编码">
                 <Input className={c("form-item-input")} disabled />
             </Form.Item>
-            <Form.Item label="（模型/技战）法编号">
+            <Form.Item name="bmNo" label="（模型/技战）法编号">
                 <Input className={c("form-item-input")} />
             </Form.Item>
             <Form.Item name="type" label="类型">
                 <Input className={c("form-item-input")} disabled />
             </Form.Item>
-            <Form.Item label="指向对象">
+            <Form.Item name="toUser" label="指向对象">
                 <Input className={c("form-item-input")} />
             </Form.Item>
-            <Form.Item label="智慧单元">
+            <Form.Item name="wisdomUnit" label="智慧单元">
                 <Input className={c("form-item-input")} disabled />
             </Form.Item>
-            <Form.Item label="警种">
+            <Form.Item name="policeKind" label="警种">
                 <Input className={c("form-item-input")} disabled />
             </Form.Item>
-            <Form.Item label="辖区">
+            <Form.Item name="managerArea" label="辖区">
                 <Select className={c("form-item-input")} />
             </Form.Item>
-            <Form.Item name="content" label="内容">
+            <Form.Item name="info" label="内容">
                 <Input.TextArea className={c("form-item-input")} />
             </Form.Item>
         </>
@@ -264,21 +253,21 @@ const Application: React.FC = () => {
         }
     ]
 
-    const tableData: DataType[] = [
-        {
-            key: "0",
-            type: "模型",
-            code: "123",
-            time: "2023-03-11",
-            content: "xxx",
-            pointObj: "卜元浩",
-            smartUnit: "智慧安防小区",
-            policeType: "治安",
-            jurisdiction: "开发区",
-            status: "待过滤",
-            morbCode: "xxx"
-        }
-    ]
+    // const tableData: DataType[] = [
+    //     {
+    //         key: "0",
+    //         type: "模型",
+    //         code: "123",
+    //         time: "2023-03-11",
+    //         content: "xxx",
+    //         pointObj: "卜元浩",
+    //         smartUnit: "智慧安防小区",
+    //         policeType: "治安",
+    //         jurisdiction: "开发区",
+    //         status: "待过滤",
+    //         morbCode: "xxx"
+    //     }
+    // ]
 
     const [modalOpen, setModalOpen] = useState(false)
     const [startTime, setStartTime] = useState<dayjs.Dayjs>(dayjs(Date.now() - 2592000000))
@@ -288,7 +277,7 @@ const Application: React.FC = () => {
     const [total, setTotal] = useState(0)
     const [appTypeSelect, setAppTypeSelect] = useState<string | undefined>(smartAppList[0].label)
     const [policeTypeSelect, setPoliceTypeSelect] = useState<string | undefined>(policeTypeList[0].label)
-    const [addForm] = Form.useForm()
+    const [form] = Form.useForm()
     const [modalTitle, setModalTitle] = useState<"新增" | "过滤原因" | "反馈" | "评估">("新增")
     const [formSpan, setFormSpan] = useState<4 | 8>(8)
     // const sessionStore = useSession()
@@ -326,14 +315,14 @@ const Application: React.FC = () => {
         setModalTitle("新增")
         setFormSpan(8)
         setModalOpen(true)
-        addForm.setFieldsValue({
-            code: Date.now()
+        form.setFieldsValue({
+            applyNo: Date.now()
         })
     }
 
     const addCancel = () => {
         setModalOpen(false)
-        addForm.resetFields()
+        form.resetFields()
     }
 
     const filter = (e: DataType) => {
@@ -357,8 +346,23 @@ const Application: React.FC = () => {
     }
 
     const save = async () => {
-        const res = await addForm.validateFields()
+        const res = await form.validateFields()
         if (modalTitle === "新增") {
+            addSmartApp({
+                applyNo: res.applyNo,
+                bmNo: res.bmNo,
+                info: res.info,
+                managerArea: res.managerArea,
+                policeKind: res.policeKind,
+                remark: res.remark,
+                status: res.status,
+                toUser: res.toUser,
+                type: res.type,
+                wisdomUnit: res.wisdomUnit
+            }).then(() => {
+                setModalOpen(false)
+                form.resetFields()
+            })
             return
         }
         if (modalTitle === "过滤原因") {
@@ -407,7 +411,7 @@ const Application: React.FC = () => {
                     </Button>
                 </div>
             </div>
-            <Table columns={column} dataSource={tableData} pagination={{ onChange: pageChange, total, pageSize }} />
+            <Table columns={column} pagination={{ onChange: pageChange, total, pageSize }} />
             <Modal
                 title={modalTitle}
                 open={modalOpen}
@@ -423,7 +427,7 @@ const Application: React.FC = () => {
                     </>
                 }
             >
-                <Form labelCol={{ span: formSpan }} form={addForm}>
+                <Form labelCol={{ span: formSpan }} form={form}>
                     {modalTitle === "新增" && <AddFormItem />}
                     {modalTitle === "过滤原因" && <FilterFormItem />}
                     {modalTitle === "反馈" && <FeedbackFormItem />}

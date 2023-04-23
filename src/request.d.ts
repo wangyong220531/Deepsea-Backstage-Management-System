@@ -1173,7 +1173,7 @@ interface Plan {
     policeKind: string
     createTime: string
     createOperator: string
-    evaluateVo: Evaluation
+    evaluateVo: Evaluation | null
 }
 
 interface Evaluation {
