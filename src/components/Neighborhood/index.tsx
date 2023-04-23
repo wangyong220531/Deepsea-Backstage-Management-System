@@ -247,17 +247,17 @@ const Neighborhood: React.FC = () => {
         <>
             <div className={c("header")}>
                 <div className={c("query")}>
-                    <div className={c("inputs")}>
+                    {/* <div className={c("inputs")}>
                         <RangePicker value={[startTime, endTime]} onCalendarChange={rangeChange} />
-                    </div>
-                    <div className={c("query-reset")}>
+                    </div> */}
+                    {/* <div className={c("query-reset")}>
                         <Button className={c("query-btn")} onClick={search}>
                             查询
                         </Button>
                         <Button className={c("reset-btn")} onClick={reset}>
                             重置
                         </Button>
-                    </div>
+                    </div> */}
                 </div>
                 <div className={c("btn-group")}>
                     <Button className={c("add")} onClick={() => setAddOpen(true)}>

@@ -1173,13 +1173,15 @@ interface Plan {
     policeKind: string
     createTime: string
     createOperator: string
-    evaluateVo: {
-        id: string
-        planId: string
-        planNo: string
-        content: string
-        type: "模型" | "技战法"
-        createTime: string
-        createOperator: string
-    }
+    evaluateVo: Evaluation
+}
+
+interface Evaluation {
+    id: string
+    planId: string
+    planNo: string
+    content: string
+    type: "模型" | "技战法"
+    createTime: string
+    createOperator: string
 }

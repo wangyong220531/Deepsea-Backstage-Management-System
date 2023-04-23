@@ -295,12 +295,16 @@ const Application: React.FC = () => {
 
     const search = async () => {
         const res = await searchSmartApp({
-            startTime: startTime.format("YYYY-MM-DD HH:mm:ss"),
-            endTime: endTime.format("YYYY-MM-DD HH:mm:ss"),
+            applyNo: "",
+            manageArea: "",
+            toUser: "",
+            stime: startTime.format("YYYY-MM-DD HH:mm:ss"),
+            etime: endTime.format("YYYY-MM-DD HH:mm:ss"),
             pageNum,
             pageSize,
-            appType: Number(smartAppList.find(x => x.label === appTypeSelect)?.value),
-            policeType: Number(policeTypeList.find(x => x.label === policeTypeSelect)?.value)
+            // appType: Number(smartAppList.find(x => x.label === appTypeSelect)?.value),
+            policeKind: Number(policeTypeList.find(x => x.label === policeTypeSelect)?.value),
+            status: ""
         })
         if (res) {
         }
@@ -313,7 +317,7 @@ const Application: React.FC = () => {
         setPoliceTypeSelect("全部")
     }
 
-    const dateRangeChange = (e: any) => {
+    const rangeChange = (e: any) => {
         setStartTime(dayjs(e[0]))
         setEndTime(dayjs(e[1]))
     }
@@ -355,19 +359,15 @@ const Application: React.FC = () => {
     const save = async () => {
         const res = await addForm.validateFields()
         if (modalTitle === "新增") {
-            console.log("1", res)
             return
         }
         if (modalTitle === "过滤原因") {
-            console.log("2", res)
             return
         }
         if (modalTitle === "反馈") {
-            console.log("3", res)
             return
         }
         if (modalTitle === "评估") {
-            console.log("4", res)
             return
         }
     }
@@ -384,7 +384,7 @@ const Application: React.FC = () => {
             <div className={c("header")}>
                 <div className={Styles["query"]}>
                     <div className={c("inputs")}>
-                        <RangePicker value={[startTime, endTime]} showTime onChange={dateRangeChange} />
+                        <RangePicker value={[startTime, endTime]} showTime onChange={rangeChange} />
                         <div className={c("query-item")}>
                             <div>类型：</div>
                             <Select className={c("select")} value={appTypeSelect} options={smartAppList} onChange={e => setAppTypeSelect(smartAppList.find(x => x.value === e)?.label)} />
