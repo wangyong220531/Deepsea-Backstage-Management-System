@@ -7,6 +7,7 @@ import { addMindEvalution, addMindQuestion, addMindSolution, searchMind, updateM
 import { useSession } from "../../store"
 import dayjs from "dayjs"
 import { EyeOutlined } from "@ant-design/icons"
+import { handleEvalObj } from "../../utils/handleEvalObj"
 
 const { RangePicker } = DatePicker
 
@@ -183,9 +184,6 @@ const StormThinking: React.FC = () => {
                             <Button type="primary" className={c("operate-btn")} onClick={() => solute(e)}>
                                 方案
                             </Button>
-                            {/* <Button type="primary" className={c("operate-btn")} onClick={() => evaluate(e)}>
-                                评估
-                            </Button> */}
                             <Button type="primary" className={c("operate-btn")} onClick={() => edit(e)}>
                                 编辑
                             </Button>
@@ -210,9 +208,6 @@ const StormThinking: React.FC = () => {
     const STFormItem: React.FC = () => {
         return (
             <>
-                {/* <Form.Item label="编号" name="code">
-                    <Input className={c("form-item-input")} disabled={true} />
-                </Form.Item> */}
                 <Form.Item label="提出人" name="proper">
                     <Input className={c("form-item-input")} disabled={true} />
                 </Form.Item>
@@ -230,12 +225,12 @@ const StormThinking: React.FC = () => {
                     {solutionList.map((e, index) => {
                         return (
                             <div key={e.id}>
-                                <Form.Item label={`解决思路${index + 1}`} name={`sloutions${index}`}>
-                                    <Input.TextArea className={c("form-item-input-textarea")} defaultValue={e.solutions} disabled />
+                                <Form.Item label={`解决思路${index + 1}`} name={`sloutions${index}`} initialValue={e.solutions}>
+                                    <Input.TextArea className={c("form-item-input-textarea")} disabled />
                                 </Form.Item>
                                 {e.evaluateVo ? (
-                                    <Form.Item label={`评估${index + 1}`} name={`evaluation${index}`}>
-                                        <Input.TextArea className={c("form-item-input-textarea")} defaultValue={e.evaluateVo.content} disabled />
+                                    <Form.Item label={`评估${index + 1}`} name={`evaluation${index}`} initialValue={e.evaluateVo.content}>
+                                        <Input.TextArea className={c("form-item-input-textarea")} disabled />
                                     </Form.Item>
                                 ) : (
                                     <>
@@ -316,7 +311,7 @@ const StormThinking: React.FC = () => {
             createOperator: "蔡徐腾",
             planVoList: [
                 {
-                    id: "0",
+                    id: "id0",
                     queId: "123",
                     planNo: "456",
                     solutions: "我是方案1",
@@ -336,7 +331,7 @@ const StormThinking: React.FC = () => {
                     }
                 },
                 {
-                    id: "1",
+                    id: "id1",
                     queId: "123",
                     planNo: "456",
                     solutions: "我是方案2",
@@ -348,7 +343,7 @@ const StormThinking: React.FC = () => {
                     evaluateVo: null
                 },
                 {
-                    id: "2",
+                    id: "id2",
                     queId: "123",
                     planNo: "456",
                     solutions: "我是方案3",
@@ -376,9 +371,9 @@ const StormThinking: React.FC = () => {
     const [solutionList, setSolutionList] = useState<Plan[]>([])
     const [selectItem, setSelectItem] = useState<DataType>(Object)
     const [evalIdList, setEvalIdList] = useState<string[]>([])
-    const [addEvalData, setAddEvalData] = useState<Evaluation[]>([])
 
     const search = async () => {
+        setTableData(data)
         const res = await searchMind({
             content: "",
             pageNum,
@@ -386,10 +381,11 @@ const StormThinking: React.FC = () => {
             policeKind: "",
             putMan: "",
             queNo: "",
-            wisdomUnit: ""
+            wisdomUnit: "",
+            startTime: startTime.format("YYYY-MM-DD HH:mm:ss"),
+            endTime: startTime.format("YYYY-MM-DD HH:mm:ss")
         })
         // res && setTableData(res.data.voList)
-        setTableData(data)
     }
 
     const showAllSolutions = (e: DataType) => {
@@ -414,10 +410,8 @@ const StormThinking: React.FC = () => {
     }
 
     const evaluate = (e: Plan) => {
-        // setTitle("评估")
-        setEvalIdList([...evalIdList, ...e.id])
+        setEvalIdList(Array.from(new Set([...evalIdList, e.id])))
         setModalOpen(true)
-        // form.setFieldsValue({ type: e.type })
     }
 
     const delMindEvaluation = (e: Plan) => {
@@ -459,6 +453,7 @@ const StormThinking: React.FC = () => {
     }
 
     const cancel = () => {
+        setEvalIdList([])
         setModalOpen(false)
         if (title === "请提出你的问题") {
             save()
@@ -498,14 +493,18 @@ const StormThinking: React.FC = () => {
             return
         }
         if (title == "解决思路") {
-            console.log(res.evaluation)
-            // addMindEvalution({ })
-            // solutionList.map((e,index) => {
-            //     return {
-            //         content: res.find((e:any) => e === `solutions${index}`),
-            //         planId:
-            //     }
-            // })
+            setEvalIdList([])
+            addMindEvalution({
+                data: handleEvalObj(res).map(e => {
+                    return {
+                        planId: solutionList[e.index].id,
+                        content: e.content,
+                        type: e.type
+                    }
+                })
+            }).then(() => {
+                search()
+            })
             return
         }
         if (title === "编辑") {

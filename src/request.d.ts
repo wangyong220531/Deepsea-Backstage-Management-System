@@ -40,7 +40,7 @@ type ResponseResult = {
     "/system/role/add": { success: Boolean }
     "/system/role/delete2/:id": { success: Boolean }
     "/system/role/list": GetAllRolesResult
-    "/report/list": GetUnitListResult
+    "/report/queryAllUnit": GetUnitListResult
     "/system/user/modifyPassword": { success: Boolean }
     "/system/user/delete/:id": { success: Boolean }
     "/system/permission/list/:parentId": GetPermissionTreeResult
@@ -620,12 +620,13 @@ interface SearchSmartAppData {
     applyNo: string
     stime: string
     etime: string
-    manageArea: number // 0：全部 ，1：智慧安防小区，2：智慧安防校区。3：智慧安防CBD，4：智慧安防医院，5：智慧安防车站
+    manageArea: string
     pageNum: number
     pageSize: number
-    policeKind: number // 0：全部 1：治安，2：刑侦，3：经侦，4：巡防，5：围保，6：网安，7：法制，8：指挥，9：涉稳。10：集成
+    policeKind: string
     toUser: string
     status: string
+    wisdomUnitType: string
 }
 
 interface SearchAppResult {
@@ -942,7 +943,10 @@ interface Role {
 }
 
 interface GetUnitListResult {
-    data: Unit[]
+    success: Boolean
+    data: {
+        unitInfos: Unit[]
+    }
 }
 
 interface Unit {
@@ -1112,10 +1116,10 @@ interface UpdateRoleData {
 }
 
 interface AddMindEvalutaionData {
-    data: Evaluation[]
+    data: Evaluate[]
 }
 
-interface Evaluation {
+interface Evaluate {
     content: string
     planId: string
     type: "模型" | "技战法"
@@ -1150,6 +1154,8 @@ interface SearchMindData {
     putMan: string
     queNo: string
     wisdomUnit: string
+    startTime: string
+    endTime: string
 }
 
 interface SearchMindResult {

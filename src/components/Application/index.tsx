@@ -5,7 +5,7 @@ import Styles from "./index.module.less"
 import dayjs from "dayjs"
 import { addSmartApp, appOperate, searchSmartApp, updateSmartApp } from "../../api/smartApp"
 import { useAsync } from "../../utils/hooks"
-// import 
+import { getUnitList } from "../../api/userManage"
 
 const { RangePicker } = DatePicker
 
@@ -15,37 +15,6 @@ function c(...classNameList: (string | undefined | null | boolean)[]) {
 
 interface DataType extends AddSmartAppData {
     operate?: ReactNode
-}
-
-const AddFormItem: React.FC = () => {
-    return (
-        <>
-            {/* <Form.Item name="applyNo" label="编码">
-                <Input className={c("form-item-input")} disabled />
-            </Form.Item> */}
-            <Form.Item name="bmNo" label="（模型/技战）法编号">
-                <Input className={c("form-item-input")} />
-            </Form.Item>
-            <Form.Item name="type" label="类型">
-                <Input className={c("form-item-input")} disabled />
-            </Form.Item>
-            <Form.Item name="toUser" label="指向对象">
-                <Input className={c("form-item-input")} />
-            </Form.Item>
-            <Form.Item name="wisdomUnit" label="智慧单元">
-                <Input className={c("form-item-input")} disabled />
-            </Form.Item>
-            <Form.Item name="policeKind" label="警种">
-                <Input className={c("form-item-input")} disabled />
-            </Form.Item>
-            <Form.Item name="managerArea" label="辖区">
-                <Select className={c("form-item-input")} />
-            </Form.Item>
-            <Form.Item name="info" label="内容">
-                <Input.TextArea className={c("form-item-input")} />
-            </Form.Item>
-        </>
-    )
 }
 
 const FilterFormItem: React.FC = () => {
@@ -92,27 +61,27 @@ const Application: React.FC = () => {
 
     const smartAppList: OptionType[] = [
         {
-            value: "0",
+            value: "全部",
             label: "全部"
         },
         {
-            value: "1",
+            value: "智慧安防小区",
             label: "智慧安防小区"
         },
         {
-            value: "2",
+            value: "智慧安防校区",
             label: "智慧安防校区"
         },
         {
-            value: "3",
+            value: "智慧安防CBD",
             label: "智慧安防CBD"
         },
         {
-            value: "4",
+            value: "智慧安防医院",
             label: "智慧安防医院"
         },
         {
-            value: "5",
+            value: "智慧安防车站",
             label: "智慧安防车站"
         }
     ]
@@ -203,47 +172,47 @@ const Application: React.FC = () => {
 
     const policeTypeList: OptionType[] = [
         {
-            value: "0",
+            value: "全部",
             label: "全部"
         },
         {
-            value: "1",
+            value: "治安",
             label: "治安"
         },
         {
-            value: "2",
+            value: "刑侦",
             label: "刑侦"
         },
         {
-            value: "3",
+            value: "经侦",
             label: "经侦"
         },
         {
-            value: "4",
+            value: "巡防",
             label: "巡防"
         },
         {
-            value: "5",
+            value: "围保",
             label: "围保"
         },
         {
-            value: "4",
+            value: "网安",
             label: "网安"
         },
         {
-            value: "7",
+            value: "法制",
             label: "法制"
         },
         {
-            value: "8",
+            value: "指挥",
             label: "指挥"
         },
         {
-            value: "9",
+            value: "涉稳",
             label: "涉稳"
         },
         {
-            value: "10",
+            value: "集成",
             label: "集成"
         }
     ]
@@ -270,27 +239,71 @@ const Application: React.FC = () => {
     const [pageNum, setPageNum] = useState(1)
     const [pageSize, setPageSize] = useState(10)
     const [total, setTotal] = useState(0)
-    const [appTypeSelect, setAppTypeSelect] = useState<string | undefined>(smartAppList[0].label)
-    const [policeTypeSelect, setPoliceTypeSelect] = useState<string | undefined>(policeTypeList[0].label)
     const [form] = Form.useForm()
     const [modalTitle, setModalTitle] = useState<"新增" | "过滤原因" | "反馈" | "评估">("新增")
     const [formSpan, setFormSpan] = useState<4 | 8>(8)
     // const sessionStore = useSession()
     const [selectApp, setSelectApp] = useState<AddSmartAppData>(Object)
     const [tableData, setTableData] = useState<DataType[]>([])
+    const [jurisdictionList, setJurisdictionList] = useState<OptionType[]>([])
+    const [policeKind, setPoliceKind] = useState("全部")
+    const [wisdomUnitType, setWisdomUnitType] = useState("全部")
+
+    const AddFormItem: React.FC = () => {
+        return (
+            <>
+                {/* <Form.Item name="applyNo" label="编码">
+                    <Input className={c("form-item-input")} disabled />
+                </Form.Item> */}
+                <Form.Item name="bmNo" label="（模型/技战）法编号">
+                    <Input className={c("form-item-input")} />
+                </Form.Item>
+                <Form.Item name="type" label="类型">
+                    <Input className={c("form-item-input")} disabled />
+                </Form.Item>
+                <Form.Item name="toUser" label="指向对象">
+                    <Input className={c("form-item-input")} />
+                </Form.Item>
+                <Form.Item name="wisdomUnit" label="智慧单元">
+                    <Input className={c("form-item-input")} disabled />
+                </Form.Item>
+                <Form.Item name="policeKind" label="警种">
+                    <Input className={c("form-item-input")} disabled />
+                </Form.Item>
+                <Form.Item name="managerArea" label="辖区">
+                    <Select className={c("form-item-input")} options={jurisdictionList} />
+                </Form.Item>
+                <Form.Item name="info" label="内容">
+                    <Input.TextArea className={c("form-item-input")} />
+                </Form.Item>
+            </>
+        )
+    }
 
     const search = async () => {
         setTableData(data)
+        getUnitList({}).then(res => {
+            res &&
+                setJurisdictionList(
+                    res.data.unitInfos.map(e => {
+                        return {
+                            value: e.unitNo,
+                            label: e.unitName
+                        }
+                    })
+                )
+        })
         const res = await searchSmartApp({
             applyNo: "",
-            manageArea: Number(smartAppList.find(x => x.label === appTypeSelect)?.value),
+            manageArea: "",
             toUser: "",
             stime: startTime.format("YYYY-MM-DD HH:mm:ss"),
             etime: endTime.format("YYYY-MM-DD HH:mm:ss"),
             pageNum,
             pageSize,
-            policeKind: Number(policeTypeList.find(x => x.label === policeTypeSelect)?.value),
-            status: ""
+            policeKind,
+            status: "",
+            wisdomUnitType
         })
         if (res) {
         }
@@ -299,8 +312,6 @@ const Application: React.FC = () => {
     const reset = () => {
         setStartTime(dayjs(Date.now() - 2592000000))
         setEndTime(dayjs(Date.now()))
-        setAppTypeSelect("全部")
-        setPoliceTypeSelect("全部")
     }
 
     const rangeChange = (e: any) => {
@@ -435,11 +446,12 @@ const Application: React.FC = () => {
                         <RangePicker value={[startTime, endTime]} showTime onChange={rangeChange} />
                         <div className={c("query-item")}>
                             <div>类型：</div>
-                            <Select className={c("select")} value={appTypeSelect} options={smartAppList} onChange={e => setAppTypeSelect(smartAppList.find(x => x.value === e)?.label)} />
+                            <Select className={c("select")} defaultValue={smartAppList[0].label} options={smartAppList} onChange={e => setPoliceKind(e)
+                            } />
                         </div>
                         <div className={c("query-item")}>
                             <div>警种：</div>
-                            <Select value={policeTypeSelect} options={policeTypeList} onChange={e => setPoliceTypeSelect(policeTypeList.find(x => x.value === e)?.label)} />
+                            <Select defaultValue={policeTypeList[0].label} options={policeTypeList} onChange={e => setWisdomUnitType(e)} />
                         </div>
                     </div>
                     <div className={c("query-reset")}>
@@ -455,7 +467,7 @@ const Application: React.FC = () => {
                     </Button>
                 </div>
             </div>
-            <Table dataSource={tableData} columns={column} pagination={{ onChange: pageChange, total, pageSize }} />
+            <Table rowKey={e => e.applyNo} dataSource={tableData} columns={column} pagination={{ onChange: pageChange, total, pageSize }} />
             <Modal
                 title={modalTitle}
                 open={modalOpen}
