@@ -38,7 +38,7 @@ export function searchUser(data: SearchUserData) {
 
 export function getUnitList(config: {}) {
     return request({
-        url: "/report/list",
+        url: "/report/queryAllUnit",
         baseURL,
         query: config,
         method: "GET"

@@ -3,8 +3,9 @@ import { ReactNode, useState } from "react"
 import type { ColumnsType } from "antd/es/table"
 import Styles from "./index.module.less"
 import dayjs from "dayjs"
-import { addSmartApp, searchSmartApp, updateSmartApp } from "../../api/smartApp"
+import { addSmartApp, appOperate, searchSmartApp, updateSmartApp } from "../../api/smartApp"
 import { useAsync } from "../../utils/hooks"
+// import 
 
 const { RangePicker } = DatePicker
 
@@ -12,16 +13,16 @@ function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
 }
 
-interface DataType extends UpdateSmartAppData {
+interface DataType extends AddSmartAppData {
     operate?: ReactNode
 }
 
 const AddFormItem: React.FC = () => {
     return (
         <>
-            <Form.Item name="applyNo" label="编码">
+            {/* <Form.Item name="applyNo" label="编码">
                 <Input className={c("form-item-input")} disabled />
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item name="bmNo" label="（模型/技战）法编号">
                 <Input className={c("form-item-input")} />
             </Form.Item>
@@ -70,7 +71,7 @@ const FeedbackFormItem: React.FC = () => {
 const EvaluateFormItem: React.FC = () => {
     return (
         <>
-            <Form.Item name="evaluate" label="评估">
+            <Form.Item name="evaluation" label="评估">
                 <Input.TextArea className={c("form-item-input-textarea")} />
             </Form.Item>
         </>
@@ -78,16 +79,16 @@ const EvaluateFormItem: React.FC = () => {
 }
 
 const Application: React.FC = () => {
-    const typeOptions: OptionType[] = [
-        {
-            value: "模型",
-            label: "模型"
-        },
-        {
-            value: "技战法",
-            label: "技战法"
-        }
-    ]
+    // const typeOptions: OptionType[] = [
+    //     {
+    //         value: "模型",
+    //         label: "模型"
+    //     },
+    //     {
+    //         value: "技战法",
+    //         label: "技战法"
+    //     }
+    // ]
 
     const smartAppList: OptionType[] = [
         {
@@ -275,25 +276,24 @@ const Application: React.FC = () => {
     const [modalTitle, setModalTitle] = useState<"新增" | "过滤原因" | "反馈" | "评估">("新增")
     const [formSpan, setFormSpan] = useState<4 | 8>(8)
     // const sessionStore = useSession()
-    const [selectApp, setSelectApp] = useState<UpdateSmartAppData>(Object)
+    const [selectApp, setSelectApp] = useState<AddSmartAppData>(Object)
     const [tableData, setTableData] = useState<DataType[]>([])
 
     const search = async () => {
+        setTableData(data)
         const res = await searchSmartApp({
             applyNo: "",
-            manageArea: "",
+            manageArea: Number(smartAppList.find(x => x.label === appTypeSelect)?.value),
             toUser: "",
             stime: startTime.format("YYYY-MM-DD HH:mm:ss"),
             etime: endTime.format("YYYY-MM-DD HH:mm:ss"),
             pageNum,
             pageSize,
-            // appType: Number(smartAppList.find(x => x.label === appTypeSelect)?.value),
             policeKind: Number(policeTypeList.find(x => x.label === policeTypeSelect)?.value),
             status: ""
         })
         if (res) {
         }
-        setTableData(data)
     }
 
     const reset = () => {
@@ -383,18 +383,10 @@ const Application: React.FC = () => {
             return
         }
         if (modalTitle === "过滤原因") {
-            updateSmartApp({
-                applyNo: selectApp.applyNo,
-                bmNo: selectApp.bmNo,
-                id: selectApp.id,
-                info: res.filterReason,
-                managerArea: selectApp.managerArea,
-                policeKind: selectApp.policeKind,
-                remark: selectApp.remark,
-                status: "已过滤",
-                toUser: selectApp.toUser,
-                type: selectApp.type,
-                wisdomUnit: selectApp.wisdomUnit
+            appOperate({
+                context: res.filterReason,
+                type: "1",
+                wpId: selectApp.id
             }).then(() => {
                 setModalOpen(false)
                 search()
@@ -403,18 +395,10 @@ const Application: React.FC = () => {
             return
         }
         if (modalTitle === "反馈") {
-            updateSmartApp({
-                applyNo: selectApp.applyNo,
-                bmNo: selectApp.bmNo,
-                id: selectApp.id,
-                info: res.feedback,
-                managerArea: selectApp.managerArea,
-                policeKind: selectApp.policeKind,
-                remark: selectApp.remark,
-                status: selectApp.status,
-                toUser: selectApp.toUser,
-                type: selectApp.type,
-                wisdomUnit: selectApp.wisdomUnit
+            appOperate({
+                context: res.feedback,
+                type: "2",
+                wpId: selectApp.id
             }).then(() => {
                 setModalOpen(false)
                 search()
@@ -423,18 +407,10 @@ const Application: React.FC = () => {
             return
         }
         if (modalTitle === "评估") {
-            updateSmartApp({
-                applyNo: selectApp.applyNo,
-                bmNo: selectApp.bmNo,
-                id: selectApp.id,
-                info: res.evaluate,
-                managerArea: selectApp.managerArea,
-                policeKind: selectApp.policeKind,
-                remark: selectApp.remark,
-                status: selectApp.status,
-                toUser: selectApp.toUser,
-                type: selectApp.type,
-                wisdomUnit: selectApp.wisdomUnit
+            appOperate({
+                context: res.evaluation,
+                type: "3",
+                wpId: selectApp.id
             }).then(() => {
                 setModalOpen(false)
                 search()

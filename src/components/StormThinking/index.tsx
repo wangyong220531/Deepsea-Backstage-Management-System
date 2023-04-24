@@ -231,11 +231,11 @@ const StormThinking: React.FC = () => {
                         return (
                             <div key={e.id}>
                                 <Form.Item label={`解决思路${index + 1}`} name={`sloutions${index}`}>
-                                    <Input.TextArea className={c("form-item-input-textarea")} disabled />
+                                    <Input.TextArea className={c("form-item-input-textarea")} defaultValue={e.solutions} disabled />
                                 </Form.Item>
                                 {e.evaluateVo ? (
                                     <Form.Item label={`评估${index + 1}`} name={`evaluation${index}`}>
-                                        <Input.TextArea className={c("form-item-input-textarea")} disabled />
+                                        <Input.TextArea className={c("form-item-input-textarea")} defaultValue={e.evaluateVo.content} disabled />
                                     </Form.Item>
                                 ) : (
                                     <>
@@ -244,8 +244,11 @@ const StormThinking: React.FC = () => {
                                                 <Form.Item label={`评估${index + 1}`} name={`evaluation${index}`}>
                                                     <Input.TextArea className={c("form-item-input-textarea")} placeholder="请输入您的评估"></Input.TextArea>
                                                 </Form.Item>
+                                                <Form.Item label={`类型${index + 1}`} name={`bmType${index}`}>
+                                                    <Select className={c("form-item-input")} options={evalTypeOpt}></Select>
+                                                </Form.Item>
                                                 <Button className={c("del-evaluate-btn")} onClick={() => delMindEvaluation(e)}>
-                                                    删除评估+
+                                                    取消
                                                 </Button>
                                             </div>
                                         ) : (
@@ -373,17 +376,18 @@ const StormThinking: React.FC = () => {
     const [solutionList, setSolutionList] = useState<Plan[]>([])
     const [selectItem, setSelectItem] = useState<DataType>(Object)
     const [evalIdList, setEvalIdList] = useState<string[]>([])
+    const [addEvalData, setAddEvalData] = useState<Evaluation[]>([])
 
     const search = async () => {
-        // const res = await searchMind({
-        //     content: "",
-        //     pageNum,
-        //     pageSize,
-        //     policeKind: "",
-        //     putMan: "",
-        //     queNo: "",
-        //     wisdomUnit: ""
-        // })
+        const res = await searchMind({
+            content: "",
+            pageNum,
+            pageSize,
+            policeKind: "",
+            putMan: "",
+            queNo: "",
+            wisdomUnit: ""
+        })
         // res && setTableData(res.data.voList)
         setTableData(data)
     }
@@ -391,13 +395,14 @@ const StormThinking: React.FC = () => {
     const showAllSolutions = (e: DataType) => {
         setTitle("解决思路")
         setSolutionList(e.planVoList)
-        console.log(solutionList.map(x => {
-            return 
-        }));
-        
-        form.setFieldsValue({
-           
-        })
+        // console.log(
+        //     solutionList.map((x,index) => {
+        //         return {
+        //             `solutions`+${index}:x
+        //         }
+        //     })
+        // )
+        // form.setFieldsValue({})
         setModalOpen(true)
     }
 
@@ -493,17 +498,25 @@ const StormThinking: React.FC = () => {
             return
         }
         if (title == "解决思路") {
-            console.log(res)
+            console.log(res.evaluation)
+            // addMindEvalution({ })
+            // solutionList.map((e,index) => {
+            //     return {
+            //         content: res.find((e:any) => e === `solutions${index}`),
+            //         planId:
+            //     }
+            // })
             return
         }
         if (title === "编辑") {
             updateMindQuestion({
-                id: "",
-                content: "",
-                putMan: "",
-                queNo: ""
+                id: selectItem.id,
+                content: res.question,
+                putMan: res.proper,
+                queNo: selectItem.queNo
             }).then(() => {
                 form.resetFields()
+                search()
             })
             return
         }

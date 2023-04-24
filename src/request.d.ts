@@ -70,6 +70,7 @@ type ResponseResult = {
     "/duty/stormMind/delStormMindQuestion": { success: Boolean }
     "/wisdom/apply/feedback": { success: Boolean }
     "/wisdom/apply/deleteFeedback": { success: Boolean }
+    "/report/queryAllUnit": GetAllUnitResult
 }
 type RequestQuery = {
     "/serve/ask/delAskInfo": { id: string }
@@ -91,6 +92,7 @@ type RequestQuery = {
     "/system/user/export": {}
     "/logout": {}
     "/wisdom/apply/deleteFeedback": { id: string }
+    "/report/queryAllUnit": {}
 }
 type RequestData = {
     "/policeSituation/selectNewAlarm": QueryLatestPS
@@ -587,6 +589,7 @@ interface TeamUser {
 }
 
 interface AddSmartAppData {
+    id?: string
     applyNo: string
     bmNo: string
     info: string
@@ -602,14 +605,14 @@ interface AddSmartAppData {
 interface UpdateSmartAppData {
     applyNo: string
     bmNo: string
-    id: string
+    id: string | undefined
     info: string
     managerArea: string
     policeKind: string
     remark: string
     status: string
     toUser: string
-    type: "模型" | "技战法"
+    type: "1" | "2" | "3" | "模型" | "技战法"
     wisdomUnit: string
 }
 
@@ -617,10 +620,9 @@ interface SearchSmartAppData {
     applyNo: string
     stime: string
     etime: string
-    manageArea: string
+    manageArea: number // 0：全部 ，1：智慧安防小区，2：智慧安防校区。3：智慧安防CBD，4：智慧安防医院，5：智慧安防车站
     pageNum: number
     pageSize: number
-    // appType: number // 0：全部 ，1：智慧安防小区，2：智慧安防校区。3：智慧安防CBD，4：智慧安防医院，5：智慧安防车站
     policeKind: number // 0：全部 1：治安，2：刑侦，3：经侦，4：巡防，5：围保，6：网安，7：法制，8：指挥，9：涉稳。10：集成
     toUser: string
     status: string
@@ -664,7 +666,7 @@ interface Feedback {
 interface AppOperateData {
     context: string
     type: string
-    wpId: string
+    wpId: string | undefined
 }
 
 interface KeyPosition {
@@ -1110,6 +1112,10 @@ interface UpdateRoleData {
 }
 
 interface AddMindEvalutaionData {
+    data: Evaluation[]
+}
+
+interface Evaluation {
     content: string
     planId: string
     type: "模型" | "技战法"
@@ -1184,4 +1190,9 @@ interface Evaluation {
     type: "模型" | "技战法"
     createTime: string
     createOperator: string
+}
+
+interface GetAllUnitResult {
+    success: Boolean
+    data: Unit[]
 }
