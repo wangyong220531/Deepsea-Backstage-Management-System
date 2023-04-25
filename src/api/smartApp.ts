@@ -62,3 +62,12 @@ export function searchPlan(config: { planNo: string }) {
         method: "GET"
     })
 }
+
+export function getPlanNoList(config: {}) {
+    return request({
+        url: "/duty/stormMind/getPlanNoList",
+        baseURL,
+        query: config,
+        method: "GET"
+    })
+}

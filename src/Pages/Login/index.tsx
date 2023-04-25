@@ -29,6 +29,7 @@ const Login: React.FC = () => {
         }).then(res => {
             if (res) {
                 sessionStorage.setItem("token", res.data.token)
+                sessionStore.setState({userNo:userNo})
                 sessionStore.setState({ token: res.data.token })
                 sessionStore.setState({ userId: res.data.userId })
                 if (res.data.user === "superAdmin") {
@@ -42,13 +43,13 @@ const Login: React.FC = () => {
                     operates[0].item = handleOperates(res.data.user)
                     return
                 }
-                // if (!res.data.user) {
-                //     console.log(1)
-                //     sessionStore.setState({
-                //         menu: [{ name: "首页", path: "home" }]
-                //     })
-                //     return
-                // }
+                if (!res.data.user) {
+                    console.log(1)
+                    sessionStore.setState({
+                        menu: [{ name: "首页", path: "home" }]
+                    })
+                    return
+                }
             }
         })
     }

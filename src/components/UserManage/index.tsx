@@ -230,7 +230,8 @@ const UserManage: FC = () => {
     useAsync(() => search(), [pageNum, pageSize])
 
     const query = () => {
-        search()
+        setPageNum(1)
+        setPageSize(10)
     }
 
     const reset = () => {

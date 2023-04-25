@@ -72,6 +72,7 @@ type ResponseResult = {
     "/wisdom/apply/deleteFeedback": { success: Boolean }
     "/report/queryAllUnit": GetAllUnitResult
     "/duty/stormMind/selectPlanByNo": SearchPlanResult
+    "/duty/stormMind/getPlanNoList": PlanListResult
 }
 type RequestQuery = {
     "/serve/ask/delAskInfo": { id: string }
@@ -95,6 +96,7 @@ type RequestQuery = {
     "/wisdom/apply/deleteFeedback": { id: string }
     "/report/queryAllUnit": {}
     "/duty/stormMind/selectPlanByNo": { planNo: string }
+    "/duty/stormMind/getPlanNoList": {}
 }
 type RequestData = {
     "/policeSituation/selectNewAlarm": QueryLatestPS
@@ -1016,6 +1018,7 @@ interface LoginLog {
     userName: string
     loginIp: string
     loginTime: string
+    status: 0 | 1
     remark: "Login" | "Logout"
 }
 
@@ -1119,7 +1122,7 @@ interface UpdateRoleData {
 }
 
 interface AddMindEvalutaionData {
-    data: Evaluate[]
+    vos: Evaluate[]
 }
 
 interface Evaluate {
@@ -1213,4 +1216,9 @@ interface SearchPlanResult {
         policeKind: string
         wisdomUnit: string
     }
+}
+
+interface PlanListResult {
+    success: Boolean
+    data: string[]
 }

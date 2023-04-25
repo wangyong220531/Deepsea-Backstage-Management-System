@@ -44,7 +44,7 @@ const RoleManage: React.FC = () => {
                     {
                         key: "shenhai",
                         title: "深海后台管理系统",
-                        children:handleTree(res.data)
+                        children: handleTree(res.data)
                     }
                 ])
         })
@@ -145,28 +145,30 @@ const RoleManage: React.FC = () => {
             render: (_, e) => {
                 return (
                     <>
-                        <div className={c("operate")}>
-                            {(operateId === 2 || operateId === 5) && (
-                                <>
-                                    <div className={c("item")} onClick={() => edit(e)}>
-                                        编辑
+                        {e.roleName === "超级管理员" ? null : (
+                            <div className={c("operate")}>
+                                {(operateId === 2 || operateId === 5) && (
+                                    <>
+                                        <div className={c("item")} onClick={() => edit(e)}>
+                                            编辑
+                                        </div>
+                                        <div className={c("item")} onClick={() => userClick(e)}>
+                                            用户
+                                        </div>
+                                    </>
+                                )}
+                                {(operateId === 3 || operateId === 5) && (
+                                    <div className={c("item")} onClick={() => authorize(e)}>
+                                        授权
                                     </div>
-                                    <div className={c("item")} onClick={() => userClick(e)}>
-                                        用户
-                                    </div>
-                                </>
-                            )}
-                            {(operateId === 3 || operateId === 5) && (
-                                <div className={c("item")} onClick={() => authorize(e)}>
-                                    授权
-                                </div>
-                            )}
-                            {operateId === 4 && (
-                                <Popconfirm title="确定要删除吗？" onConfirm={() => delRoleConfirm(e)}>
-                                    <div className={c("item")}>删除</div>
-                                </Popconfirm>
-                            )}
-                        </div>
+                                )}
+                                {operateId === 4 && (
+                                    <Popconfirm title="确定要删除吗？" onConfirm={() => delRoleConfirm(e)}>
+                                        <div className={c("item")}>删除</div>
+                                    </Popconfirm>
+                                )}
+                            </div>
+                        )}
                     </>
                 )
             }
@@ -298,18 +300,12 @@ const RoleManage: React.FC = () => {
     }
 
     const [userShow, setUserShow] = useState(false)
-
     const [modalContent, setmodalContent] = useState<"新增" | "用户授权" | "角色编辑">("用户授权")
-
     const [modalWidth, setModalWidth] = useState(600)
-
     const [addForm] = Form.useForm()
     const [editForm] = Form.useForm()
-
     const [modalTableData, setModalTableData] = useState<UserInfo[]>([])
-
     const [editRole, setEditRole] = useState<UpdateRoleData>(Object)
-
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
         roles[0].selected = newSelectedRowKeys.toString().split(",")
@@ -321,10 +317,9 @@ const RoleManage: React.FC = () => {
         onChange: onSelectChange
     }
 
-    const inputModalAccount = useRef("")
-
-    const assignUserQuery = () => {
-        userSearch()
+    const assignUserQuery = async () => {
+        setModalPagenum(1)
+        setModalPagesize(5)
     }
 
     const assignUserReset = () => {
@@ -366,8 +361,9 @@ const RoleManage: React.FC = () => {
         }
         if (modalContent === "角色编辑") {
             const res = await editForm.validateFields()
-            updateRole({ id: editRole.id, roleName: res.roleName, status: editRole.status })
-            search()
+            updateRole({ id: editRole.id, roleName: res.roleName, status: editRole.status }).then(() => {
+                search()
+            })
             return
         }
     }
@@ -388,7 +384,8 @@ const RoleManage: React.FC = () => {
     }
 
     const query = () => {
-        search()
+        setPageNum(1)
+        setPageSize(10)
     }
 
     const reset = () => {

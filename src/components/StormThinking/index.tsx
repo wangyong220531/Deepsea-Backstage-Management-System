@@ -8,6 +8,7 @@ import { useSession } from "../../store"
 import dayjs from "dayjs"
 import { EyeOutlined } from "@ant-design/icons"
 import { handleEvalObj } from "../../utils/handleEvalObj"
+import { smartAppList, policeTypeList } from "../Application"
 
 const { RangePicker } = DatePicker
 
@@ -146,54 +147,17 @@ const StormThinking: React.FC = () => {
         )
     }
 
-    const Solutions: React.FC = () => {
-        return (
-            <>
-                <div className={c("solution-eval-container")}>
-                    {solutionList.map((e, index) => {
-                        return (
-                            <div key={e.id}>
-                                <Form.Item label={"解决思路"+e.planNo} name={`sloutions${index}`} initialValue={e.solutions}>
-                                    <Input.TextArea className={c("form-item-input-textarea")} disabled />
-                                </Form.Item>
-                                {e.evaluateVo ? (
-                                    <Form.Item label={`评估${index + 1}`} name={`evaluation${index}`} initialValue={e.evaluateVo.content}>
-                                        <Input.TextArea className={c("form-item-input-textarea")} disabled />
-                                    </Form.Item>
-                                ) : (
-                                    <>
-                                        {evalIdList.includes(e.id) ? (
-                                            <div>
-                                                <Form.Item label={`评估${index + 1}`} name={`evaluation${index}`}>
-                                                    <Input.TextArea className={c("form-item-input-textarea")} placeholder="请输入您的评估"></Input.TextArea>
-                                                </Form.Item>
-                                                <Form.Item label={`类型${index + 1}`} name={`bmType${index}`}>
-                                                    <Select className={c("form-item-input")} options={evalTypeOpt}></Select>
-                                                </Form.Item>
-                                                <Button className={c("del-evaluate-btn")} onClick={() => delMindEvaluation(e)}>
-                                                    取消
-                                                </Button>
-                                            </div>
-                                        ) : (
-                                            <Button className={c("add-evaluate-btn")} onClick={() => evaluate(e)}>
-                                                添加评估+
-                                            </Button>
-                                        )}
-                                    </>
-                                )}
-                            </div>
-                        )
-                    })}
-                </div>
-            </>
-        )
-    }
-
     const SolutionFormItem: React.FC = () => {
         return (
             <>
                 <Form.Item label="解决方案" name="solution">
                     <Input.TextArea className={c("form-item-input-textarea")} placeholder="请输入您的解决方案" />
+                </Form.Item>
+                <Form.Item label="警种" name="policeKind">
+                    <Select className={c("form-item-input")} options={policeTypeList.filter(e => e.value !== "全部")}></Select>
+                </Form.Item>
+                <Form.Item label="智慧单元" name="wisdomUnit">
+                    <Select className={c("form-item-input")} options={smartAppList.filter(e => e.value !== "全部")}></Select>
                 </Form.Item>
             </>
         )
@@ -212,7 +176,6 @@ const StormThinking: React.FC = () => {
         )
     }
 
-
     const [tableData, setTableData] = useState<DataType[]>([])
     const [pageNum, setPageNum] = useState(1)
     const [pageSize, setPageSize] = useState(10)
@@ -226,6 +189,7 @@ const StormThinking: React.FC = () => {
     const [solutionList, setSolutionList] = useState<Plan[]>([])
     const [selectItem, setSelectItem] = useState<DataType>(Object)
     const [evalIdList, setEvalIdList] = useState<string[]>([])
+    const [isSolution, setIsSolution] = useState(false)
 
     const search = async () => {
         const res = await searchMind({
@@ -236,14 +200,15 @@ const StormThinking: React.FC = () => {
             putMan: "",
             queNo: "",
             wisdomUnit: "",
-            startTime: startTime.format("YYYY-MM-DD HH:mm:ss"),
-            endTime: endTime.format("YYYY-MM-DD HH:mm:ss")
+            startTime: startTime.format("YYYY-MM-DD"),
+            endTime: endTime.format("YYYY-MM-DD")
         })
         res && (setTableData(res.data.voList), setTotal(res.data.size))
     }
 
     const showAllSolutions = (e: DataType) => {
         setTitle("解决思路")
+        setIsSolution(true)
         setSolutionList(e.planVoList)
         setModalOpen(true)
     }
@@ -256,11 +221,14 @@ const StormThinking: React.FC = () => {
 
     const evaluate = (e: Plan) => {
         setEvalIdList(Array.from(new Set([...evalIdList, e.id])))
-        setModalOpen(true)
     }
 
-    const delMindEvaluation = (e: Plan) => {
+    const delMindEvaluation = (e: Plan, index: number) => {
         setEvalIdList(evalIdList.filter(x => x !== e.id))
+        form.setFieldsValue({
+            ["bmType" + index]: "",
+            ["evaluation" + index]: ""
+        })
     }
 
     const edit = (e: DataType) => {
@@ -306,6 +274,11 @@ const StormThinking: React.FC = () => {
         })
     }
 
+    const topRightCancel = () => {
+        setModalOpen(false)
+        form.resetFields()
+    }
+
     const cancel = () => {
         setEvalIdList([])
         setModalOpen(false)
@@ -337,20 +310,22 @@ const StormThinking: React.FC = () => {
             addMindSolution({
                 doneMan: "",
                 planNo: "",
-                policeKind: "",
+                policeKind: res.policeKind,
                 queId: selectItem.id,
                 solutions: res.solution,
                 status: "",
-                wisdomUnit: ""
+                wisdomUnit: res.wisdomUnit
             }).then(() => {
                 form.resetFields()
+                search()
             })
             return
         }
         if (title == "解决思路") {
             setEvalIdList([])
+            setIsSolution(false)
             addMindEvalution({
-                data: handleEvalObj(res).map(e => {
+                vos: handleEvalObj(res).map(e => {
                     return {
                         planId: solutionList[e.index].id,
                         content: e.content,
@@ -403,10 +378,10 @@ const StormThinking: React.FC = () => {
             <Table rowKey={e => e.id} columns={column} dataSource={tableData} pagination={{ onChange: changePg, total, pageSize }} />
             <Modal
                 title={title}
-                width={630}
+                width={isSolution ? 700 : 630}
                 open={modalOpen}
                 onOk={save}
-                onCancel={cancel}
+                onCancel={topRightCancel}
                 footer={
                     title === "请提出你的问题" ? (
                         <>
@@ -426,11 +401,47 @@ const StormThinking: React.FC = () => {
                     )
                 }
             >
-                <Form labelCol={{ span: 6 }} form={form}>
-                    {title == "解决思路" && <Solutions />}
+                <Form labelCol={{ span: isSolution ? 8 : 6 }} form={form}>
+                    {title == "解决思路" && (
+                        <div className={c("solution-eval-container")}>
+                            {solutionList.map((e, index) => {
+                                return (
+                                    <div key={e.id}>
+                                        <Form.Item label={"解决思路" + e.planNo} name={`sloutions${index}`} initialValue={e.solutions}>
+                                            <Input.TextArea className={c("form-item-input-textarea")} disabled />
+                                        </Form.Item>
+                                        {e.evaluateVo ? (
+                                            <Form.Item label={`评估${index + 1}`} name={`evaluation${index}`} initialValue={e.evaluateVo.content}>
+                                                <Input.TextArea className={c("form-item-input-textarea")} disabled />
+                                            </Form.Item>
+                                        ) : (
+                                            <>
+                                                {evalIdList.includes(e.id) ? (
+                                                    <div>
+                                                        <Form.Item label={`评估${index + 1}`} name={`evaluation${index}`}>
+                                                            <Input.TextArea className={c("form-item-input-textarea")} placeholder="请输入您的评估"></Input.TextArea>
+                                                        </Form.Item>
+                                                        <Form.Item label={`类型${index + 1}`} name={`bmType${index}`}>
+                                                            <Select className={c("form-item-input")} options={evalTypeOpt}></Select>
+                                                        </Form.Item>
+                                                        <Button className={c("del-evaluate-btn")} onClick={() => delMindEvaluation(e, index)}>
+                                                            取消
+                                                        </Button>
+                                                    </div>
+                                                ) : (
+                                                    <Button className={c("add-evaluate-btn")} onClick={() => evaluate(e)}>
+                                                        添加评估+
+                                                    </Button>
+                                                )}
+                                            </>
+                                        )}
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    )}
                     {title === "请提出你的问题" && <STFormItem />}
                     {title === "请说出你的方案" && <SolutionFormItem />}
-                    {/* {title === "评估" && <EvalFormItem />} */}
                     {title === "编辑" && <EditFormItem />}
                 </Form>
             </Modal>

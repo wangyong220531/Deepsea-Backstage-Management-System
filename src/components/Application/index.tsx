@@ -1,17 +1,101 @@
-import { Button, Input, DatePicker, Table, Select, Modal, Form, Space } from "antd"
+import { Button, Input, DatePicker, Table, Select, Modal, Form, Space, Popconfirm } from "antd"
 import { useRef, useState } from "react"
 import type { ColumnsType } from "antd/es/table"
 import Styles from "./index.module.less"
 import dayjs from "dayjs"
-import { addSmartApp, appOperate, searchPlan, searchSmartApp, updateSmartApp } from "../../api/smartApp"
+import { addSmartApp, appOperate, getPlanNoList, searchPlan, searchSmartApp, updateSmartApp } from "../../api/smartApp"
 import { useAsync } from "../../utils/hooks"
 import { getUnitList } from "../../api/userManage"
+
+interface Feedback {
+    id: string
+    context: string
+    createOperator: string
+    createTime: string
+    remark: string
+    type: "1" | "2" | "3"
+    wpId: string
+}
 
 const { RangePicker } = DatePicker
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
 }
+
+export const smartAppList: OptionType[] = [
+    {
+        value: "全部",
+        label: "全部"
+    },
+    {
+        value: "智慧安防小区",
+        label: "智慧安防小区"
+    },
+    {
+        value: "智慧安防校区",
+        label: "智慧安防校区"
+    },
+    {
+        value: "智慧安防CBD",
+        label: "智慧安防CBD"
+    },
+    {
+        value: "智慧安防医院",
+        label: "智慧安防医院"
+    },
+    {
+        value: "智慧安防车站",
+        label: "智慧安防车站"
+    }
+]
+
+export const policeTypeList: OptionType[] = [
+    {
+        value: "全部",
+        label: "全部"
+    },
+    {
+        value: "治安",
+        label: "治安"
+    },
+    {
+        value: "刑侦",
+        label: "刑侦"
+    },
+    {
+        value: "经侦",
+        label: "经侦"
+    },
+    {
+        value: "巡防",
+        label: "巡防"
+    },
+    {
+        value: "国保",
+        label: "国保"
+    },
+    {
+        value: "网安",
+        label: "网安"
+    },
+    {
+        value: "法制",
+        label: "法制"
+    },
+    {
+        value: "指挥",
+        label: "指挥"
+    },
+    {
+        value: "涉稳",
+        label: "涉稳"
+    },
+    {
+        value: "集成",
+        label: "集成"
+    }
+]
 
 const FilterFormItem: React.FC = () => {
     return (
@@ -44,33 +128,6 @@ const EvaluateFormItem: React.FC = () => {
 }
 
 const Application: React.FC = () => {
-    const smartAppList: OptionType[] = [
-        {
-            value: "全部",
-            label: "全部"
-        },
-        {
-            value: "智慧安防小区",
-            label: "智慧安防小区"
-        },
-        {
-            value: "智慧安防校区",
-            label: "智慧安防校区"
-        },
-        {
-            value: "智慧安防CBD",
-            label: "智慧安防CBD"
-        },
-        {
-            value: "智慧安防医院",
-            label: "智慧安防医院"
-        },
-        {
-            value: "智慧安防车站",
-            label: "智慧安防车站"
-        }
-    ]
-
     const column: ColumnsType<App> = [
         {
             key: "type",
@@ -136,18 +193,22 @@ const Application: React.FC = () => {
                 return (
                     <>
                         <div className={Styles["operate"]}>
-                            <Button className={c("operate-btn")} onClick={() => filter(e)}>
-                                过滤
+                            <Button className={c("operate-btn")} onClick={() => filter(e)} disabled={e.status === "已过滤" || e.status === "已签收" ? true : false}>
+                                {e.status === "已过滤" || e.status === "已签收" ? "已过滤" : "过滤"}
                             </Button>
-                            <Button className={c("operate-btn")} onClick={() => sign(e)}>
-                                签收
+                            <Button className={c("operate-btn")} onClick={() => sign(e)} disabled={e.status === "已签收" || e.status === "待过滤" ? true : false}>
+                                {e.status === "已签收" ? "已签收" : "签收"}
                             </Button>
-                            <Button className={c("operate-btn")} onClick={() => feedback(e)}>
-                                反馈
-                            </Button>
-                            <Button className={c("operate-btn")} onClick={() => evaluate(e)}>
-                                评估
-                            </Button>
+                            <Popconfirm icon={<></>} title="反馈" cancelText="查看" okText="去反馈" onCancel={() => seeFeedback(e)} onConfirm={() => feedbackConfirm(e)}>
+                                <Button className={c("operate-btn")} onClick={() => feedback(e)}>
+                                    反馈
+                                </Button>
+                            </Popconfirm>
+                            <Popconfirm icon={<></>} title="评估" cancelText="查看" okText="去评估" onCancel={() => seeEvaluate(e)} onConfirm={() => evaluateConfirm(e)}>
+                                <Button className={c("operate-btn")} onClick={() => evaluate(e)}>
+                                    评估
+                                </Button>
+                            </Popconfirm>
                         </div>
                     </>
                 )
@@ -155,52 +216,43 @@ const Application: React.FC = () => {
         }
     ]
 
-    const policeTypeList: OptionType[] = [
-        {
-            value: "全部",
-            label: "全部"
-        },
-        {
-            value: "治安",
-            label: "治安"
-        },
-        {
-            value: "刑侦",
-            label: "刑侦"
-        },
-        {
-            value: "经侦",
-            label: "经侦"
-        },
-        {
-            value: "巡防",
-            label: "巡防"
-        },
-        {
-            value: "国保",
-            label: "国保"
-        },
-        {
-            value: "网安",
-            label: "网安"
-        },
-        {
-            value: "法制",
-            label: "法制"
-        },
-        {
-            value: "指挥",
-            label: "指挥"
-        },
-        {
-            value: "涉稳",
-            label: "涉稳"
-        },
-        {
-            value: "集成",
-            label: "集成"
-        }
-    ]
+    const SeeFeedbackFormItem: React.FC = () => {
+        return (
+            <>
+                {feedbackList &&
+                    feedbackList
+                        .filter(e => e.type === "2")
+                        .map((e, index) => {
+                            return (
+                                <>
+                                    <Form.Item key={e.id} label={`反馈${index}`}>
+                                        {e.context}
+                                    </Form.Item>
+                                </>
+                            )
+                        })}
+            </>
+        )
+    }
+
+    const SeeEvaluationFormItem: React.FC = () => {
+        return (
+            <>
+                {feedbackList &&
+                    feedbackList
+                        .filter(e => e.type === "3")
+                        .map((e, index) => {
+                            return (
+                                <>
+                                    <Form.Item key={e.id} label={`评估${index}`}>
+                                        {e.context}
+                                    </Form.Item>
+                                </>
+                            )
+                        })}
+            </>
+        )
+    }
 
     const [modalOpen, setModalOpen] = useState(false)
     const [startTime, setStartTime] = useState<dayjs.Dayjs>(dayjs(Date.now() - 2592000000))
@@ -209,7 +261,7 @@ const Application: React.FC = () => {
     const [pageSize, setPageSize] = useState(10)
     const [total, setTotal] = useState(0)
     const [form] = Form.useForm()
-    const [modalTitle, setModalTitle] = useState<"新增" | "过滤原因" | "反馈" | "评估">("新增")
+    const [modalTitle, setModalTitle] = useState<"新增" | "过滤原因" | "反馈" | "评估" | "查看反馈" | "查看评估">("新增")
     const [formSpan, setFormSpan] = useState<4 | 8>(8)
     const [selectApp, setSelectApp] = useState<App>(Object)
     const [tableData, setTableData] = useState<App[]>([])
@@ -218,15 +270,14 @@ const Application: React.FC = () => {
     const [policeTypeSelect, setPoliceTypeSelect] = useState(policeTypeList[0].label)
     const [planId, setPlanId] = useState("")
     const planNo = useRef()
+    const [feedbackList, setFeedbackList] = useState<Feedback[] | undefined>([])
+    const [planNolist, setPlanNolist] = useState<OptionType[]>([])
 
     const AddFormItem: React.FC = () => {
         return (
             <>
                 <Form.Item name="bmNo" label="（模型/技战法）编号">
-                    <Space.Compact>
-                        <Input className={c("form-item-input")} />
-                        <Button onClick={bmNoChange}>查找</Button>
-                    </Space.Compact>
+                    <Select className={c("form-item-input")} options={planNolist} onSelect={bmNoChange}></Select>
                 </Form.Item>
                 <Form.Item name="toUser" label="指向对象">
                     <Input className={c("form-item-input")} />
@@ -251,7 +302,7 @@ const Application: React.FC = () => {
         getUnitList({}).then(res => {
             res &&
                 setJurisdictionList(
-                    res.data.unitInfos.map(e => {
+                    res.data.unitInfos.filter((e:Unit) => e.unitName.includes("派出所")).map(e => {
                         return {
                             value: e.unitNo,
                             label: e.unitName
@@ -280,8 +331,6 @@ const Application: React.FC = () => {
     const bmNoChange = async () => {
         const res = await form.validateFields()
         planNo.current = res.bmNo
-        console.log(1)
-
         searchPlan({
             planNo: res.bmNo
         }).then(e => {
@@ -293,7 +342,6 @@ const Application: React.FC = () => {
                 }),
                 setPlanId(e.data.id))
         })
-        console.log(2)
     }
 
     const reset = () => {
@@ -308,8 +356,18 @@ const Application: React.FC = () => {
         setEndTime(dayjs(e[1]))
     }
 
-    const add = () => {
+    const add = async () => {
         getAllJurisdictions()
+        const res = await getPlanNoList({})
+        res &&
+            setPlanNolist(
+                res.data.map(e => {
+                    return {
+                        value: e,
+                        label: e
+                    }
+                })
+            )
         setModalTitle("新增")
         setFormSpan(8)
         setModalOpen(true)
@@ -331,8 +389,6 @@ const Application: React.FC = () => {
     }
 
     const sign = (e: App) => {
-        console.log(e)
-
         updateSmartApp({
             applyNo: e.applyNo,
             bmNo: e.bmNo,
@@ -351,6 +407,15 @@ const Application: React.FC = () => {
     }
 
     const feedback = (e: App) => {
+        setFeedbackList(e.feedbackVos)
+    }
+
+    const seeFeedback = (e: App) => {
+        setModalTitle("查看反馈")
+        setModalOpen(true)
+    }
+
+    const feedbackConfirm = (e: App) => {
         setModalTitle("反馈")
         setSelectApp(e)
         setFormSpan(4)
@@ -358,6 +423,15 @@ const Application: React.FC = () => {
     }
 
     const evaluate = (e: App) => {
+        setFeedbackList(e.feedbackVos)
+    }
+
+    const seeEvaluate = (e: App) => {
+        setModalTitle("查看评估")
+        setModalOpen(true)
+    }
+
+    const evaluateConfirm = (e: App) => {
         setModalTitle("评估")
         setSelectApp(e)
         setFormSpan(4)
@@ -435,7 +509,7 @@ const Application: React.FC = () => {
             <div className={c("header")}>
                 <div className={Styles["query"]}>
                     <div className={c("inputs")}>
-                        <RangePicker value={[startTime, endTime]} showTime onChange={rangeChange} />
+                        <RangePicker value={[startTime, endTime]} onChange={rangeChange} />
                         <div className={c("query-item")}>
                             <div>类型：</div>
                             <Select className={c("select")} value={wisdomUnitSelect} options={smartAppList} onChange={e => setWisdomUnitSelect(e)} />
@@ -464,14 +538,16 @@ const Application: React.FC = () => {
                 open={modalOpen}
                 onCancel={addCancel}
                 footer={
-                    <>
-                        <Button className={c("cancel")} onClick={addCancel}>
-                            取消
-                        </Button>
-                        <Button className={c("save")} onClick={save}>
-                            提交
-                        </Button>
-                    </>
+                    modalTitle === "查看反馈" || modalTitle === "查看评估" ? null : (
+                        <>
+                            <Button className={c("cancel")} onClick={addCancel}>
+                                取消
+                            </Button>
+                            <Button className={c("save")} onClick={save}>
+                                提交
+                            </Button>
+                        </>
+                    )
                 }
             >
                 <Form labelCol={{ span: formSpan }} form={form}>
@@ -479,6 +555,8 @@ const Application: React.FC = () => {
                     {modalTitle === "过滤原因" && <FilterFormItem />}
                     {modalTitle === "反馈" && <FeedbackFormItem />}
                     {modalTitle === "评估" && <EvaluateFormItem />}
+                    {modalTitle === "查看反馈" && <SeeFeedbackFormItem />}
+                    {modalTitle === "查看评估" && <SeeEvaluationFormItem />}
                 </Form>
             </Modal>
         </>

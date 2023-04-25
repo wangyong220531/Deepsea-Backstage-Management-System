@@ -51,7 +51,8 @@ const OperateLogs: FC = () => {
                             userName: e.userName,
                             loginIp: e.loginIp,
                             loginTime: e.loginTime,
-                            remark: e.remark
+                            remark: e.remark,
+                            status: e.status
                         }
                     })
                 ),
@@ -121,7 +122,8 @@ const OperateLogs: FC = () => {
     }
 
     const query = () => {
-        search()
+        setPageNum(1)
+        setlogPagesize(10)
     }
 
     const reset = () => {
@@ -141,7 +143,7 @@ const OperateLogs: FC = () => {
             title: "日志内容",
             align: "center",
             render: (_, e) => {
-                return <>{e.remark === "Login" ? "登录成功！" : "退出登录！"}</>
+                return <>{e.status === 0 ? "登录成功！" : "登录失败！"}</>
             }
         },
         {
@@ -336,7 +338,7 @@ const OperateLogs: FC = () => {
                     <div className={c("inputs")}>
                         <div className={c("query-item")}>
                             <div className={c("label")}>搜索日志：</div>
-                            <Input placeholder="请输入操作人警号" value={queryAccount} onChange={e => setQueryAccount(e.target.value)} />
+                            <Input placeholder="请输入操作人姓名" value={queryAccount} onChange={e => setQueryAccount(e.target.value)} />
                         </div>
                         <div className={c("query-item")}>
                             <div className={c("label")}>创建时间：</div>
