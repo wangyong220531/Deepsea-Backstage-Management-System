@@ -100,78 +100,6 @@ const StormThinking: React.FC = () => {
                 )
             }
         },
-        // {
-        //     key: "smartUnit",
-        //     dataIndex: "smartUnit",
-        //     title: "智慧单元",
-        //     align: "center"
-        // },
-        // {
-        //     key: "policeType",
-        //     dataIndex: "policeType",
-        //     title: "警种",
-        //     align: "center"
-        // },
-        // {
-        //     key: "ownership",
-        //     dataIndex: "ownership",
-        //     title: "产权人",
-        //     align: "center"
-        // },
-        // {
-        //     key: "solveTime",
-        //     dataIndex: "solveTime",
-        //     title: "解决时间",
-        //     align: "center"
-        // },
-        // {
-        //     key: "type",
-        //     dataIndex: "type",
-        //     title: "类型",
-        //     align: "center"
-        // },
-        // {
-        //     key: "evalContent",
-        //     dataIndex: "evalContent",
-        //     title: "评估内容",
-        //     align: "center",
-        //     width: 200,
-        //     onCell: () => {
-        //         return {
-        //             style: {
-        //                 maxWidth: 200,
-        //                 overflow: "hidden",
-        //                 whiteSpace: "nowrap",
-        //                 textOverflow: "ellipsis",
-        //                 cursor: "pointer"
-        //             }
-        //         }
-        //     },
-        //     render: (_, e) => {
-        //         return (
-        //             <>
-        //                 {/* <Tooltip title={e.evalContent}>
-        //                     <div>{e.evalContent}</div>
-        //                 </Tooltip> */}
-        //                 <Tooltip title="查看全部">
-        //                     <EyeOutlined onClick={() => showAllEvaluations(e)} />
-        //                 </Tooltip>
-        //             </>
-        //         )
-        //     }
-        // },
-        // {
-        //     key: "evalTime",
-        //     dataIndex: "evalTime",
-        //     title: "评估时间",
-        //     align: "center"
-        // },
-        // {
-        //     key: "status",
-        //     dataIndex: "status",
-        //     title: "状态",
-        //     align: "center"
-        // },
         {
             key: "operate",
             dataIndex: "operate",
@@ -225,7 +153,7 @@ const StormThinking: React.FC = () => {
                     {solutionList.map((e, index) => {
                         return (
                             <div key={e.id}>
-                                <Form.Item label={`解决思路${index + 1}`} name={`sloutions${index}`} initialValue={e.solutions}>
+                                <Form.Item label={"解决思路"+e.planNo} name={`sloutions${index}`} initialValue={e.solutions}>
                                     <Input.TextArea className={c("form-item-input-textarea")} disabled />
                                 </Form.Item>
                                 {e.evaluateVo ? (
@@ -264,15 +192,9 @@ const StormThinking: React.FC = () => {
     const SolutionFormItem: React.FC = () => {
         return (
             <>
-                {/* <Form.Item label="编号" name="code">
-                    <Input className={c("form-item-input")} disabled={true} />
-                </Form.Item> */}
                 <Form.Item label="解决方案" name="solution">
                     <Input.TextArea className={c("form-item-input-textarea")} placeholder="请输入您的解决方案" />
                 </Form.Item>
-                {/* <Form.Item label="产权人" name="owner">
-                    <Input className={c("form-item-input")} disabled={true} />
-                </Form.Item> */}
             </>
         )
     }
@@ -280,83 +202,16 @@ const StormThinking: React.FC = () => {
     const EditFormItem: React.FC = () => {
         return (
             <>
-                {/* <Form.Item label="编号" name="code">
-                    <Input className={c("form-item-input")} disabled={true} />
-                </Form.Item> */}
                 <Form.Item label="问题" name="question">
                     <Input.TextArea className={c("form-item-input-textarea")} />
                 </Form.Item>
                 <Form.Item label="提出人" name="proper">
                     <Input className={c("form-item-input")} disabled={true} />
                 </Form.Item>
-                {/* <Form.Item label="状态" name="status">
-                    <Select
-                        className={c("form-item-input")}
-                        options={[
-                            { value: "运行", label: "运行" },
-                            { value: "废弃", label: "废弃" }
-                        ]}
-                    />
-                </Form.Item> */}
             </>
         )
     }
 
-    const data: DataType[] = [
-        {
-            id: "0",
-            queNo: "00",
-            content: "我是问题1",
-            createTime: "2023-02-03",
-            createOperator: "蔡徐腾",
-            planVoList: [
-                {
-                    id: "id0",
-                    queId: "123",
-                    planNo: "456",
-                    solutions: "我是方案1",
-                    status: "运行",
-                    wisdomUnit: "xxx",
-                    policeKind: "xxx",
-                    createTime: "2023-03-06",
-                    createOperator: "卜元浩",
-                    evaluateVo: {
-                        id: "0",
-                        planId: "123",
-                        planNo: "456",
-                        content: "我是评估1",
-                        type: "技战法",
-                        createTime: "2023-04-05",
-                        createOperator: "朱晓欢"
-                    }
-                },
-                {
-                    id: "id1",
-                    queId: "123",
-                    planNo: "456",
-                    solutions: "我是方案2",
-                    status: "运行",
-                    wisdomUnit: "xxx",
-                    policeKind: "xxx",
-                    createTime: "2023-03-06",
-                    createOperator: "卜元浩",
-                    evaluateVo: null
-                },
-                {
-                    id: "id2",
-                    queId: "123",
-                    planNo: "456",
-                    solutions: "我是方案3",
-                    status: "运行",
-                    wisdomUnit: "xxx",
-                    policeKind: "xxx",
-                    createTime: "2023-03-06",
-                    createOperator: "卜元浩",
-                    evaluateVo: null
-                }
-            ]
-        }
-    ]
 
     const [tableData, setTableData] = useState<DataType[]>([])
     const [pageNum, setPageNum] = useState(1)
@@ -373,7 +228,6 @@ const StormThinking: React.FC = () => {
     const [evalIdList, setEvalIdList] = useState<string[]>([])
 
     const search = async () => {
-        setTableData(data)
         const res = await searchMind({
             content: "",
             pageNum,
@@ -383,22 +237,14 @@ const StormThinking: React.FC = () => {
             queNo: "",
             wisdomUnit: "",
             startTime: startTime.format("YYYY-MM-DD HH:mm:ss"),
-            endTime: startTime.format("YYYY-MM-DD HH:mm:ss")
+            endTime: endTime.format("YYYY-MM-DD HH:mm:ss")
         })
-        // res && setTableData(res.data.voList)
+        res && (setTableData(res.data.voList), setTotal(res.data.size))
     }
 
     const showAllSolutions = (e: DataType) => {
         setTitle("解决思路")
         setSolutionList(e.planVoList)
-        // console.log(
-        //     solutionList.map((x,index) => {
-        //         return {
-        //             `solutions`+${index}:x
-        //         }
-        //     })
-        // )
-        // form.setFieldsValue({})
         setModalOpen(true)
     }
 
@@ -406,7 +252,6 @@ const StormThinking: React.FC = () => {
         setSelectItem(e)
         setTitle("请说出你的方案")
         setModalOpen(true)
-        // form.setFieldsValue({ owner: e.ownership })
     }
 
     const evaluate = (e: Plan) => {
@@ -425,7 +270,16 @@ const StormThinking: React.FC = () => {
         form.setFieldsValue({ question: e.content, proper: e.createOperator })
     }
 
-    const propConfirm = () => {
+    const propConfirm = async () => {
+        const res = await form.validateFields()
+        addMindQuestion({
+            content: res.question,
+            putMan: sessionStore.userNo,
+            queNo: ""
+        }).then(() => {
+            search()
+            form.resetFields()
+        })
         setTitle("请说出你的方案")
     }
 
@@ -474,6 +328,7 @@ const StormThinking: React.FC = () => {
                 putMan: sessionStore.userNo,
                 queNo: ""
             }).then(() => {
+                search()
                 form.resetFields()
             })
             return

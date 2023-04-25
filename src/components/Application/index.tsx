@@ -1,9 +1,9 @@
-import { Button, Input, DatePicker, Table, Select, Modal, Form } from "antd"
-import { ReactNode, useState } from "react"
+import { Button, Input, DatePicker, Table, Select, Modal, Form, Space } from "antd"
+import { useRef, useState } from "react"
 import type { ColumnsType } from "antd/es/table"
 import Styles from "./index.module.less"
 import dayjs from "dayjs"
-import { addSmartApp, appOperate, searchSmartApp, updateSmartApp } from "../../api/smartApp"
+import { addSmartApp, appOperate, searchPlan, searchSmartApp, updateSmartApp } from "../../api/smartApp"
 import { useAsync } from "../../utils/hooks"
 import { getUnitList } from "../../api/userManage"
 
@@ -11,10 +11,6 @@ const { RangePicker } = DatePicker
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
-}
-
-interface DataType extends AddSmartAppData {
-    operate?: ReactNode
 }
 
 const FilterFormItem: React.FC = () => {
@@ -48,17 +44,6 @@ const EvaluateFormItem: React.FC = () => {
 }
 
 const Application: React.FC = () => {
-    // const typeOptions: OptionType[] = [
-    //     {
-    //         value: "模型",
-    //         label: "模型"
-    //     },
-    //     {
-    //         value: "技战法",
-    //         label: "技战法"
-    //     }
-    // ]
-
     const smartAppList: OptionType[] = [
         {
             value: "全部",
@@ -86,7 +71,7 @@ const Application: React.FC = () => {
         }
     ]
 
-    const column: ColumnsType<DataType> = [
+    const column: ColumnsType<App> = [
         {
             key: "type",
             dataIndex: "type",
@@ -192,8 +177,8 @@ const Application: React.FC = () => {
             label: "巡防"
         },
         {
-            value: "围保",
-            label: "围保"
+            value: "国保",
+            label: "国保"
         },
         {
             value: "网安",
@@ -217,22 +202,6 @@ const Application: React.FC = () => {
         }
     ]
 
-    const data: DataType[] = [
-        {
-            id: "0",
-            applyNo: "00",
-            bmNo: "000",
-            info: "我是智慧应用1",
-            managerArea: "辖区1",
-            policeKind: "维稳",
-            remark: "备注1",
-            status: "待过滤",
-            toUser: "蔡徐腾",
-            type: "技战法",
-            wisdomUnit: "xxx"
-        }
-    ]
-
     const [modalOpen, setModalOpen] = useState(false)
     const [startTime, setStartTime] = useState<dayjs.Dayjs>(dayjs(Date.now() - 2592000000))
     const [endTime, setEndTime] = useState<dayjs.Dayjs>(dayjs(Date.now()))
@@ -242,24 +211,22 @@ const Application: React.FC = () => {
     const [form] = Form.useForm()
     const [modalTitle, setModalTitle] = useState<"新增" | "过滤原因" | "反馈" | "评估">("新增")
     const [formSpan, setFormSpan] = useState<4 | 8>(8)
-    // const sessionStore = useSession()
-    const [selectApp, setSelectApp] = useState<AddSmartAppData>(Object)
-    const [tableData, setTableData] = useState<DataType[]>([])
+    const [selectApp, setSelectApp] = useState<App>(Object)
+    const [tableData, setTableData] = useState<App[]>([])
     const [jurisdictionList, setJurisdictionList] = useState<OptionType[]>([])
-    const [policeKind, setPoliceKind] = useState("全部")
-    const [wisdomUnitType, setWisdomUnitType] = useState("全部")
+    const [wisdomUnitSelect, setWisdomUnitSelect] = useState(smartAppList[0].label)
+    const [policeTypeSelect, setPoliceTypeSelect] = useState(policeTypeList[0].label)
+    const [planId, setPlanId] = useState("")
+    const planNo = useRef()
 
     const AddFormItem: React.FC = () => {
         return (
             <>
-                {/* <Form.Item name="applyNo" label="编码">
-                    <Input className={c("form-item-input")} disabled />
-                </Form.Item> */}
-                <Form.Item name="bmNo" label="（模型/技战）法编号">
-                    <Input className={c("form-item-input")} />
-                </Form.Item>
-                <Form.Item name="type" label="类型">
-                    <Input className={c("form-item-input")} disabled />
+                <Form.Item name="bmNo" label="（模型/技战法）编号">
+                    <Space.Compact>
+                        <Input className={c("form-item-input")} />
+                        <Button onClick={bmNoChange}>查找</Button>
+                    </Space.Compact>
                 </Form.Item>
                 <Form.Item name="toUser" label="指向对象">
                     <Input className={c("form-item-input")} />
@@ -280,8 +247,7 @@ const Application: React.FC = () => {
         )
     }
 
-    const search = async () => {
-        setTableData(data)
+    const getAllJurisdictions = () => {
         getUnitList({}).then(res => {
             res &&
                 setJurisdictionList(
@@ -293,25 +259,48 @@ const Application: React.FC = () => {
                     })
                 )
         })
+    }
+
+    const search = async () => {
         const res = await searchSmartApp({
             applyNo: "",
             manageArea: "",
             toUser: "",
-            stime: startTime.format("YYYY-MM-DD HH:mm:ss"),
-            etime: endTime.format("YYYY-MM-DD HH:mm:ss"),
+            stime: startTime.format("YYYY-MM-DD"),
+            etime: endTime.format("YYYY-MM-DD"),
             pageNum,
             pageSize,
-            policeKind,
+            policeKind: wisdomUnitSelect === "全部" ? "" : wisdomUnitSelect,
             status: "",
-            wisdomUnitType
+            wisdomUnitType: policeTypeSelect === "全部" ? "" : policeTypeSelect
         })
-        if (res) {
-        }
+        res && (setTableData(res.data.voList), setTotal(res.data.size))
+    }
+
+    const bmNoChange = async () => {
+        const res = await form.validateFields()
+        planNo.current = res.bmNo
+        console.log(1)
+
+        searchPlan({
+            planNo: res.bmNo
+        }).then(e => {
+            e &&
+                (form.setFieldsValue({
+                    bmNo: planNo.current,
+                    wisdomUnit: e.data.wisdomUnit,
+                    policeKind: e.data.policeKind
+                }),
+                setPlanId(e.data.id))
+        })
+        console.log(2)
     }
 
     const reset = () => {
         setStartTime(dayjs(Date.now() - 2592000000))
         setEndTime(dayjs(Date.now()))
+        setWisdomUnitSelect("全部")
+        setPoliceTypeSelect("全部")
     }
 
     const rangeChange = (e: any) => {
@@ -320,6 +309,7 @@ const Application: React.FC = () => {
     }
 
     const add = () => {
+        getAllJurisdictions()
         setModalTitle("新增")
         setFormSpan(8)
         setModalOpen(true)
@@ -333,14 +323,16 @@ const Application: React.FC = () => {
         form.resetFields()
     }
 
-    const filter = (e: DataType) => {
+    const filter = (e: App) => {
         setModalTitle("过滤原因")
         setSelectApp(e)
         setFormSpan(4)
         setModalOpen(true)
     }
 
-    const sign = (e: DataType) => {
+    const sign = (e: App) => {
+        console.log(e)
+
         updateSmartApp({
             applyNo: e.applyNo,
             bmNo: e.bmNo,
@@ -358,14 +350,14 @@ const Application: React.FC = () => {
         })
     }
 
-    const feedback = (e: DataType) => {
+    const feedback = (e: App) => {
         setModalTitle("反馈")
         setSelectApp(e)
         setFormSpan(4)
         setModalOpen(true)
     }
 
-    const evaluate = (e: DataType) => {
+    const evaluate = (e: App) => {
         setModalTitle("评估")
         setSelectApp(e)
         setFormSpan(4)
@@ -377,7 +369,7 @@ const Application: React.FC = () => {
         if (modalTitle === "新增") {
             addSmartApp({
                 applyNo: res.applyNo,
-                bmNo: res.bmNo,
+                bmNo: planId,
                 info: res.info,
                 managerArea: res.managerArea,
                 policeKind: res.policeKind,
@@ -446,12 +438,11 @@ const Application: React.FC = () => {
                         <RangePicker value={[startTime, endTime]} showTime onChange={rangeChange} />
                         <div className={c("query-item")}>
                             <div>类型：</div>
-                            <Select className={c("select")} defaultValue={smartAppList[0].label} options={smartAppList} onChange={e => setPoliceKind(e)
-                            } />
+                            <Select className={c("select")} value={wisdomUnitSelect} options={smartAppList} onChange={e => setWisdomUnitSelect(e)} />
                         </div>
                         <div className={c("query-item")}>
                             <div>警种：</div>
-                            <Select defaultValue={policeTypeList[0].label} options={policeTypeList} onChange={e => setWisdomUnitType(e)} />
+                            <Select value={policeTypeSelect} options={policeTypeList} onChange={e => setPoliceTypeSelect(e)} />
                         </div>
                     </div>
                     <div className={c("query-reset")}>
@@ -478,7 +469,7 @@ const Application: React.FC = () => {
                             取消
                         </Button>
                         <Button className={c("save")} onClick={save}>
-                            保存
+                            提交
                         </Button>
                     </>
                 }

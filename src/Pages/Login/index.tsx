@@ -8,7 +8,7 @@ import Logo from "../../assets/logo.png"
 import Styles from "./index.module.less"
 import { getCaptcha, login } from "../../api/login"
 import useOperates from "../../utils/operates"
-import { handlePermission,handleOperates } from "../../utils/recursive"
+import { handlePermission, handleOperates } from "../../utils/recursive"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -23,51 +23,49 @@ const Login: React.FC = () => {
     const operates = useOperates()
 
     const submit = () => {
-        sessionStore.setState({ token: "123", userNo: userNo })
-        // login({
-        //     code: captcha,
-        //     userNo: userNo
-        // }).then(res => {
-        //     if (res) {
-        //         sessionStorage.setItem("token", res.data.token)
-        //         sessionStore.setState({ token: res.data.token })
-        //         sessionStore.setState({ userId: res.data.userId })
-        //         if (res.data.user === "superAdmin") {
-        //             sessionStore.setState({ userType: res.data.user })
-        //             console.log(1);
-
-        //             return
-        //         }
-        //         if (res.data.user instanceof Array) {
-        //             sessionStore.setState({
-        //                 menu: handlePermission(res.data.user)
-        //             })
-        //             operates[0].item = handleOperates(res.data.user)
-        //             return
-        //         }
-        //     }
-        // })
+        login({
+            code: captcha,
+            userNo: userNo
+        }).then(res => {
+            if (res) {
+                sessionStorage.setItem("token", res.data.token)
+                sessionStore.setState({ token: res.data.token })
+                sessionStore.setState({ userId: res.data.userId })
+                if (res.data.user === "superAdmin") {
+                    sessionStore.setState({ userType: res.data.user })
+                    return
+                }
+                if (res.data.user instanceof Array) {
+                    sessionStore.setState({
+                        menu: handlePermission(res.data.user)
+                    })
+                    operates[0].item = handleOperates(res.data.user)
+                    return
+                }
+                // if (!res.data.user) {
+                //     console.log(1)
+                //     sessionStore.setState({
+                //         menu: [{ name: "首页", path: "home" }]
+                //     })
+                //     return
+                // }
+            }
+        })
     }
 
     const [captchaBtnDisable, setCaptchaBtnDisable] = useState(false)
     const [captchaBtnText, setCaptchaBtnText] = useState("获取验证码")
 
     const queryCaptcha = () => {
-        if (userNo.split("").length === 6) {
-            getCaptcha({
-                userNo: userNo
-            }).then(res => {
-                res && setCaptcha(res.data)
-            })
-            setCaptchaBtnDisable(true)
-            CaptchaCountdown()
-            return
-        }
-        return message.warning("请输入合法的账号！")
+        getCaptcha({
+            userNo: userNo
+        })
+        setCaptchaBtnDisable(true)
+        CaptchaCountdown()
     }
 
     const CaptchaCountdown = () => {
-        let time = 5
+        let time = 10
         const timer = setInterval(() => {
             if (time == 0) {
                 clearInterval(timer)

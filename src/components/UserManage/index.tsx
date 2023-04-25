@@ -1,6 +1,6 @@
 import { FC, ReactNode, useEffect, useRef, useState } from "react"
 import Styles from "./index.module.less"
-import { Button, Input, Modal, Switch, Table, Form, Popconfirm, Select, message } from "antd"
+import { Button, Input, Modal, Switch, Table, Form, Popconfirm } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import { delUser, getUnitList, searchUser, updatePassword, updateUserInfo, userInfoExport } from "../../api/userManage"
 import { exportExcel } from "../../utils/index"
@@ -134,7 +134,6 @@ const UserManage: FC = () => {
 
     const delConfirm = (e: TableHead) => {
         delUser({ id: e.id }).then(() => {
-            message.success("删除用户成功！")
             search()
         })
     }
@@ -147,7 +146,7 @@ const UserManage: FC = () => {
         getUnitList({}).then(res => {
             res &&
                 setUnitList(
-                    res.data.map(e => {
+                    res.data.unitInfos.map(e => {
                         return {
                             value: e.unitNo,
                             label: e.unitName

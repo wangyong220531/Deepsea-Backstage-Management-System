@@ -73,6 +73,8 @@ const LayoutFC: React.FC = () => {
         }
     })
 
+    // const special: MenuProps["items"] = [routes[0]]
+
     const menuList: MenuProps["items"] = routes.map(e => {
         return {
             key: e.path,
@@ -180,7 +182,7 @@ const LayoutFC: React.FC = () => {
             </Header>
             <Layout hasSider>
                 <Sider trigger={null} style={{ width: "200px", background: "#FFF", height: "920px" }} collapsed={collapsed} collapsible>
-                    <Menu mode="inline" defaultOpenKeys={[location.pathname.split("/")[1]]} selectedKeys={[location.pathname.split("/").slice(-1).toString()]} items={sessionStore.menu.length > 0 ? superAdminMenu : menuList} onClick={changeRoute} />
+                    <Menu mode="inline" defaultOpenKeys={[location.pathname.split("/")[1]]} selectedKeys={[location.pathname.split("/").slice(-1).toString()]} items={sessionStore.menu.length ? superAdminMenu : menuList} onClick={changeRoute} />
                 </Sider>
                 <BreakMenu></BreakMenu>
                 <Content className={c("content")}>

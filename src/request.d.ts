@@ -71,6 +71,7 @@ type ResponseResult = {
     "/wisdom/apply/feedback": { success: Boolean }
     "/wisdom/apply/deleteFeedback": { success: Boolean }
     "/report/queryAllUnit": GetAllUnitResult
+    "/duty/stormMind/selectPlanByNo": SearchPlanResult
 }
 type RequestQuery = {
     "/serve/ask/delAskInfo": { id: string }
@@ -93,6 +94,7 @@ type RequestQuery = {
     "/logout": {}
     "/wisdom/apply/deleteFeedback": { id: string }
     "/report/queryAllUnit": {}
+    "/duty/stormMind/selectPlanByNo": { planNo: string }
 }
 type RequestData = {
     "/policeSituation/selectNewAlarm": QueryLatestPS
@@ -609,7 +611,7 @@ interface UpdateSmartAppData {
     info: string
     managerArea: string
     policeKind: string
-    remark: string
+    remark: string | undefined
     status: string
     toUser: string
     type: "1" | "2" | "3" | "模型" | "技战法"
@@ -638,20 +640,21 @@ interface SearchAppResult {
 }
 
 interface App {
-    id: string
-    type: string
+    id?: string
+    type: "1" | "2" | "3" | "模型" | "技战法"
     applyNo: string
     info: string
     toUser: string
     wisdomUnit: string
     policeKind: string
-    manageArea: string
+    managerArea: string
     status: string
     bmNo: string
-    remark: string
-    createTime: string
-    createOperator: string
-    feedbackVos: []
+    remark?: string
+    createTime?: string
+    createOperator?: string
+    feedbackVos?: []
+    operate?: ReactNode
 }
 
 interface Feedback {
@@ -1201,4 +1204,13 @@ interface Evaluation {
 interface GetAllUnitResult {
     success: Boolean
     data: Unit[]
+}
+
+interface SearchPlanResult {
+    success: Boolean
+    data: {
+        id: string
+        policeKind: string
+        wisdomUnit: string
+    }
 }

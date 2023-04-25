@@ -53,3 +53,12 @@ export function delOperate(config: { id: string }) {
         method: "GET"
     })
 }
+
+export function searchPlan(config: { planNo: string }) {
+    return request({
+        url: "/duty/stormMind/selectPlanByNo",
+        baseURL,
+        query: config,
+        method: "GET"
+    })
+}
