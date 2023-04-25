@@ -237,6 +237,11 @@ const DutyManage: React.FC = () => {
         getPositions()
     }
 
+    const query = () => {
+        setPageNum(1)
+        setPageSize(10)
+    }
+
     const launch = (e: DataType) => {
         const tName = policeTeamLIst.find(t => t.value === e.team)?.label
         updateDutyManage({
@@ -320,7 +325,7 @@ const DutyManage: React.FC = () => {
                 <div className={Styles["query"]}>
                     <RangePicker value={[startTime, endTime]} onCalendarChange={rangeChange} />
                     <div className={c("query-reset")}>
-                        <Button onClick={search} className={c("query-btn")}>
+                        <Button onClick={query} className={c("query-btn")}>
                             查询
                         </Button>
                         <Button onClick={reset} className={c("reset-btn")}>

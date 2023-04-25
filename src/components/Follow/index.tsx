@@ -206,6 +206,11 @@ const Follow: React.FC = () => {
         res && (setCaseData(res.data.situtationVos), setCaseTotal(res.data.size))
     }
 
+    const query = () => {
+        setPageNum(1)
+        setPageSize(10)
+    }
+
     const changeForcePg = (pageNum: number, pageSize: number) => {
         setPageNum(pageNum)
         setPageSize(pageSize)
@@ -239,7 +244,7 @@ const Follow: React.FC = () => {
                         <RangePicker value={[startTime, endTime]} onCalendarChange={rangeChange} />
                     </div>
                     <div className={c("query-reset")}>
-                        <Button className={c("query-btn")} onClick={search}>
+                        <Button className={c("query-btn")} onClick={query}>
                             查询
                         </Button>
                         <Button className={c("reset-btn")} onClick={reset}>

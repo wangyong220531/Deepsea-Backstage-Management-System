@@ -344,6 +344,11 @@ const Application: React.FC = () => {
         })
     }
 
+    const query = () => {
+        setPageNum(1)
+        setPageSize(10)
+    }
+
     const reset = () => {
         setStartTime(dayjs(Date.now() - 2592000000))
         setEndTime(dayjs(Date.now()))
@@ -520,7 +525,7 @@ const Application: React.FC = () => {
                         </div>
                     </div>
                     <div className={c("query-reset")}>
-                        <Button className={c("query-button")} onClick={() => search()}>
+                        <Button className={c("query-button")} onClick={query}>
                             查询
                         </Button>
                         <Button onClick={reset}>重置</Button>

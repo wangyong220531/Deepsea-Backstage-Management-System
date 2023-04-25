@@ -58,6 +58,11 @@ const Analysis: React.FC = () => {
     const [tableData, setTableData] = useState<TotalAV[]>([])
     const [type, setType] = useState<string | 1 | 2>("")
 
+    const query = () => {
+        setPageNum(1)
+        setPageSize(10)
+    }
+
     const search = async () => {
         const res = await getDuty({
             assignPerName: "",
@@ -113,7 +118,9 @@ const Analysis: React.FC = () => {
                         <RangePicker value={[startTime, endTime]} onCalendarChange={rangeChange} />
                     </div>
                     <div className={c("query-reset")}>
-                        <Button className={c("query-btn")} onClick={search}>查询</Button>
+                        <Button className={c("query-btn")} onClick={query}>
+                            查询
+                        </Button>
                         <Button onClick={reset}>重置</Button>
                     </div>
                 </div>

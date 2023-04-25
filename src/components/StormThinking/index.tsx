@@ -206,6 +206,11 @@ const StormThinking: React.FC = () => {
         res && (setTableData(res.data.voList), setTotal(res.data.size))
     }
 
+    const query = () => {
+        setPageNum(1)
+        setPageSize(10)
+    }
+
     const showAllSolutions = (e: DataType) => {
         setTitle("解决思路")
         setIsSolution(true)
@@ -361,7 +366,7 @@ const StormThinking: React.FC = () => {
                         <RangePicker value={[startTime, endTime]} onCalendarChange={rangeChange} />
                     </div>
                     <div className={c("query-reset")}>
-                        <Button className={c("query-btn")} onClick={search}>
+                        <Button className={c("query-btn")} onClick={query}>
                             查询
                         </Button>
                         <Button className={c("reset-btn")} onClick={reset}>

@@ -3,6 +3,7 @@ import type { ColumnsType } from "antd/es/table"
 import React, { useEffect, useState } from "react"
 import { AddSchool, SearchCampus } from "../../api/smartSchool"
 import Styles from "./index.module.less"
+import { useAsync } from "../../utils/hooks"
 
 const { RangePicker } = DatePicker
 
@@ -155,6 +156,11 @@ const School: React.FC = () => {
             setTotal(res.data.size))
     }
 
+    const query = () => {
+        setPageNum(1)
+        setPageSize(10)
+    }
+
     const addConfirm = async () => {
         const res = await form.validateFields()
         AddSchool({
@@ -189,6 +195,8 @@ const School: React.FC = () => {
         setName("")
         setType("")
     }
+
+    useAsync(() => search(), [pageNum, pageSize])
 
     const SchoolFormItem: React.FC = () => {
         return (
@@ -241,7 +249,7 @@ const School: React.FC = () => {
                         <Select placeholder="请选择类型" value={type} options={schoolType} onChange={e => setType(e)} />
                     </div>
                     <div className={c("query-reset")}>
-                        <Button className={c("query-btn")} onClick={search}>
+                        <Button className={c("query-btn")} onClick={query}>
                             查询
                         </Button>
                         <Button className={c("reset-btn")} onClick={reset}>

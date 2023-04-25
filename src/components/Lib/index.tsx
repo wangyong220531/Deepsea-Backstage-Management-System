@@ -212,6 +212,11 @@ const Lib: React.FC = () => {
         res && (setTableData(res.data.list), setTotal(res.data.total))
     }
 
+    const query = () => {
+        setPageNum(1)
+        setPageSize(10)
+    }
+
     const onChange = (key: string) => {
         if (key === "1") {
             setQueryType("")
@@ -263,7 +268,7 @@ const Lib: React.FC = () => {
                         <RangePicker value={[startTime, endTime]} onCalendarChange={rangeChange} />
                     </div>
                     <div className={c("query-reset")}>
-                        <Button onClick={search} className={c("query-btn")}>
+                        <Button onClick={query} className={c("query-btn")}>
                             查询
                         </Button>
                         <Button onClick={reset} className={c("reset-btn")}>

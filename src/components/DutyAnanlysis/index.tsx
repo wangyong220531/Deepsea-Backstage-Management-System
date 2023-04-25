@@ -93,6 +93,11 @@ const DutyAnalysis: React.FC = () => {
         res && (setTableData(res.data.infoList), setTotal(res.data.total))
     }
 
+    const query = () => {
+        setPageNum(1)
+        setPageSize(10)
+    }
+
     const changePg = (pageNum: number, pageSize: number) => {
         setPageNum(pageNum)
         setPageSize(pageSize)
@@ -115,7 +120,7 @@ const DutyAnalysis: React.FC = () => {
                 <div className={Styles["query"]}>
                     <RangePicker value={[startTime, endTime]} onCalendarChange={rangeChange} />
                     <div className={c("query-reset")}>
-                        <Button onClick={search} className={c("query-btn")}>
+                        <Button onClick={query} className={c("query-btn")}>
                             查询
                         </Button>
                         <Button onClick={reset} className={c("reset-btn")}>
