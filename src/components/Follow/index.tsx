@@ -197,8 +197,8 @@ const Follow: React.FC = () => {
             return
         }
         const res = await caseFollowList({
-            startTime: startTime.format("YYYY-MM-DD HH:mm:ss"),
-            endTime: endTime.format("YYYY-MM-DD HH:mm:ss"),
+            startTime: Number(startTime),
+            endTime: Number(endTime),
             pageNum,
             pageSize,
             psStatus: ""

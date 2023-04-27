@@ -305,11 +305,11 @@ interface police {
 }
 
 interface CaseFollowListData {
-    endTime: string
+    endTime: number
     pageNum: number
     pageSize: number
     psStatus: string
-    startTime: string
+    startTime: number
 }
 
 interface CaseFollowListResult {
