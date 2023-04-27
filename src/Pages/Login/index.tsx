@@ -23,7 +23,7 @@ const Login: React.FC = () => {
     const operates = useOperates()
 
     const submit = () => {
-        sessionStore.setState({token:"123"})
+        sessionStore.setState({ token: "123" })
         // login({
         //     code: captcha,
         //     userNo: userNo
@@ -72,7 +72,7 @@ const Login: React.FC = () => {
             if (time == 0) {
                 clearInterval(timer)
                 setCaptchaBtnDisable(false)
-                setCaptchaBtnText("获取验证码")
+                setCaptchaBtnText("重新发送") 
                 return
             }
             setCaptchaBtnText(`${time}s 后重新获取`)
