@@ -333,11 +333,11 @@ const DutyManage: React.FC = () => {
                         </Button>
                     </div>
                 </div>
-                <div className={c("btn-group")}>
+                {/* <div className={c("btn-group")}>
                     <Button className={c("add")} onClick={add}>
                         新增
                     </Button>
-                </div>
+                </div> */}
             </div>
             <Table columns={column} rowKey={e => e.code} dataSource={tableData} pagination={{ onChange: changePg, total, pageSize }} />
             <Modal
