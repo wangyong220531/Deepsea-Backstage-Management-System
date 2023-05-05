@@ -22,37 +22,32 @@ const Login: React.FC = () => {
     const [captcha, setCaptcha] = useState("")
     const operates = useOperates()
 
-    const submit = () => {
-        sessionStore.setState({ token: "123" })
-        // login({
+    const submit = async () => {
+        sessionStore.setState({token:"123"})
+        // const res = await login({
         //     code: captcha,
         //     userNo: userNo
-        // }).then(res => {
-        //     if (res) {
-        //         sessionStorage.setItem("token", res.data.token)
-        //         sessionStore.setState({userNo:userNo})
-        //         sessionStore.setState({ token: res.data.token })
-        //         sessionStore.setState({ userId: res.data.userId })
-        //         if (res.data.user === "superAdmin") {
-        //             sessionStore.setState({ userType: res.data.user })
-        //             return
-        //         }
-        //         if (res.data.user instanceof Array) {
-        //             sessionStore.setState({
-        //                 menu: handlePermission(res.data.user)
-        //             })
-        //             operates[0].item = handleOperates(res.data.user)
-        //             return
-        //         }
-        //         if (!res.data.user) {
-        //             console.log(1)
-        //             sessionStore.setState({
-        //                 menu: [{ name: "首页", path: "home" }]
-        //             })
-        //             return
-        //         }
-        //     }
         // })
+        // if (res) {
+        //     sessionStore.setState({ token: res.data.token, userNo: userNo, userId: res.data.userId})
+        //     if (res.data.user === "superAdmin") {
+        //         sessionStore.setState({ userType: res.data.user })
+        //         return
+        //     }
+        //     if (res.data.user instanceof Array) {
+        //         sessionStore.setState({
+        //             menu: handlePermission(res.data.user)
+        //         })
+        //         operates[0].item = handleOperates(res.data.user)
+        //         return
+        //     }
+        //     if (!res.data.user) {
+        //         sessionStore.setState({
+        //             menu: [{ name: "首页", path: "home" }]
+        //         })
+        //         return
+        //     }
+        // }
     }
 
     const [captchaBtnDisable, setCaptchaBtnDisable] = useState(false)
@@ -72,7 +67,7 @@ const Login: React.FC = () => {
             if (time == 0) {
                 clearInterval(timer)
                 setCaptchaBtnDisable(false)
-                setCaptchaBtnText("重新发送") 
+                setCaptchaBtnText("重新发送")
                 return
             }
             setCaptchaBtnText(`${time}s 后重新获取`)

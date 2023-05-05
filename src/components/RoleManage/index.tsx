@@ -1,7 +1,7 @@
 import { Button, Input, Modal, Switch, Table, Drawer, Tree, Form, Popconfirm } from "antd"
 import Styles from "./index.module.less"
 import type { ColumnsType } from "antd/es/table"
-import { ReactNode, useEffect, useRef, useState } from "react"
+import { ReactNode, useEffect, useState } from "react"
 import type { DataNode } from "antd/es/tree"
 import { CloseOutlined } from "@ant-design/icons"
 import { addRole, AssignMultiUsers, AssignPermission, delRole, getRolePermission, searchRole, updateRole } from "../../api/roleManage"
@@ -56,8 +56,8 @@ const RoleManage: React.FC = () => {
             pageSize: pageSize,
             roleName: inputRolename
         })
-        if (res) {
-            setTableData(
+        res &&
+            (setTableData(
                 res.data.rows.map(e => {
                     return {
                         id: e.id,
@@ -66,12 +66,15 @@ const RoleManage: React.FC = () => {
                         status: e.status
                     }
                 })
-            )
-            setTotal(res.data.total)
-        }
+            ),
+            setTotal(res.data.total))
+        judge()
+    }
 
+    const judge = () => {
         if (sessionStore.userType === "superAdmin") {
             setOperateId(5)
+            return
         }
         if (
             operates[0].item
@@ -130,11 +133,7 @@ const RoleManage: React.FC = () => {
             title: "状态",
             align: "center",
             render: (_, e) => {
-                return (
-                    <>
-                        <Switch defaultChecked={e.status === 0 ? false : true} checkedChildren="启用" unCheckedChildren="禁用" onChange={() => statusSwitch(e)} />
-                    </>
-                )
+                return <>{e.roleName === "超级管理员" ? null : <Switch defaultChecked={e.status === 0 ? false : true} checkedChildren="启用" unCheckedChildren="禁用" onChange={() => statusSwitch(e)} />}</>
             }
         },
         {

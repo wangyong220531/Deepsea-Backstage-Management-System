@@ -8,6 +8,7 @@ import routes, { RouteChild } from "../../routes"
 import { getPng } from "../../utils/index"
 import BreadcrumbIcon from "../../assets/SystemManagement/BreadcrumbIcon.png"
 import { logoutQuery } from "../../api/login"
+import useOperates from "../../utils/operates"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -25,10 +26,10 @@ const LayoutFC: React.FC = () => {
     const [collapsed, setCollapsed] = useState(false)
     const [showTitle, setShowTitle] = useState(true)
     const [breaks, setBreaks] = useState<RouteChild[] | null>(null)
-    const session = useSession()
     const navigate = useNavigate()
     const location = useLocation()
     const sessionStore = useSession()
+    const operates = useOperates()
 
     const superAdminMenu: MenuProps["items"] = sessionStore.menu.map(e => {
         if (e.children && e.children.length > 0 && e.children.find(x => x.children)) {
@@ -72,8 +73,6 @@ const LayoutFC: React.FC = () => {
             label: e.name
         }
     })
-
-    // const special: MenuProps["items"] = [routes[0]]
 
     const menuList: MenuProps["items"] = routes.map(e => {
         return {
@@ -154,11 +153,9 @@ const LayoutFC: React.FC = () => {
         }
     }
 
-    const logout = () => {
-        logoutQuery({})
-        session.setState({ token: undefined, menu: [] })
-        sessionStorage.removeItem("token")
-        navigate(`/login?${encodeURIComponent("from=" + location.pathname + location.search)}`, { replace: true })
+    const logout = async () => {
+        const res = await logoutQuery({})
+        res && res.success && ((operates[0].item = []), sessionStore.setState({ token: undefined, menu: [] }), sessionStorage.removeItem("token"), navigate(`/login?${encodeURIComponent("from=" + location.pathname + location.search)}`, { replace: true }))
     }
 
     const items: MenuProps["items"] = [
