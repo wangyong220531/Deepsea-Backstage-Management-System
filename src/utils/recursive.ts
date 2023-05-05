@@ -53,3 +53,13 @@ export const handleTree = (data: MenuChild[]): TreeNode[] => {
         }
     })
 }
+
+// export const handleRoutes = (data:Route[]):{name:String,path:String}[] => {
+//     return data.map((e:Route) => {
+//         if(e.children && e.children.length){
+//             return {
+
+//             }
+//         }
+//     })
+// }

@@ -25,7 +25,7 @@ type MenuChange = {
 const LayoutFC: React.FC = () => {
     const [collapsed, setCollapsed] = useState(false)
     const [showTitle, setShowTitle] = useState(true)
-    const [breaks, setBreaks] = useState<RouteChild[] | null>(null)
+    const [breaks, setBreaks] = useState<(string | undefined)[]>([])
     const navigate = useNavigate()
     const location = useLocation()
     const sessionStore = useSession()
@@ -95,16 +95,25 @@ const LayoutFC: React.FC = () => {
     })
 
     function getBreak(Path: string) {
-        return routes.map(item => (item.path === Path ? item : item.children?.find(item => item.path === Path))).filter(item => item !== undefined)
+        return routes
+            .map(e => {
+                if (e.path === Path) {
+                    return e.name
+                }
+                return e.children?.find(e => e.path === Path) ? e.children?.find(e => e.path === Path)?.name : e.children?.map(a => a.children?.find(e => e.path === Path)?.name)
+            })
+            .filter(e => e)
+            .flat()
     }
 
     useEffect(() => {
         setBreaks(
             location.pathname
                 .split("/")
-                .filter(item => item !== "")
-                .map(item => getBreak(item))
-                .flat(2) as RouteChild[]
+                .filter(e => e !== "")
+                .map(e => getBreak(e))
+                .flat()
+                .filter(e => e)
         )
     }, [location])
 
@@ -117,10 +126,10 @@ const LayoutFC: React.FC = () => {
                         {breaks &&
                             breaks.map((item, index) => {
                                 return (
-                                    <React.Fragment key={item.path}>
+                                    <>
                                         {index !== 0 && "/"}
-                                        {item.name}
-                                    </React.Fragment>
+                                        {item}
+                                    </>
                                 )
                             })}
                     </div>

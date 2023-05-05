@@ -15,3 +15,11 @@ type Session = {
     userId: string
     userNo: string
 }
+
+interface Route {
+    name: string
+    path: string
+    component: ReactNode
+    children?: RouteChild[]
+    icon: ReactNode
+}
