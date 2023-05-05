@@ -9,6 +9,7 @@ import { exportExcel } from "../../utils/index"
 import { useAsync } from "../../utils/hooks"
 import useOperates from "../../store/operates"
 import { useSession } from "../../store"
+import judgePermissionItem from "../../utils/judge"
 
 const { RangePicker } = DatePicker
 
@@ -31,7 +32,7 @@ const OperateLogs: FC = () => {
     const [endTime, setEndTime] = useState<dayjs.Dayjs | null>(dayjs(Date.now()))
     const operates = useOperates()
     const sessionStore = useSession()
-    const [operateId, setOperateId] = useState<0 | 1 | 2 | 5>(0)
+    const [operateArr, setOperateArr] = useState<string[]>([])
 
     const search = async () => {
         if (tabActived === "登录日志") {
@@ -57,7 +58,7 @@ const OperateLogs: FC = () => {
                     })
                 ),
                 setLogTotal(res.data.total))
-            judge()
+            setOperateArr(judgePermissionItem(operates[0].item))
             return
         }
         const res = await searchOperateLog({
@@ -82,32 +83,7 @@ const OperateLogs: FC = () => {
                 })
             ),
             setLogTotal(res.data.total))
-        judge()
-    }
-
-    const judge = () => {
-        if (sessionStore.userType === "superAdmin") {
-            setOperateId(5)
-            return
-        }
-        if (
-            operates[0].item
-                .find(e => e.name === "系统管理")
-                ?.children?.find(e => e.name === "日志")
-                ?.children?.find(e => e.name === "登录日志")
-                ?.children?.find(e => e.name === "导出")
-        ) {
-            setOperateId(1)
-        }
-        if (
-            operates[0].item
-                .find(e => e.name === "系统管理")
-                ?.children?.find(e => e.name === "日志")
-                ?.children?.find(e => e.name === "操作日志")
-                ?.children?.find(e => e.name === "导出")
-        ) {
-            setOperateId(2)
-        }
+        setOperateArr(judgePermissionItem(operates[0].item))
     }
 
     const onChange = (key: string) => {
@@ -355,7 +331,7 @@ const OperateLogs: FC = () => {
                         </Button>
                     </div>
                 </div>
-                <div className={c("btn-group")}>{(operateId === 1 || operateId === 2 || operateId === 5) && <Button onClick={exportLog}>导出</Button>}</div>
+                <div className={c("btn-group")}>{(sessionStore.userType === "superAdmin" || operateArr.includes("7-0-0") || operateArr.includes("7-0-1")) && <Button onClick={exportLog}>导出</Button>}</div>
             </div>
             {tabActived === "登录日志" ? <Table rowKey={e => e.id} columns={loginColumns} dataSource={loginTableData} pagination={{ onChange: logPageChange, total: logTotal, pageSize: logPagesize }} /> : <Table rowKey={e => e.id} columns={operateColumns} dataSource={operateTableData} pagination={{ onChange: logPageChange, total: logTotal, pageSize: logPagesize }} />}
         </>

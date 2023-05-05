@@ -1,5 +1,5 @@
-import { Table, Button, Input, Upload, DatePicker, Modal, Form, Select, Tooltip, Tabs } from "antd"
-import { ReactNode, useEffect, useState } from "react"
+import { Table, Button, Input, DatePicker, Modal, Form, Select, Tooltip, Tabs } from "antd"
+import {useState } from "react"
 import type { ColumnsType } from "antd/es/table"
 import { FileTextOutlined, UploadOutlined } from "@ant-design/icons"
 import { addReqServer, dowloadFile, queryReqServer } from "../../api/reqserver"

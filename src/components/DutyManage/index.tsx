@@ -1,5 +1,5 @@
 import { Table, Button, Input, DatePicker, Modal, Form, Select, Popconfirm } from "antd"
-import { ReactNode, useEffect, useState } from "react"
+import { ReactNode, useState } from "react"
 import { getAllKeyPositions, addDutyManage, getAllPoliceTeam, searchDutyManage, delDutyManage, updateDutyManage } from "../../api/command"
 import type { ColumnsType } from "antd/lib/table/InternalTable"
 import Styles from "./index.module.less"

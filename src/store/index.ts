@@ -1,4 +1,4 @@
-import createStorage from "../utils/persistentStorage"
+import createStorage from "../utils/persisitentStore"
 
 export const useLocal = createStorage<Local>(
     {

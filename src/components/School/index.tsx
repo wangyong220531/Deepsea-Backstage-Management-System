@@ -1,11 +1,9 @@
-import { Button, Input, DatePicker, Table, Select, Modal, Form } from "antd"
+import { Button, Input, Table, Select, Modal, Form } from "antd"
 import type { ColumnsType } from "antd/es/table"
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { AddSchool, SearchCampus } from "../../api/smartSchool"
 import Styles from "./index.module.less"
 import { useAsync } from "../../utils/hooks"
-
-const { RangePicker } = DatePicker
 
 interface DataType {
     key?: string

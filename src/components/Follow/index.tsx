@@ -7,6 +7,8 @@ import { forceFollowList, caseFollowList } from "../../api/command"
 import Styles from "./index.module.less"
 import dayjs from "dayjs"
 import { useAsync } from "../../utils/hooks"
+import judgePermissionItem from "../../utils/judge"
+import useOperates from "../../store/operates"
 
 const { RangePicker } = DatePicker
 
@@ -179,12 +181,14 @@ const Follow: React.FC = () => {
     const [pageSize, setPageSize] = useState(10)
     const [forceTotal, setForceTotal] = useState(0)
     const [caseTotal, setCaseTotal] = useState(0)
+    const operates = useOperates()
 
     const onChange = (key: string) => {
         key === "1" ? setTable(0) : setTable(1)
     }
 
     const search = async () => {
+        console.log(judgePermissionItem(operates[0].item));
         if (table === 0) {
             const res = await forceFollowList({
                 pageNum,

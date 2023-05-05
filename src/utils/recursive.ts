@@ -1,10 +1,3 @@
-interface Permission {
-    id?: string
-    permissionName: string
-    permissionPath?: string
-    children?: Permission[]
-}
-
 interface TreeNode {
     key: string
     title: string

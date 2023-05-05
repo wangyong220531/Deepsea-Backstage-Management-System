@@ -12,6 +12,7 @@ import { useAsync } from "../../utils/hooks"
 import useRole from "../../store/role"
 import useOperates from "../../store/operates"
 import { handleTree } from "../../utils/recursive"
+import judgePermissionItem from "../../utils/judge"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -33,7 +34,7 @@ const RoleManage: React.FC = () => {
     const sessionStore = useSession()
     const roles = useRole()
     const operates = useOperates()
-    const [operateId, setOperateId] = useState<0 | 1 | 2 | 3 | 4 | 5>(0)
+    const [operateArr, setOperateArr] = useState<string[]>([])
 
     const searchPermissionTree = () => {
         getPermissionTree({
@@ -68,46 +69,7 @@ const RoleManage: React.FC = () => {
                 })
             ),
             setTotal(res.data.total))
-        judge()
-    }
-
-    const judge = () => {
-        if (sessionStore.userType === "superAdmin") {
-            setOperateId(5)
-            return
-        }
-        if (
-            operates[0].item
-                .find(e => e.name === "系统管理")
-                ?.children?.find(e => e.name === "角色管理")
-                ?.children?.find(e => e.name === "新增")
-        ) {
-            setOperateId(1)
-        }
-        if (
-            operates[0].item
-                .find(e => e.name === "系统管理")
-                ?.children?.find(e => e.name === "角色管理")
-                ?.children?.find(e => e.name === "编辑")
-        ) {
-            setOperateId(2)
-        }
-        if (
-            operates[0].item
-                .find(e => e.name === "系统管理")
-                ?.children?.find(e => e.name === "角色管理")
-                ?.children?.find(e => e.name === "授权")
-        ) {
-            setOperateId(3)
-        }
-        if (
-            operates[0].item
-                .find(e => e.name === "系统管理")
-                ?.children?.find(e => e.name === "角色管理")
-                ?.children?.find(e => e.name === "删除")
-        ) {
-            setOperateId(4)
-        }
+        setOperateArr(judgePermissionItem(operates[0].item))
     }
 
     useEffect(() => {
@@ -146,7 +108,7 @@ const RoleManage: React.FC = () => {
                     <>
                         {e.roleName === "超级管理员" ? null : (
                             <div className={c("operate")}>
-                                {(operateId === 2 || operateId === 5) && (
+                                {(sessionStore.userType === "superAdmin" || operateArr.includes("6-0-1")) && (
                                     <>
                                         <div className={c("item")} onClick={() => edit(e)}>
                                             编辑
@@ -156,12 +118,12 @@ const RoleManage: React.FC = () => {
                                         </div>
                                     </>
                                 )}
-                                {(operateId === 3 || operateId === 5) && (
+                                {(sessionStore.userType === "superAdmin" || operateArr.includes("6-0-2")) && (
                                     <div className={c("item")} onClick={() => authorize(e)}>
                                         授权
                                     </div>
                                 )}
-                                {operateId === 4 && (
+                                {sessionStore.userType === "superAdmin" && (
                                     <Popconfirm title="确定要删除吗？" onConfirm={() => delRoleConfirm(e)}>
                                         <div className={c("item")}>删除</div>
                                     </Popconfirm>
@@ -421,7 +383,7 @@ const RoleManage: React.FC = () => {
                     </div>
                 </div>
                 <div className={c("btn-group")}>
-                    {(operateId === 1 || operateId === 5) && (
+                    {(sessionStore.userType === "superAdmin" || operateArr.includes("6-0-0")) && (
                         <Button className={c("add")} onClick={() => addNew()}>
                             新增
                         </Button>

@@ -7,6 +7,7 @@ import { exportExcel } from "../../utils/index"
 import { useAsync } from "../../utils/hooks"
 import useOperates from "../../store/operates"
 import { useSession } from "../../store"
+import judgePermissionItem from "../../utils/judge"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -95,12 +96,12 @@ const UserManage: FC = () => {
                 return (
                     <>
                         <div className={c("operate")}>
-                            {(operateId === 5 || operateId === 1) && (
+                            {(sessionStore.userType === "superAdmin" || operateArr.includes("6-1-1")) && (
                                 <div className={c("item")} onClick={() => edit(e)}>
                                     编辑
                                 </div>
                             )}
-                            {(operateId === 5 || operateId === 2) && (
+                            {(sessionStore.userType === "superAdmin" || operateArr.includes("6-1-2")) && (
                                 <Popconfirm title="确定要删除吗？" onConfirm={() => delConfirm(e)}>
                                     <div className={c("item")}>删除</div>
                                 </Popconfirm>
@@ -158,7 +159,7 @@ const UserManage: FC = () => {
     const [pageNum, setPageNum] = useState(1)
     const [pageSize, setPageSize] = useState(10)
     const sessionStore = useSession()
-    const [operateId, setOperateId] = useState<0 | 1 | 2 | 3 | 4 | 5>(0)
+    const [operateArr, setOperateArr] = useState<string[]>([])
 
     const changePage = (pageNum: number, pageSize: number) => {
         setPageNum(pageNum)
@@ -191,38 +192,7 @@ const UserManage: FC = () => {
                 })
             ),
             setTotal(res.data.total))
-        judge()
-    }
-
-    const judge = () => {
-        if (sessionStore.userType === "superAdmin") {
-            setOperateId(5)
-            return
-        }
-        if (
-            operates[0].item
-                .find(e => e.name === "系统管理")
-                ?.children?.find(e => e.name === "用户管理")
-                ?.children?.find(e => e.name === "编辑")
-        ) {
-            setOperateId(1)
-        }
-        if (
-            operates[0].item
-                .find(e => e.name === "系统管理")
-                ?.children?.find(e => e.name === "用户管理")
-                ?.children?.find(e => e.name === "删除")
-        ) {
-            setOperateId(2)
-        }
-        if (
-            operates[0].item
-                .find(e => e.name === "系统管理")
-                ?.children?.find(e => e.name === "用户管理")
-                ?.children?.find(e => e.name === "导出")
-        ) {
-            setOperateId(3)
-        }
+        setOperateArr(judgePermissionItem(operates[0].item))
     }
 
     // useEffect(() => {
@@ -331,7 +301,7 @@ const UserManage: FC = () => {
                         </Button>
                     </div>
                 </div>
-                <div className={c("btn-group")}>{(operateId === 5 || operateId === 3) && <Button onClick={exportUserInfo}>导出</Button>}</div>
+                <div className={c("btn-group")}>{(sessionStore.userType === "superAdmin" || operateArr.includes("6-1-0")) && <Button onClick={exportUserInfo}>导出</Button>}</div>
             </div>
             <Table rowKey={e => e.account} columns={columns} dataSource={tableData} pagination={{ onChange: changePage, total, pageSize }} />
             <Modal

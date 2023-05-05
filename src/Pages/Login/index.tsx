@@ -1,4 +1,4 @@
-import { Button, message } from "antd"
+import { Button } from "antd"
 import React, { useState } from "react"
 import { Navigate, useSearchParams } from "react-router-dom"
 import { useSession } from "../../store"
@@ -29,7 +29,7 @@ const Login: React.FC = () => {
             userNo: userNo
         })
         if (res) {
-            sessionStore.setState({ token: res.data.token, userNo: userNo, userId: res.data.userId})
+            sessionStore.setState({ token: res.data.token, userNo: userNo, userId: res.data.userId })
             if (res.data.user === "superAdmin") {
                 sessionStore.setState({ userType: res.data.user })
                 return
@@ -62,7 +62,7 @@ const Login: React.FC = () => {
     }
 
     const CaptchaCountdown = () => {
-        let time = 10
+        let time = 60
         const timer = setInterval(() => {
             if (time == 0) {
                 clearInterval(timer)

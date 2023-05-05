@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { SettingOutlined } from "@ant-design/icons"
-import { Dropdown, Layout, Menu, MenuProps, message } from "antd"
+import { Dropdown, Layout, Menu, MenuProps } from "antd"
 import Styles from "./index.module.less"
 import { useSession } from "../../store/index"
 import { Outlet, useLocation, useNavigate } from "react-router-dom"

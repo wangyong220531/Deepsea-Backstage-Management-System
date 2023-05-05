@@ -126,7 +126,7 @@ const Lib: React.FC = () => {
             key: "appointTeamVos",
             align: "center",
             render: (_, e) => {
-                return <>{e.appointTeamVos && <div>{e.appointTeamVos.map(x => x.ptTeamNo + "-" + x.ptPresentTime)}</div>}</>
+                return <>{e.appointTeamVos && <div>{e.appointTeamVos.map(x => (x.ptPresentTime ? x.ptTeamNo + "-" + x.ptPresentTime : x.ptTeamNo))}</div>}</>
             }
         },
         {
@@ -277,7 +277,7 @@ const Lib: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <Table rowKey={e =>e.psNo} columns={columns} dataSource={tableData} pagination={{ onChange: changePg, total, pageSize }} />
+            <Table rowKey={e => e.psNo} columns={columns} dataSource={tableData} pagination={{ onChange: changePg, total, pageSize }} />
         </>
     )
 }

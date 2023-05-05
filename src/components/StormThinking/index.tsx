@@ -7,7 +7,7 @@ import { addMindEvalution, addMindQuestion, addMindSolution, searchMind, updateM
 import { useSession } from "../../store"
 import dayjs from "dayjs"
 import { EyeOutlined } from "@ant-design/icons"
-import { handleEvalObj } from "../../utils/handleEvalObj"
+import { handleEvalObj } from "../../utils/handleObj"
 import { smartAppList, policeTypeList } from "../Application"
 
 const { RangePicker } = DatePicker
