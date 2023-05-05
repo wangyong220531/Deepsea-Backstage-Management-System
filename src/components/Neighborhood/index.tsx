@@ -4,9 +4,9 @@ import { useEffect, useState } from "react"
 import { getAllNeighbor } from "../../api/smartUnit"
 import Styles from "./index.module.less"
 import { useAsync } from "../../utils/hooks"
-import dayjs from "dayjs"
+// import dayjs from "dayjs"
 
-const { RangePicker } = DatePicker
+// const { RangePicker } = DatePicker
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -177,8 +177,8 @@ const Neighborhood: React.FC = () => {
     const [pageNum, setPageNum] = useState(1)
     const [pageSize, setPageSize] = useState(10)
     const [total, setTotal] = useState(0)
-    const [startTime, setStartTime] = useState<dayjs.Dayjs | null>(dayjs(Date.now() - 2592000000))
-    const [endTime, setEndTime] = useState<dayjs.Dayjs | null>(dayjs(Date.now()))
+    // const [startTime, setStartTime] = useState<dayjs.Dayjs | null>(dayjs(Date.now() - 2592000000))
+    // const [endTime, setEndTime] = useState<dayjs.Dayjs | null>(dayjs(Date.now()))
     const [tableData, setTableData] = useState<DataType[]>([])
     const [addOpen, setAddOpen] = useState(false)
     const [addForm] = Form.useForm()
@@ -217,20 +217,20 @@ const Neighborhood: React.FC = () => {
             setTotal(res.data.total))
     }
 
-    const rangeChange = (e: any) => {
-        setStartTime(dayjs(e[0]))
-        setEndTime(dayjs(e[1]))
-    }
+    // const rangeChange = (e: any) => {
+    //     setStartTime(dayjs(e[0]))
+    //     setEndTime(dayjs(e[1]))
+    // }
 
     const changePg = (pageNum: number, pageSize: number) => {
         setPageNum(pageNum)
         setPageSize(pageSize)
     }
 
-    const reset = () => {
-        setStartTime(dayjs(Date.now()))
-        setEndTime(dayjs(Date.now() - 2592000000))
-    }
+    // const reset = () => {
+    //     setStartTime(dayjs(Date.now()))
+    //     setEndTime(dayjs(Date.now() - 2592000000))
+    // }
 
     const addCancel = () => {
         setAddOpen(false)

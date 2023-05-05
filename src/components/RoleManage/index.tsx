@@ -10,7 +10,7 @@ import { getPermissionTree } from "../../api/permisssion"
 import { useSession } from "../../store"
 import { useAsync } from "../../utils/hooks"
 import useRole from "../../store/role"
-import useOperates from "../../utils/operates"
+import useOperates from "../../store/operates"
 import { handleTree } from "../../utils/recursive"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
@@ -474,7 +474,7 @@ const RoleManage: React.FC = () => {
             >
                 {modalContent === "新增" && (
                     <>
-                        <Form form={addForm}>
+                        <Form labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} form={addForm}>
                             <Form.Item label="角色名称" name="roleName">
                                 <Input placeholder="请输入角色名称" className={c("form-item-input")} />
                             </Form.Item>
@@ -515,7 +515,7 @@ const RoleManage: React.FC = () => {
                 )}
                 {modalContent === "角色编辑" && (
                     <>
-                        <Form form={editForm}>
+                        <Form labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} form={editForm}>
                             <Form.Item label="角色名称" name="roleName">
                                 <Input placeholder="请输入角色名称" className={c("form-item-input")} />
                             </Form.Item>

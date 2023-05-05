@@ -7,7 +7,7 @@ import { exportLoginLog, exportOperateLog, searchLoginLog, searchOperateLog } fr
 import dayjs from "dayjs"
 import { exportExcel } from "../../utils/index"
 import { useAsync } from "../../utils/hooks"
-import useOperates from "../../utils/operates"
+import useOperates from "../../store/operates"
 import { useSession } from "../../store"
 
 const { RangePicker } = DatePicker
@@ -88,6 +88,7 @@ const OperateLogs: FC = () => {
     const judge = () => {
         if (sessionStore.userType === "superAdmin") {
             setOperateId(5)
+            return
         }
         if (
             operates[0].item

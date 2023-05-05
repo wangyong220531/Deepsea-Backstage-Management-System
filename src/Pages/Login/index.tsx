@@ -7,7 +7,7 @@ import Captcha from "../../assets/Login/Captcha.png"
 import Logo from "../../assets/logo.png"
 import Styles from "./index.module.less"
 import { getCaptcha, login } from "../../api/login"
-import useOperates from "../../utils/operates"
+import useOperates from "../../store/operates"
 import { handlePermission, handleOperates } from "../../utils/recursive"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
@@ -23,31 +23,31 @@ const Login: React.FC = () => {
     const operates = useOperates()
 
     const submit = async () => {
-        sessionStore.setState({token:"123"})
-        // const res = await login({
-        //     code: captcha,
-        //     userNo: userNo
-        // })
-        // if (res) {
-        //     sessionStore.setState({ token: res.data.token, userNo: userNo, userId: res.data.userId})
-        //     if (res.data.user === "superAdmin") {
-        //         sessionStore.setState({ userType: res.data.user })
-        //         return
-        //     }
-        //     if (res.data.user instanceof Array) {
-        //         sessionStore.setState({
-        //             menu: handlePermission(res.data.user)
-        //         })
-        //         operates[0].item = handleOperates(res.data.user)
-        //         return
-        //     }
-        //     if (!res.data.user) {
-        //         sessionStore.setState({
-        //             menu: [{ name: "首页", path: "home" }]
-        //         })
-        //         return
-        //     }
-        // }
+        // sessionStore.setState({token:"123"})
+        const res = await login({
+            code: captcha,
+            userNo: userNo
+        })
+        if (res) {
+            sessionStore.setState({ token: res.data.token, userNo: userNo, userId: res.data.userId})
+            if (res.data.user === "superAdmin") {
+                sessionStore.setState({ userType: res.data.user })
+                return
+            }
+            if (res.data.user instanceof Array) {
+                sessionStore.setState({
+                    menu: handlePermission(res.data.user)
+                })
+                operates[0].item = handleOperates(res.data.user)
+                return
+            }
+            if (!res.data.user) {
+                sessionStore.setState({
+                    menu: [{ name: "首页", path: "home" }]
+                })
+                return
+            }
+        }
     }
 
     const [captchaBtnDisable, setCaptchaBtnDisable] = useState(false)

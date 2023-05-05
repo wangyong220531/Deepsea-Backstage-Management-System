@@ -1,11 +1,11 @@
-import { FC, ReactNode, useEffect, useRef, useState } from "react"
+import { FC, ReactNode, useState } from "react"
 import Styles from "./index.module.less"
 import { Button, Input, Modal, Switch, Table, Form, Popconfirm } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import { delUser, getUnitList, searchUser, updatePassword, updateUserInfo, userInfoExport } from "../../api/userManage"
 import { exportExcel } from "../../utils/index"
 import { useAsync } from "../../utils/hooks"
-import useOperates from "../../utils/operates"
+import useOperates from "../../store/operates"
 import { useSession } from "../../store"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
@@ -138,23 +138,21 @@ const UserManage: FC = () => {
         })
     }
 
-    const [unitList, setUnitList] = useState<OptionType[]>([])
-    const inputAccount = useRef("")
-    const inputUnit = useRef("")
+    // const [unitList, setUnitList] = useState<OptionType[]>([])
 
-    const searchUnitList = () => {
-        getUnitList({}).then(res => {
-            res &&
-                setUnitList(
-                    res.data.unitInfos.map(e => {
-                        return {
-                            value: e.unitNo,
-                            label: e.unitName
-                        }
-                    })
-                )
-        })
-    }
+    // const searchUnitList = () => {
+    //     getUnitList({}).then(res => {
+    //         res &&
+    //             setUnitList(
+    //                 res.data.unitInfos.map(e => {
+    //                     return {
+    //                         value: e.unitNo,
+    //                         label: e.unitName
+    //                     }
+    //                 })
+    //             )
+    //     })
+    // }
 
     const [total, setTotal] = useState(0)
     const [pageNum, setPageNum] = useState(1)
@@ -176,8 +174,8 @@ const UserManage: FC = () => {
             pageNum: pageNum,
             pageSize: pageSize
         })
-        if (res) {
-            setTableData(
+        res &&
+            (setTableData(
                 res.data.rows.map(e => {
                     return {
                         id: e.id,
@@ -191,11 +189,15 @@ const UserManage: FC = () => {
                         status: e.status
                     }
                 })
-            )
-            setTotal(res.data.total)
-        }
+            ),
+            setTotal(res.data.total))
+        judge()
+    }
+
+    const judge = () => {
         if (sessionStore.userType === "superAdmin") {
             setOperateId(5)
+            return
         }
         if (
             operates[0].item
@@ -223,9 +225,9 @@ const UserManage: FC = () => {
         }
     }
 
-    useEffect(() => {
-        searchUnitList()
-    }, [])
+    // useEffect(() => {
+    //     searchUnitList()
+    // }, [])
 
     useAsync(() => search(), [pageNum, pageSize])
 
@@ -256,15 +258,14 @@ const UserManage: FC = () => {
     }
 
     const [tableData, setTableData] = useState<TableHead[]>([])
-    const [modalContent, setModalContent] = useState<"新增" | "编辑" | "密码修改">("编辑")
+    const [modalContent, setModalContent] = useState<"编辑" | "密码修改">("编辑")
     const [operateShow, setOperateShow] = useState(false)
-    const [editAccount, seteditAccount] = useState("")
     const [editForm] = Form.useForm()
     const [pwdChangeForm] = Form.useForm()
 
     const save = async () => {
         setOperateShow(false)
-        if (modalContent === "新增" || modalContent === "编辑") {
+        if (modalContent === "编辑") {
             const res = await editForm.validateFields()
             updateUserInfo({
                 id: selectId,
@@ -349,8 +350,8 @@ const UserManage: FC = () => {
                     </>
                 }
             >
-                {modalContent === "新增" || modalContent === "编辑" ? (
-                    <Form labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} form={editForm}>
+                {modalContent === "编辑" && (
+                    <Form labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} form={editForm}>
                         <Form.Item label="用户账号" name="account">
                             <Input className={c("form-item-input")} disabled addonAfter="同警号" />
                         </Form.Item>
@@ -368,18 +369,6 @@ const UserManage: FC = () => {
                         </Form.Item>
                         <Form.Item label="角色" name="role">
                             <Input className={c("form-item-input")} disabled />
-                        </Form.Item>
-                    </Form>
-                ) : (
-                    <Form labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} form={pwdChangeForm}>
-                        <Form.Item label="账号">
-                            <Input value={editAccount} disabled className={c("form-item-input")} />
-                        </Form.Item>
-                        <Form.Item label="密码" name="password" rules={[{ required: true, message: "请输入密码!" }]}>
-                            <Input className={c("form-item-input")} />
-                        </Form.Item>
-                        <Form.Item label="再次输入" name="confirmPwd" rules={[{ required: true, message: "请再次确认!" }]}>
-                            <Input className={c("form-item-input")} />
                         </Form.Item>
                     </Form>
                 )}
