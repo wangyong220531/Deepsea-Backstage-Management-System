@@ -9,6 +9,7 @@ import { getPng } from "../../utils/index"
 import BreadcrumbIcon from "../../assets/SystemManagement/BreadcrumbIcon.png"
 import { logoutQuery } from "../../api/login"
 import useOperates from "../../store/operates"
+import getBreaks from "../../utils/getBreaks"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -94,24 +95,12 @@ const LayoutFC: React.FC = () => {
         }
     })
 
-    function getBreak(Path: string) {
-        return routes
-            .map(e => {
-                if (e.path === Path) {
-                    return e.name
-                }
-                return e.children?.find(e => e.path === Path) ? e.children?.find(e => e.path === Path)?.name : e.children?.map(a => a.children?.find(e => e.path === Path)?.name)
-            })
-            .filter(e => e)
-            .flat()
-    }
-
     useEffect(() => {
         setBreaks(
             location.pathname
                 .split("/")
                 .filter(e => e !== "")
-                .map(e => getBreak(e))
+                .map(e => getBreaks(e))
                 .flat()
                 .filter(e => e)
         )
