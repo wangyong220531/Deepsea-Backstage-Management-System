@@ -1,6 +1,6 @@
 import { Table, Button, Input, Select, Modal, Form } from "antd"
 import type { ColumnsType } from "antd/es/table"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { getAllNeighbor } from "../../api/smartUnit"
 import Styles from "./index.module.less"
 import { useAsync } from "../../utils/hooks"

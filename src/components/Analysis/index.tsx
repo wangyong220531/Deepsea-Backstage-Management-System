@@ -56,7 +56,7 @@ const Analysis: React.FC = () => {
     const [pageSize, setPageSize] = useState(10)
     const [total, setTotal] = useState(0)
     const [tableData, setTableData] = useState<TotalAV[]>([])
-    const [type, setType] = useState<string | 1 | 2>("")
+    const [type, setType] = useState<"" | 1 | 2>("")
 
     const query = () => {
         setPageNum(1)
