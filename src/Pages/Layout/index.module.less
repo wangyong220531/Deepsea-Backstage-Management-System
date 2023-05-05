@@ -50,8 +50,6 @@
     left: 200px;
     width: calc(100vw - 200px);
     font-size: 14px;
-    color: #000000;
-    font-weight: 600;
     background-color: rgb(255, 255, 255);
     padding: 20px 0 20px 40px;
     display: flex;
@@ -59,6 +57,17 @@
     img {
         width: 20px;
         height: 20px;
+    }
+    .text-group {
+        display: flex;
+        gap: 4px;
+    }
+    .prev {
+        color: grey;
+    }
+    .current {
+        color: #2a58ad;
+        font-weight: 600;
     }
 }
 
@@ -73,7 +82,7 @@
     .ant-menu-item-selected {
         color: #2a58ad !important;
     }
-    :where(.css-dev-only-do-not-override-1me4733).ant-menu-light .ant-menu-submenu-selected >.ant-menu-submenu-title {
+    :where(.css-dev-only-do-not-override-1me4733).ant-menu-light .ant-menu-submenu-selected > .ant-menu-submenu-title {
         color: #2a58ad;
     }
 }

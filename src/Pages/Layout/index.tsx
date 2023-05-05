@@ -111,13 +111,15 @@ const LayoutFC: React.FC = () => {
             <>
                 <div className={c("breaks")}>
                     <img src={BreadcrumbIcon} alt="" />
-                    <div>
+                    <div className={c("text-group")}>
                         {breaks &&
-                            breaks.map((item, index) => {
+                            breaks.map((e, index) => {
                                 return (
                                     <>
-                                        {index !== 0 && "/"}
-                                        {item}
+                                        <div key={e} className={index == breaks.length-1 ? c("current") : c("prev")}>
+                                            {index !== 0 && "/ "}
+                                            {e}
+                                        </div>
                                     </>
                                 )
                             })}
