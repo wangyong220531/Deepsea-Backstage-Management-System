@@ -1,4 +1,4 @@
-import { BankOutlined, BranchesOutlined, HomeOutlined, RadarChartOutlined, FileDoneOutlined, SubnodeOutlined, AppstoreOutlined } from "@ant-design/icons"
+import { BankOutlined, BranchesOutlined, HomeOutlined, RadarChartOutlined, FileDoneOutlined, SubnodeOutlined, AppstoreOutlined, TeamOutlined } from "@ant-design/icons"
 import { ReactNode } from "react"
 import Area from "../components/Neighborhood"
 import Command from "../components/Command"
@@ -20,6 +20,11 @@ import SystemManagement from "../components/SystemManagement"
 import UserManage from "../components/UserManage"
 import RoleManage from "../components/RoleManage"
 import OperateLogs from "../components/OperateLogs"
+import RealPopulation from "../components/RealPopulation"
+import HouseholdLib from "../components/HouseholdLib"
+import OneBThreeRPLib from "../components/OneBThreeRPLib"
+import OneBThreeRALib from "../components/OneBThreeRALib"
+import ImageParseLib from "../components/ImageParseLib"
 
 export interface RouteChild {
     name: string
@@ -136,6 +141,34 @@ const routes: Route[] = [
         path: "stormthinking",
         component: <StormThinking />,
         icon: <BranchesOutlined />
+    },
+    {
+        name: "实有人口相关库",
+        path: "realPopulation",
+        component: <RealPopulation />,
+        icon: <TeamOutlined />,
+        children: [
+            {
+                name: "户籍人口库",
+                path: "householdLib",
+                component: <HouseholdLib />
+            },
+            {
+                name: "一标三实人口口库",
+                path: "oneBThreeRPLib",
+                component: <OneBThreeRPLib />
+            },
+            {
+                name: "一标三实地址库",
+                path: "oneBThreeRALib",
+                component: <OneBThreeRALib />
+            },
+            {
+                name: "图片解析归档库",
+                path: "imageParseLib",
+                component: <ImageParseLib />
+            }
+        ]
     },
     {
         name: "系统管理",
