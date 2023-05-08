@@ -73,6 +73,8 @@ type ResponseResult = {
     "/report/queryAllUnit": GetAllUnitResult
     "/duty/stormMind/selectPlanByNo": SearchPlanResult
     "/duty/stormMind/getPlanNoList": PlanListResult
+    "/OneStandAndManyFacts/queryPLPersonInfo": QueryPopulationLibResult
+    "/OneStandAndManyFacts/queryPLAddress": QueryAddressLibResult
 }
 type RequestQuery = {
     "/serve/ask/delAskInfo": { id: string }
@@ -145,6 +147,8 @@ type RequestData = {
     "/duty/stormMind/delStormMindPlan": { id: string }
     "/duty/stormMind/delStormMindQuestion": { id: string }
     "/wisdom/apply/feedback": AppOperateData
+    "/OneStandAndManyFacts/queryPLPersonInfo": QueryPopulationLibData
+    "/OneStandAndManyFacts/queryPLAddress": QueryAddressLibData
 }
 
 type RequestParams = {
@@ -1221,4 +1225,72 @@ interface SearchPlanResult {
 interface PlanListResult {
     success: Boolean
     data: string[]
+}
+
+interface QueryPopulationLibData {
+    pageNum: number
+    pageSize: number
+}
+
+interface QueryPopulationLibResult {}
+
+interface QueryAddressLibData {
+    pageNum: number
+    pageSize: number
+}
+
+interface QueryAddressLibResult {
+    success: Boolean
+    data: {
+        /**标准层更新时间*/
+        bzcGxsj: string
+        /**标准层入库时间*/
+        bzcRksj: string
+        /**创建时间:地址创建的时间*/
+        cjsj: string
+        /**创建人*/
+        createBy: string
+        /**创建单位*/
+        createOrgCode: string
+        /**创建时间*/
+        createTime: string
+        /**幢楼编号:(二级编号)：0至3843*/
+        dlbh: string
+        /**幢楼副号:(二级副号)：0至61*/
+        dlfh: string
+        /**幢楼量词:(二级量词)*/
+        dllc: string
+        /**地名编码:取地名表中地名编码*/
+        dmdm: string
+        /**单元楼层编号:(三级编号)： -61至 3843*/
+        dylcbh: string
+        /**单元楼层量词:(三级量词)*/
+        dylclc: string
+        /**地址:由编码段合成的地址字符串*/
+        dz: string
+        /**临时编号*/
+        dzid: string
+        /**地址类型:0未确定、1建筑地址*/
+        dzlx: string
+        /**地址全称 */
+        dzmc: string
+        /**地址特征码 */
+        dztzm: string
+        /**地址状态：0待建、1有效、2冻结、3 待替换、4替换、5*/
+        dzzt: string
+        /**公安部-表名*/
+        gabBm: string
+        /**公安部-备注*/
+        gabBz: string
+        /**公安部-采集地*/
+        gabCjd: string
+        /**公安部-记录唯一标识*/
+        gabJlwybs: string
+        /**公安部-数据库服务标识F*/
+        gabSjkfwbs: string
+        /**公安部-数据来源系统分类代码*/
+        gabSjlyxtfldm: string
+        /**公安部-数据记录敏感级别*/
+        gabSjmgjb: string
+    }[]
 }

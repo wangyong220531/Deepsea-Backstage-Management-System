@@ -154,7 +154,7 @@ const routes: Route[] = [
                 component: <HouseholdLib />
             },
             {
-                name: "一标三实人口口库",
+                name: "一标三实人口库",
                 path: "oneBThreeRPLib",
                 component: <OneBThreeRPLib />
             },
