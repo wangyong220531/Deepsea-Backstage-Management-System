@@ -1291,97 +1291,100 @@ interface QueryAddressLibData {
 interface QueryAddressLibResult {
     success: Boolean
     data: {
-        /**标准层更新时间*/
-        bzcGxsj: string
-        /**标准层入库时间*/
-        bzcRksj: string
-        /**创建时间:地址创建的时间*/
-        cjsj: string
-        /**创建人*/
-        createBy: string
-        /**创建单位*/
-        createOrgCode: string
-        /**创建时间*/
-        createTime: string
-        /**幢楼编号:(二级编号)：0至3843*/
-        dlbh: string
-        /**幢楼副号:(二级副号)：0至61*/
-        dlfh: string
-        /**幢楼量词:(二级量词)*/
-        dllc: string
-        /**地名编码:取地名表中地名编码*/
-        dmdm: string
-        /**单元楼层编号:(三级编号)： -61至 3843*/
-        dylcbh: string
-        /**单元楼层量词:(三级量词)*/
-        dylclc: string
-        /**地址:由编码段合成的地址字符串*/
-        dz: string
-        /**临时编号*/
-        dzid: string
-        /**地址类型:0未确定、1建筑地址*/
-        dzlx: string
-        /**地址全称 */
-        dzmc: string
-        /**地址特征码 */
-        dztzm: string
-        /**地址状态：0待建、1有效、2冻结、3 待替换、4替换、5消亡、6无效*/
-        dzzt: string
-        /**公安部-表名*/
-        gabBm: string
-        /**公安部-备注*/
-        gabBz: string
-        /**公安部-采集地*/
-        gabCjd: string
-        /**公安部-记录唯一标识*/
-        gabJlwybs: string
-        /**公安部-数据库服务标识F*/
-        gabSjkfwbs: string
-        /**公安部-数据来源系统分类代码*/
-        gabSjlyxtfldm: string
-        /**公安部-数据记录敏感级别*/
-        gabSjmgjb: string
-        /**编号*/
-        id: string
-        /**建筑的地址id*/
-        jzdzid: string
-        /**建筑的最大单元数*/
-        jzjgdy: sting
-        /**最大层数*/
-        jzjglc: string
-        /**所属区域id*/
-        plAreaId: string
-        /**plCommunity*/
-        plCommunity: string
-        /**类型，VILLA-独栋,HOUSE-房间,UNIT-单元,BUILD-楼栋,AREA-区域*/
-        plType: "VILLA" | "HOUSE" | "UNIT" | "BUILD" | "AREA"
-        /**是否标注：0-未；1-已*/
-        sfbz: 0 | 1
-        /**是否确认：0-未；1-已*/
-        sfconfirm: 0 | 1
-        /**是否门楼牌*/
-        sfmlp: string
-        /**室号编号*/
-        shbh: string
-        /**所属县区*/
-        ssxq: string
-        /**室位置：单元位置*/
-        swzdy: string
-        /**室位置：层位置*/
-        swzlc: string
-        /**室位置：室位置*/
-        swzs: string
-        /**室位置：室号*/
-        swzsh: string
-        /**坐标X*/
-        x: string
-        /**坐标Y*/
-        y: string
-        /**刑事责任区*/
-        xszrq: string
-        /**行政区划：(取12位社区代码)F*/
-        xzqh: string
-        /**治安责任区：(取12位责任区代码)*/
-        zazrq: string
-    }[]
+        rows: {
+            /**标准层更新时间*/
+            bzcGxsj: string
+            /**标准层入库时间*/
+            bzcRksj: string
+            /**创建时间:地址创建的时间*/
+            cjsj: string
+            /**创建人*/
+            createBy: string
+            /**创建单位*/
+            createOrgCode: string
+            /**创建时间*/
+            createTime: string
+            /**幢楼编号:(二级编号)：0至3843*/
+            dlbh: string
+            /**幢楼副号:(二级副号)：0至61*/
+            dlfh: string
+            /**幢楼量词:(二级量词)*/
+            dllc: string
+            /**地名编码:取地名表中地名编码*/
+            dmdm: string
+            /**单元楼层编号:(三级编号)： -61至 3843*/
+            dylcbh: string
+            /**单元楼层量词:(三级量词)*/
+            dylclc: string
+            /**地址:由编码段合成的地址字符串*/
+            dz: string
+            /**临时编号*/
+            dzid: string
+            /**地址类型:0未确定、1建筑地址*/
+            dzlx: string
+            /**地址全称 */
+            dzmc: string
+            /**地址特征码 */
+            dztzm: string
+            /**地址状态：0待建、1有效、2冻结、3 待替换、4替换、5消亡、6无效*/
+            dzzt: string
+            /**公安部-表名*/
+            gabBm: string
+            /**公安部-备注*/
+            gabBz: string
+            /**公安部-采集地*/
+            gabCjd: string
+            /**公安部-记录唯一标识*/
+            gabJlwybs: string
+            /**公安部-数据库服务标识F*/
+            gabSjkfwbs: string
+            /**公安部-数据来源系统分类代码*/
+            gabSjlyxtfldm: string
+            /**公安部-数据记录敏感级别*/
+            gabSjmgjb: string
+            /**编号*/
+            id: string
+            /**建筑的地址id*/
+            jzdzid: string
+            /**建筑的最大单元数*/
+            jzjgdy: sting
+            /**最大层数*/
+            jzjglc: string
+            /**所属区域id*/
+            plAreaId: string
+            /**plCommunity*/
+            plCommunity: string
+            /**类型，VILLA-独栋,HOUSE-房间,UNIT-单元,BUILD-楼栋,AREA-区域*/
+            plType: "VILLA" | "HOUSE" | "UNIT" | "BUILD" | "AREA"
+            /**是否标注：0-未；1-已*/
+            sfbz: 0 | 1
+            /**是否确认：0-未；1-已*/
+            sfconfirm: 0 | 1
+            /**是否门楼牌*/
+            sfmlp: string
+            /**室号编号*/
+            shbh: string
+            /**所属县区*/
+            ssxq: string
+            /**室位置：单元位置*/
+            swzdy: string
+            /**室位置：层位置*/
+            swzlc: string
+            /**室位置：室位置*/
+            swzs: string
+            /**室位置：室号*/
+            swzsh: string
+            /**坐标X*/
+            x: string
+            /**坐标Y*/
+            y: string
+            /**刑事责任区*/
+            xszrq: string
+            /**行政区划：(取12位社区代码)F*/
+            xzqh: string
+            /**治安责任区：(取12位责任区代码)*/
+            zazrq: string
+        }[]
+        total: number
+    }
 }
