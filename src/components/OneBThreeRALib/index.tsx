@@ -77,7 +77,7 @@ const OneBThreeRALib: FC = () => {
         {
             key: "jzdzid",
             dataIndex: "jzdzid",
-            title: "建筑的地址id",
+            title: "建筑的地址ID",
             align: "center"
         },
         {
@@ -144,9 +144,9 @@ const OneBThreeRALib: FC = () => {
             }
         },
         {
-            key: "shbh",
-            dataIndex: "shbh",
-            title: "室号编号",
+            key: "xzqh",
+            dataIndex: "xzqh",
+            title: "行政区划",
             align: "center"
         }
     ]

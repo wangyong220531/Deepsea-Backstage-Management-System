@@ -1370,25 +1370,25 @@ interface Address {
     /**是否门楼牌*/
     sfmlp?: string
     /**室号编号*/
-    shbh: string
+    shbh?: string
     /**所属县区*/
-    ssxq: string
+    ssxq?: string
     /**室位置：单元位置*/
-    swzdy: string
+    swzdy?: string
     /**室位置：层位置*/
-    swzlc: string
+    swzlc?: string
     /**室位置：室位置*/
-    swzs: string
+    swzs?: string
     /**室位置：室号*/
-    swzsh: string
+    swzsh?: string
     /**坐标X*/
     x?: string
     /**坐标Y*/
     y?: string
     /**刑事责任区*/
-    xszrq: string
+    xszrq?: string
     /**行政区划：(取12位社区代码)F*/
     xzqh: string
     /**治安责任区：(取12位责任区代码)*/
-    zazrq: string
+    zazrq?: string
 }
