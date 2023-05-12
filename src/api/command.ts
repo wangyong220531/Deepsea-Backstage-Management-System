@@ -116,3 +116,12 @@ export function getAllDutyClock(data: GetAllDuty) {
         method: "POST"
     })
 }
+
+export function forceOperate(data: ForceOperateData) {
+    return request({
+        url: "/policeSituation/updateDisPatchSheet",
+        baseURL,
+        data,
+        method: "POST"
+    })
+}

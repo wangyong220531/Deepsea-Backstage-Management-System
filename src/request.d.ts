@@ -75,6 +75,7 @@ type ResponseResult = {
     "/duty/stormMind/getPlanNoList": PlanListResult
     "/OneStandAndManyFacts/queryPLPersonInfo": QueryPopulationLibResult
     "/OneStandAndManyFacts/queryPLAddress": QueryAddressLibResult
+    "/policeSituation/updateDisPatchSheet": ForceOperateResult
 }
 type RequestQuery = {
     "/serve/ask/delAskInfo": { id: string }
@@ -149,6 +150,7 @@ type RequestData = {
     "/wisdom/apply/feedback": AppOperateData
     "/OneStandAndManyFacts/queryPLPersonInfo": QueryPopulationLibData
     "/OneStandAndManyFacts/queryPLAddress": QueryAddressLibData
+    "/policeSituation/updateDisPatchSheet": ForceOperateData
 }
 
 type RequestParams = {
@@ -294,6 +296,8 @@ interface ForceFollowListResult {
 }
 
 interface Mfuatv {
+    appointTeamId: string
+    psId: string
     teamNo: string
     teamStatus: number
     carNo: string[]
@@ -1396,4 +1400,13 @@ interface Address {
     xzqh: string
     /**治安责任区：(取12位责任区代码)*/
     zazrq?: string
+}
+
+interface ForceOperateData {
+    appointTeamId: string
+    id: string
+    operatedId: null
+    points: null
+    remark: null
+    status: "POLICE_END" | "POLICE_PRESENT"
 }

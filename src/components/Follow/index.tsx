@@ -3,7 +3,7 @@ import React, { useState } from "react"
 import type { ColumnsType } from "antd/es/table"
 import type { TabsProps } from "antd"
 import { ReactNode } from "react"
-import { forceFollowList, caseFollowList } from "../../api/command"
+import { forceFollowList, caseFollowList, forceOperate } from "../../api/command"
 import Styles from "./index.module.less"
 import dayjs from "dayjs"
 import { useAsync } from "../../utils/hooks"
@@ -43,12 +43,14 @@ const Follow: React.FC = () => {
             title: "状态",
             align: "center",
             render: (_, e) => {
-                return <>
-                    {e.teamStatus === 0 && <div>初始派警</div>}
-                    {e.teamStatus === 1 && <div>警力到场</div>}
-                    {e.teamStatus === 2 && <div>警力任务结束</div>}
-                    {e.teamStatus === 3 && <div>处置结束</div>}
-                </>
+                return (
+                    <>
+                        {e.teamStatus === 0 && <div>初始派警</div>}
+                        {e.teamStatus === 1 && <div>警力到场</div>}
+                        {e.teamStatus === 2 && <div>警力任务结束</div>}
+                        {e.teamStatus === 3 && <div>处置结束</div>}
+                    </>
+                )
             }
         },
         {
@@ -65,9 +67,15 @@ const Follow: React.FC = () => {
             render: (_, e) => {
                 return (
                     <>
-                        {e.polices.filter(e => e.userType === "CIVILPOLICE").map((m: Police) => {
-                            return <><div key={m.userIdCode}>{m.userName}</div></>
-                        })}
+                        {e.polices
+                            .filter(e => e.userType === "CIVILPOLICE")
+                            .map((m: Police) => {
+                                return (
+                                    <>
+                                        <div key={m.userIdCode}>{m.userName}</div>
+                                    </>
+                                )
+                            })}
                     </>
                 )
             }
@@ -80,9 +88,15 @@ const Follow: React.FC = () => {
             render: (_, e) => {
                 return (
                     <>
-                        {e.polices.filter(e => e.userType === "AUXILIARYPOLICE").map((m: Police) => {
-                            return <><div key={m.userIdCode} >{m.userName}</div></>
-                        })}
+                        {e.polices
+                            .filter(e => e.userType === "AUXILIARYPOLICE")
+                            .map((m: Police) => {
+                                return (
+                                    <>
+                                        <div key={m.userIdCode}>{m.userName}</div>
+                                    </>
+                                )
+                            })}
                     </>
                 )
             }
@@ -98,17 +112,16 @@ const Follow: React.FC = () => {
             dataIndex: "operate",
             title: "操作",
             align: "center",
-            render: () => {
+            render: (_, e) => {
                 return (
                     <>
                         <div className={Styles["operate"]}>
-                            <Button type="primary">到场</Button>
-                            <Button type="primary" disabled={true}>
+                            <Button type="primary" disabled={e.teamStatus === 1 || e.teamStatus === 2} onClick={() => forceArrive(e)}>
+                                到场
+                            </Button>
+                            <Button type="primary" disabled={e.teamStatus === 2} onClick={() => forceEnd(e)}>
                                 处结
                             </Button>
-                            {/* <Button type="primary" disabled={true}>
-                                定位
-                            </Button> */}
                         </div>
                     </>
                 )
@@ -164,9 +177,7 @@ const Follow: React.FC = () => {
             title: "状态",
             align: "center",
             render: (_, e) => {
-                return <>
-                    {psStatusList.find(s => s.code === e.psStatus)?.desc}
-                </>
+                return <>{psStatusList.find(s => s.code === e.psStatus)?.desc}</>
             }
         },
         {
@@ -211,26 +222,30 @@ const Follow: React.FC = () => {
             title: "处置警组",
             align: "center",
             render: (_, e) => {
-                return <>
-                    {e.teams.length > 1 ? e.teams.map(t => {
-                        return <div key={t.ptPsId}>{t.ptTeamNo}</div>
-                    }) : e.teams[0].ptTeamNo}
-                </>
-            }
-        },
-        {
-            key: "operate",
-            dataIndex: "operate",
-            title: "操作",
-            align: "center",
-            render: () => {
                 return (
                     <>
-                        <Button type="primary">跟进</Button>
+                        {e.teams.length > 1
+                            ? e.teams.map(t => {
+                                  return <div key={t.ptPsId}>{t.ptTeamNo}</div>
+                              })
+                            : e.teams[0].ptTeamNo}
                     </>
                 )
             }
         }
+        // {
+        //     key: "operate",
+        //     dataIndex: "operate",
+        //     title: "操作",
+        //     align: "center",
+        //     render: () => {
+        //         return (
+        //             <>
+        //                 <Button type="primary">跟进</Button>
+        //             </>
+        //         )
+        //     }
+        // }
     ]
 
     const items: TabsProps["items"] = [
@@ -278,14 +293,34 @@ const Follow: React.FC = () => {
             psStatus: ""
         })
         res && (setCaseData(res.data.situtationVos), setCaseTotal(res.data.size))
-        console.log(caseData);
-
     }
 
     const query = () => {
         setPageNum(1)
         setPageSize(10)
         search()
+    }
+
+    const forceArrive = (e: Mfuatv) => {
+        forceOperate({
+            appointTeamId: e.appointTeamId,
+            id: e.psId,
+            operatedId: null,
+            points: null,
+            remark: null,
+            status: "POLICE_PRESENT"
+        }).then(() => search())
+    }
+
+    const forceEnd = (e: Mfuatv) => {
+        forceOperate({
+            appointTeamId: e.appointTeamId,
+            id: e.psId,
+            operatedId: null,
+            points: null,
+            remark: null,
+            status: "POLICE_END"
+        }).then(() => search())
     }
 
     const changeForcePg = (pageNum: number, pageSize: number) => {
