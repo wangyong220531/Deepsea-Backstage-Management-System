@@ -96,6 +96,7 @@ const DutyAnalysis: React.FC = () => {
     const query = () => {
         setPageNum(1)
         setPageSize(10)
+        search()
     }
 
     const changePg = (pageNum: number, pageSize: number) => {

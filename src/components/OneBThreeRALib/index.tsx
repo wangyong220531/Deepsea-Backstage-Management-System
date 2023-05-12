@@ -49,12 +49,12 @@ const OneBThreeRALib: FC = () => {
             title: "地址全称",
             align: "center"
         },
-        {
-            key: "dztzm",
-            dataIndex: "dztzm",
-            title: "地址状态码",
-            align: "center"
-        },
+        // {
+        //     key: "dztzm",
+        //     dataIndex: "dztzm",
+        //     title: "地址特征码",
+        //     align: "center"
+        // },
         {
             key: "dzzt",
             dataIndex: "dzzt",
@@ -74,12 +74,12 @@ const OneBThreeRALib: FC = () => {
                 )
             }
         },
-        {
-            key: "jzdzid",
-            dataIndex: "jzdzid",
-            title: "建筑的地址ID",
-            align: "center"
-        },
+        // {
+        //     key: "jzdzid",
+        //     dataIndex: "jzdzid",
+        //     title: "建筑的地址ID",
+        //     align: "center"
+        // },
         {
             key: "jzjgdy",
             dataIndex: "jzjgdy",

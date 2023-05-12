@@ -209,6 +209,7 @@ const StormThinking: React.FC = () => {
     const query = () => {
         setPageNum(1)
         setPageSize(10)
+        search()
     }
 
     const showAllSolutions = (e: DataType) => {

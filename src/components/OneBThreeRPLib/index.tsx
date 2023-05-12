@@ -1,6 +1,6 @@
 import { FC, useState } from "react"
 import styles from "./index.module.less"
-import { Table } from "antd"
+import { Table, Tooltip } from "antd"
 import { ColumnsType } from "antd/es/table"
 import { useAsync } from "../../utils/hooks"
 import { queryAddressLib } from "../../api/oneBidThreeRPLib"
@@ -15,7 +15,8 @@ const OneBThreeRPLib: FC = () => {
             key: "XM",
             dataIndex: "XM",
             title: "姓名",
-            align: "center"
+            align: "center",
+            width: "100px"
         },
         {
             key: "XB",
@@ -39,7 +40,10 @@ const OneBThreeRPLib: FC = () => {
             key: "ZJLX",
             dataIndex: "ZJLX",
             title: "证件类型",
-            align: "center"
+            align: "center",
+            render: (_, e) => {
+                return <>{e.ZJLX === "111" && <div>身份证</div>}</>
+            }
         },
         {
             key: "GMSFHM",
@@ -71,12 +75,12 @@ const OneBThreeRPLib: FC = () => {
             title: "出生地市县",
             align: "center"
         },
-        {
-            key: "GMSFHM",
-            dataIndex: "GMSFHM",
-            title: "户籍地址详址",
-            align: "center"
-        },
+        // {
+        //     key: "GMSFHM",
+        //     dataIndex: "GMSFHM",
+        //     title: "户籍地址详址",
+        //     align: "center"
+        // },
         {
             key: "LXFS",
             dataIndex: "LXFS",
@@ -93,7 +97,29 @@ const OneBThreeRPLib: FC = () => {
             key: "XZZXZ",
             dataIndex: "XZZXZ",
             title: "现住址详址",
-            align: "center"
+            align: "center",
+            width: 200,
+            onCell: () => {
+                return {
+                    style: {
+                        maxWidth: 200,
+                        overflow: "hidden",
+                        whiteSpace: "nowrap",
+                        textOverflow: "ellipsis",
+                        cursor: "pointer",
+                        textAlign: "center"
+                    }
+                }
+            },
+            render: (_, e) => {
+                return (
+                    <>
+                        <Tooltip title={e.XZZXZ}>
+                            <div>{e.XZZXZ}</div>
+                        </Tooltip>
+                    </>
+                )
+            }
         },
         {
             key: "SYRKHSJG",

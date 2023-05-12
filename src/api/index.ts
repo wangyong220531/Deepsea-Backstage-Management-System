@@ -34,4 +34,4 @@ export async function request<T extends UrlList>(config: GetAxiosConfig<T>): Pro
     return null
 }
 
-export const baseURL = "http://32.118.0.6:8989"
+export const baseURL = "http://50.113.129.110:8989"

@@ -101,6 +101,7 @@ const OperateLogs: FC = () => {
     const query = () => {
         setPageNum(1)
         setlogPagesize(10)
+        search()
     }
 
     const reset = () => {

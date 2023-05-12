@@ -116,7 +116,7 @@ const LayoutFC: React.FC = () => {
                             breaks.map((e, index) => {
                                 return (
                                     <>
-                                        <div key={e} className={index == breaks.length-1 ? c("current") : c("prev")}>
+                                        <div key={index} className={index == breaks.length-1 ? c("current") : c("prev")}>
                                             {index !== 0 && "/ "}
                                             {e}
                                         </div>

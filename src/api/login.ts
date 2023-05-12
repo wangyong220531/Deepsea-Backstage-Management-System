@@ -1,8 +1,8 @@
 import { request, baseURL } from "./index"
 
-export function getCaptcha(config: { userNo: string }) {
+export function getCaptcha(config: { param: string }) {
     return request({
-        url: "/captcha2",
+        url: "/captcha2/mobileCaptcha",
         baseURL,
         query: config,
         method: "GET"

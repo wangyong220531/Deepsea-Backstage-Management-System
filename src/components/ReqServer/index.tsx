@@ -197,6 +197,7 @@ const ReqServer: React.FC = () => {
     const query = () => {
         setPageNum(1)
         setPageSize(10)
+        search()
     }
 
     const downloadReq = (e: string) => {

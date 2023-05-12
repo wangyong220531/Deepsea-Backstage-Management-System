@@ -1,4 +1,4 @@
-import { Button, DatePicker, Table, Tabs } from "antd"
+import { Button, DatePicker, Divider, Table, Tabs } from "antd"
 import React, { useState } from "react"
 import type { ColumnsType } from "antd/es/table"
 import type { TabsProps } from "antd"
@@ -16,12 +16,17 @@ function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
 }
 
-interface ForceType extends mfuatv {
+interface ForceType extends Mfuatv {
     operate?: ReactNode
 }
 
 interface CaseType extends Situation {
     operate?: ReactNode
+}
+
+interface PsStatus {
+    code: string
+    desc: string
 }
 
 const Follow: React.FC = () => {
@@ -36,7 +41,15 @@ const Follow: React.FC = () => {
             key: "teamStatus",
             dataIndex: "teamStatus",
             title: "状态",
-            align: "center"
+            align: "center",
+            render: (_, e) => {
+                return <>
+                    {e.teamStatus === 0 && <div>初始派警</div>}
+                    {e.teamStatus === 1 && <div>警力到场</div>}
+                    {e.teamStatus === 2 && <div>警力任务结束</div>}
+                    {e.teamStatus === 3 && <div>处置结束</div>}
+                </>
+            }
         },
         {
             key: "car",
@@ -52,8 +65,8 @@ const Follow: React.FC = () => {
             render: (_, e) => {
                 return (
                     <>
-                        {e.mPolice.map(m => {
-                            return <>{m.userName}</>
+                        {e.polices.filter(e => e.userType === "CIVILPOLICE").map((m: Police) => {
+                            return <><div key={m.userIdCode}>{m.userName}</div></>
                         })}
                     </>
                 )
@@ -67,8 +80,8 @@ const Follow: React.FC = () => {
             render: (_, e) => {
                 return (
                     <>
-                        {e.fPolice.map(m => {
-                            return <>{m.userName}</>
+                        {e.polices.filter(e => e.userType === "AUXILIARYPOLICE").map((m: Police) => {
+                            return <><div key={m.userIdCode} >{m.userName}</div></>
                         })}
                     </>
                 )
@@ -93,9 +106,9 @@ const Follow: React.FC = () => {
                             <Button type="primary" disabled={true}>
                                 处结
                             </Button>
-                            <Button type="primary" disabled={true}>
+                            {/* <Button type="primary" disabled={true}>
                                 定位
-                            </Button>
+                            </Button> */}
                         </div>
                     </>
                 )
@@ -103,48 +116,107 @@ const Follow: React.FC = () => {
         }
     ]
 
+    const psStatusList: PsStatus[] = [
+        {
+            code: "NEW",
+            desc: "新建待分派"
+        },
+        {
+            code: "FIRST_ASSIGN",
+            desc: "一级分派"
+        },
+        {
+            code: "FIRST_BACK",
+            desc: "一级退单"
+        },
+        {
+            code: "FIRST_REASSIGN",
+            desc: "一级重派"
+        },
+        {
+            code: "SECOND_ASSIGN",
+            desc: "二级分派"
+        },
+        {
+            code: "SECOND_BACK",
+            desc: "二级退单"
+        },
+        {
+            code: "SECOND_REASSIGN",
+            desc: "二级重派"
+        },
+        {
+            code: "TASK_END",
+            desc: "任务结束"
+        }
+    ]
+
     const CaseColumn: ColumnsType<CaseType> = [
         {
-            key: "sheet",
-            dataIndex: "sheet",
+            key: "psNo",
+            dataIndex: "psNo",
             title: "警单",
             align: "center"
         },
         {
-            key: "status",
-            dataIndex: "status",
+            key: "psStatus",
+            dataIndex: "psStatus",
             title: "状态",
+            align: "center",
+            render: (_, e) => {
+                return <>
+                    {psStatusList.find(s => s.code === e.psStatus)?.desc}
+                </>
+            }
+        },
+        {
+            key: "psReportUserName",
+            dataIndex: "psReportUserName",
+            title: "报警人",
             align: "center"
         },
         {
-            key: "address",
-            dataIndex: "address",
+            key: "psPlace",
+            dataIndex: "psPlace",
             title: "报警地址",
             align: "center"
         },
         {
-            key: "time",
-            dataIndex: "time",
+            key: "psResportUserPhone",
+            dataIndex: "psResportUserPhone",
+            title: "报警人手机号",
+            align: "center"
+        },
+        {
+            key: "psReportTime",
+            dataIndex: "psReportTime",
             title: "报警时间",
             align: "center"
         },
         {
-            key: "firstTime",
-            dataIndex: "firstTime",
+            key: "psFirstDispatchTime",
+            dataIndex: "psFirstDispatchTime",
             title: "一级派警时间",
             align: "center"
         },
         {
-            key: "secondTime",
-            dataIndex: "secondTime",
+            key: "psSecondDispatchTime",
+            dataIndex: "psSecondDispatchTime",
             title: "二级派警时间",
             align: "center"
         },
         {
-            key: "handleTeam",
-            dataIndex: "handleTeam",
+            key: "teams",
+            dataIndex: "teams",
             title: "处置警组",
-            align: "center"
+            align: "center",
+            render: (_, e) => {
+                return <>
+                    {e.teams.length > 1 ? e.teams.map(t => {
+                        return <div key={t.ptPsId}>{t.ptTeamNo}</div>
+                    }) : e.teams[0].ptTeamNo}
+                </>
+            }
         },
         {
             key: "operate",
@@ -181,14 +253,12 @@ const Follow: React.FC = () => {
     const [pageSize, setPageSize] = useState(10)
     const [forceTotal, setForceTotal] = useState(0)
     const [caseTotal, setCaseTotal] = useState(0)
-    const operates = useOperates()
 
     const onChange = (key: string) => {
         key === "1" ? setTable(0) : setTable(1)
     }
 
     const search = async () => {
-        console.log(judgePermissionItem(operates[0].item));
         if (table === 0) {
             const res = await forceFollowList({
                 pageNum,
@@ -208,11 +278,14 @@ const Follow: React.FC = () => {
             psStatus: ""
         })
         res && (setCaseData(res.data.situtationVos), setCaseTotal(res.data.size))
+        console.log(caseData);
+
     }
 
     const query = () => {
         setPageNum(1)
         setPageSize(10)
+        search()
     }
 
     const changeForcePg = (pageNum: number, pageSize: number) => {
@@ -257,7 +330,7 @@ const Follow: React.FC = () => {
                     </div>
                 </div>
             </div>
-            {table === 0 ? <Table rowKey={e => e.psNo} columns={ForceColumn} dataSource={forceData} pagination={{ onChange: changeForcePg, total: forceTotal, pageSize }} /> : <Table columns={CaseColumn} dataSource={caseData} pagination={{ onChange: changeCasePg, total: caseTotal, pageSize }} />}
+            {table === 0 ? <Table rowKey={e => e.psNo} columns={ForceColumn} dataSource={forceData} pagination={{ onChange: changeForcePg, total: forceTotal, pageSize }} /> : <Table rowKey={e => e.psNo} columns={CaseColumn} dataSource={caseData} pagination={{ onChange: changeCasePg, total: caseTotal, pageSize }} />}
         </>
     )
 }

@@ -47,7 +47,7 @@ type ResponseResult = {
     "/system/role/vague": SearchRoleResult
     "/system/user/add": { success: Boolean }
     "/monitor/loginLog/query": SearchLoginLogResult
-    "/captcha2": GetCaptchaResult
+    "/captcha2/mobileCaptcha": GetCaptchaResult
     "/monitor/operationLog/query": SearchOperateLogResult
     "/system/user/distributeRole2/:roleId/:userIds": { success: Boolean }
     "/system/role/distributePSet/:roleId/:pSetId": { success: Boolean }
@@ -90,7 +90,7 @@ type RequestQuery = {
     "/system/role/list": {}
     "/report/list": {}
     "/system/user/modifyPassword": { newPass: string; userId: string }
-    "/captcha2": { userNo: string }
+    "/captcha2/mobileCaptcha": { param: string }
     "/monitor/loginLog/export": {}
     "/monitor/operationLog/export": {}
     "/system/user/export": {}
@@ -283,7 +283,7 @@ interface ForceFollowListData {
 interface ForceFollowListResult {
     code: string
     data: {
-        myFollowUpAppointTeamVos: mfuatv[]
+        myFollowUpAppointTeamVos: Mfuatv[]
         pageNum: number
         pageSize: number
         size: number
@@ -293,16 +293,17 @@ interface ForceFollowListResult {
     timestamp: string
 }
 
-interface mfuatv {
+interface Mfuatv {
     teamNo: string
-    teamStatus: string
-    car: string[]
-    mPolice: police[]
-    fPolice: police[]
+    teamStatus: number
+    carNo: string[]
+    polices: Police[]
+    mPolice: Police[]
+    fPolice: Police[]
     psNo: string
 }
 
-interface police {
+interface Police {
     userIdCode: string
     userName: string
     userType: string
@@ -329,14 +330,17 @@ interface Situation {
     psNo: string
     psStatus: string
     psPlace: string
+    psReportUserName: string
     psReportTime: string
+    psResportUserPhone: string
     psFirstDispatchTime: string
     psSecondDispatchTime: string
-    teams: [
-        {
-            ptTeamNo: string
-        }
-    ]
+    teams: PsTeam[]
+}
+
+interface PsTeam {
+    ptPsId: string
+    ptTeamNo: string
 }
 
 interface AddReqServerData {
@@ -1070,6 +1074,7 @@ interface AssignPermissionsData {
 interface LoginData {
     code: string
     userNo: string
+    source: 1 | 2
 }
 
 interface LoginResult {
