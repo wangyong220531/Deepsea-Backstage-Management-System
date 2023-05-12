@@ -10,6 +10,7 @@ import BreadcrumbIcon from "../../assets/SystemManagement/BreadcrumbIcon.png"
 import { logoutQuery } from "../../api/login"
 import useOperates from "../../store/operates"
 import getBreaks from "../../utils/getBreaks"
+import { nanoid } from "nanoid"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : Styles[className])).join(" ")
@@ -23,10 +24,15 @@ type MenuChange = {
     keyPath: string[]
 }
 
+interface Break {
+    id: string
+    name: string | undefined
+}
+
 const LayoutFC: React.FC = () => {
     const [collapsed, setCollapsed] = useState(false)
     const [showTitle, setShowTitle] = useState(true)
-    const [breaks, setBreaks] = useState<(string | undefined)[]>([])
+    const [breaks, setBreaks] = useState<Break[]>([])
     const navigate = useNavigate()
     const location = useLocation()
     const sessionStore = useSession()
@@ -103,6 +109,12 @@ const LayoutFC: React.FC = () => {
                 .map(e => getBreaks(e))
                 .flat()
                 .filter(e => e)
+                .map(e => {
+                    return {
+                        id: nanoid(),
+                        name: e
+                    }
+                })
         )
     }, [location])
 
@@ -112,17 +124,14 @@ const LayoutFC: React.FC = () => {
                 <div className={c("breaks")}>
                     <img src={BreadcrumbIcon} alt="" />
                     <div className={c("text-group")}>
-                        {breaks &&
-                            breaks.map((e, index) => {
-                                return (
-                                    <>
-                                        <div key={index} className={index == breaks.length-1 ? c("current") : c("prev")}>
-                                            {index !== 0 && "/ "}
-                                            {e}
-                                        </div>
-                                    </>
-                                )
-                            })}
+                        {breaks.map((e, index) => {
+                            return (
+                                <div key={e.id} className={index == breaks.length - 1 ? c("current") : c("prev")}>
+                                    {index !== 0 && "/ "}
+                                    {e.name}
+                                </div>
+                            )
+                        })}
                     </div>
                 </div>
             </>
