@@ -151,6 +151,7 @@ type RequestData = {
     "/OneStandAndManyFacts/queryPLPersonInfo": QueryPopulationLibData
     "/OneStandAndManyFacts/queryPLAddress": QueryAddressLibData
     "/policeSituation/updateDisPatchSheet": ForceOperateData
+    "/personAtLarge": searchPersonsAtLargeData
 }
 
 type RequestParams = {
@@ -913,6 +914,7 @@ interface UpdateUserInfoData {
 
 interface SearchUserData {
     account: string
+    roleName: string
     unitName: string
     pageNum: number
     pageSize: number
@@ -1409,4 +1411,8 @@ interface ForceOperateData {
     points: null
     remark: null
     status: "POLICE_END" | "POLICE_PRESENT"
+}
+
+interface searchPersonsAtLargeData {
+    
 }

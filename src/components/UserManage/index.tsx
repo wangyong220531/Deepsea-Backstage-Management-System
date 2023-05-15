@@ -1,8 +1,9 @@
 import { FC, ReactNode, useState } from "react"
 import Styles from "./index.module.less"
-import { Button, Input, Modal, Switch, Table, Form, Popconfirm } from "antd"
+import { Button, Input, Modal, Switch, Table, Form, Popconfirm, Select } from "antd"
 import type { ColumnsType } from "antd/es/table"
-import { delUser, getUnitList, searchUser, updatePassword, updateUserInfo, userInfoExport } from "../../api/userManage"
+import { delUser, searchUser, updatePassword, updateUserInfo, userInfoExport } from "../../api/userManage"
+import { getAllRoles } from "../../api/roleManage"
 import { exportExcel } from "../../utils/index"
 import { useAsync } from "../../utils/hooks"
 import useOperates from "../../store/operates"
@@ -160,6 +161,9 @@ const UserManage: FC = () => {
     const [pageSize, setPageSize] = useState(10)
     const sessionStore = useSession()
     const [operateArr, setOperateArr] = useState<string[]>([])
+    const [isFirstIn, setIsFirstIn] = useState(true)
+    const [roleList, setRoleList] = useState<OptionType[]>([])
+    const [roleName, setRoleName] = useState("")
 
     const changePage = (pageNum: number, pageSize: number) => {
         setPageNum(pageNum)
@@ -171,6 +175,7 @@ const UserManage: FC = () => {
     const search = async () => {
         const res = await searchUser({
             account: queryAccount,
+            roleName,
             unitName: queryUnit,
             pageNum: pageNum,
             pageSize: pageSize
@@ -193,6 +198,19 @@ const UserManage: FC = () => {
             ),
             setTotal(res.data.total))
         setOperateArr(judgePermissionItem(operates[0].item))
+        isFirstIn
+            ? getAllRoles({}).then(res => {
+                  res &&
+                      setRoleList(
+                          res.rows.map(e => {
+                              return {
+                                  value: e.roleName,
+                                  label: e.roleName
+                              }
+                          })
+                      )
+              })
+            : setIsFirstIn(false)
     }
 
     // useEffect(() => {
@@ -291,6 +309,10 @@ const UserManage: FC = () => {
                         <div className={c("query-item")}>
                             <div className={c("label")}>单位：</div>
                             <Input placeholder="请输入单位名称" value={queryUnit} onChange={e => setQueryUnit(e.target.value)} />
+                        </div>
+                        <div className={c("query-item")}>
+                            <div className={c("label")}>角色：</div>
+                            <Select options={roleList} onSelect={e => setRoleName(e.target.value)}></Select>
                         </div>
                     </div>
                     <div className={c("query-reset")}>

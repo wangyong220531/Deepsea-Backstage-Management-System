@@ -25,6 +25,7 @@ import HouseholdLib from "../components/HouseholdLib"
 import OneBThreeRPLib from "../components/OneBThreeRPLib"
 import OneBThreeRALib from "../components/OneBThreeRALib"
 import ImageParseLib from "../components/ImageParseLib"
+import PersonAtLargeLib from "../components/PersonAtLargeLib"
 
 export interface RouteChild {
     name: string
@@ -167,6 +168,11 @@ const routes: Route[] = [
                 name: "图片解析归档库",
                 path: "imageParseLib",
                 component: <ImageParseLib />
+            },
+            {
+                name:"在逃人员库",
+                path:"personAtLargeLib",
+                component:<PersonAtLargeLib/>
             }
         ]
     },
