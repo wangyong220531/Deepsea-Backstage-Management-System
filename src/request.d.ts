@@ -76,6 +76,7 @@ type ResponseResult = {
     "/OneStandAndManyFacts/queryPLPersonInfo": QueryPopulationLibResult
     "/OneStandAndManyFacts/queryPLAddress": QueryAddressLibResult
     "/policeSituation/updateDisPatchSheet": ForceOperateResult
+    "/personAtLarge": searchPersonsAtLargeResult
 }
 type RequestQuery = {
     "/serve/ask/delAskInfo": { id: string }
@@ -1413,6 +1414,135 @@ interface ForceOperateData {
     status: "POLICE_END" | "POLICE_PRESENT"
 }
 
-interface searchPersonsAtLargeData {
-    
+interface searchPersonsAtLargeData {}
+
+interface searchPersonsAtLargeResult {
+    success: Boolean
+    data: {
+        RECORDS: PLRecord[]
+        total: number
+    }
+}
+
+interface PLRecord {
+    /**在逃人员编号*/
+    ztrybh: string
+    /**在逃人员类型代码*/
+    ztrylxdm: string
+    /**案事件编号*/
+    asjbh: string
+    /**立案日期*/
+    larq: string
+    /**立案单位_公安机关机构代码*/
+    ladw_gajgjgdm: string
+    /**立案单位_公安机关名称*/
+    ladw_gajgmc: string
+    /**案件类别代码*/
+    ajlbdm: string
+    /**简要案情*/
+    jyaq: string
+    /**部督捕_判断标识*/
+    bdb_pdbz: string
+    /**抓逃奖金*/
+    ztjj: string
+    /**犯罪嫌疑人到案状态代码*/
+    fzxyrdaztdm: string
+    /**姓名*/
+    xm: string
+    /**常用证件代码*/
+    cyzjdm: string
+    /**证件号码*/
+    zjhm: string
+    /**出生日期*/
+    csrq: string
+    /**性别代码*/
+    xbdm: string
+    /**国籍代码*/
+    gjdm: string
+    /**籍贯省市县代码*/
+    jgdm: string
+    /**民族代码*/
+    mzdm: string
+    /**户籍地址_行政区划代码*/
+    hjdz_xzqhdm: string
+    /**户籍地址_地址名称*/
+    hjdz_dzmc: string
+    /**现住址_行政区划代码*/
+    xzz_xzqhdm: string
+    /**现住址_地址名称*/
+    xzz_dzmc: string
+    /**身高下限*/
+    sgxx: string
+    /**身高上限*/
+    sgsx: string
+    /**职业类别代码*/
+    zylbdm: string
+    /**抓获犯罪嫌疑人_判断标识*/
+    zhfzxyr_pdbz: string
+    /**抓获日期*/
+    zhrq: string
+    /**抓获地点_行政区划代码*/
+    zhdd_xzqhdm: string
+    /**抓获地点_地址名称*/
+    zhdd_dzmc: string
+    /**抓获单位_公安机关机构代码*/
+    zhdw_gajgjgdm: string
+    /**抓获单位_公安机关名称*/
+    zhdw_gajgmc: string
+    /**抓获方式代码*/
+    zhfsdm: string
+    /**登记审批单位_公安机关机构代码/采用GA 380《全国公安机关机构代码编码规则》统一编制的代码/CODE_GXS*/
+    djspdw_gajgjgdm: string
+    /**登记审批单位_公安机关名称*/
+    djspdw_gajgmc: string
+    /**登记审批人_姓名*/
+    djspr_xm: string
+    /**登记审批人_公民身份号码/符合GB11643《公民身份号码》*/
+    djspr_gmsfhm: string
+    /**登记审批人_联系电话*/
+    djspr_lxdh: string
+    /**登记审批_审批时间*/
+    djsp_spsj: string
+    /**信息登记单位_公安机关机构代码采用GA 380《全国公安机关机构代码编码规则》统一编制的代码/CODE_GXS*/
+    xxdjdw_gajgjgdm: string
+    /**更新时间*/
+    gxsj: string
+    /**信息入部库时间*/
+    xxrbksj_rqsj: string
+    /**业务状态（0：待审批，1：审批不通过，2：审批通过，3：草稿）*/
+    ryzt: "0" | "1" | "2" | "3"
+    /**移交标识（1：移交，0：未移交, 2:被其他单位移交）*/
+    yjbz: "0" | "1" | "2"
+    /**主办单位_公安机关机构代码*/
+    zbdw_gajgjgdm: string
+    /**主办单位_公安机关名称*/
+    zbdw_gajgmc: string
+    /**主办人_姓名*/
+    zbr_xm: string
+    /**主办人_联系电话*/
+    zbr_lxdh: string
+    /**抓获单位分类/CODE_DWFL*/
+    zhdwfldm: string
+    /**信息主键编号*/
+    xxzjbh: string
+    /**主办单位分类*/
+    zbdwfldm: string
+    /**在逃审批人*/
+    ztspr: string
+    /**口音/CODE_KY*/
+    ky: string
+    /**主办单位联系电话*/
+    zbdw_lxdh: string
+    /**省厅入库时间*/
+    strksj: string
+    /**公安部-表名*/
+    gab_bm: string
+    /**公安部-采集地*/
+    gab_cjd: string
+    /**公安部-数据库服务标识*/
+    gab_sjkfwbs: string
+    /**公安部-数据来源系统分类代码*/
+    gab_sjlyxtfldm: string
+    /**汇集层更新时间*/
+    hjc_gxsj: string
 }
