@@ -132,13 +132,13 @@ const PersonAtLargeLib: FC = () => {
         const res = await searchPersonsAtLarge({})
     }
 
-    const query = () => {
-        setPageNum(0)
-        setPageSize(10)
-        search()
-    }
+    // const query = () => {
+    //     setPageNum(0)
+    //     setPageSize(10)
+    //     search()
+    // }
 
-    const reset = () => {}
+    // const reset = () => {}
 
     const pageChange = (pageNum: number, pageSize: number) => {
         setPageNum(pageNum)
