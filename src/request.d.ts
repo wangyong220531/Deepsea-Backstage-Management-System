@@ -77,6 +77,7 @@ type ResponseResult = {
     "/OneStandAndManyFacts/queryPLAddress": QueryAddressLibResult
     "/policeSituation/updateDisPatchSheet": ForceOperateResult
     "/library/selectRunningPerson": searchPersonsAtLargeResult
+    "/searchDrugAddictors": SearchDrugAddictorsResult
 }
 type RequestQuery = {
     "/serve/ask/delAskInfo": { id: string }
@@ -153,6 +154,7 @@ type RequestData = {
     "/OneStandAndManyFacts/queryPLAddress": QueryAddressLibData
     "/policeSituation/updateDisPatchSheet": ForceOperateData
     "/library/selectRunningPerson": searchPersonsAtLargeData
+    "/searchDrugAddictors": SearchDrugAddictorsData
 }
 
 type RequestParams = {
@@ -1551,4 +1553,42 @@ interface PLRecord {
     gab_sjlyxtfldm: string
     /**汇集层更新时间*/
     hjc_gxsj: string
+}
+
+interface SearchDrugAddictorsData {
+    pageNum: number
+    pageSize: number
+}
+
+interface SearchDrugAddictorsResult {
+    success: Boolean
+    data: {
+        list: DrugAddict[]
+        size: number
+    }
+}
+
+interface DrugAddict {
+    /**姓名*/
+    XM: string
+    /**公民身份号码*/
+    GMSFHM: string
+    /**吸毒编号*/
+    XDBH: string
+    /**现住地详址*/
+    XZDXZ: string
+    /**备注*/
+    BZ: string
+    /**修改人姓名*/
+    XGRXM: string
+    /**修改单位名称*/
+    XGDWMC: string
+    /**人员修改时间*/
+    XGSJ: string
+    /**填报人*/
+    DJR: string
+    /**填报单位名称*/
+    DJDWMC: string
+    /**填报日期*/
+    DJSJ: string
 }
