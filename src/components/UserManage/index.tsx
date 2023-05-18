@@ -3,7 +3,7 @@ import Styles from "./index.module.less"
 import { Button, Input, Modal, Switch, Table, Form, Popconfirm, Select } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import { delUser, searchUser, updatePassword, updateUserInfo, userInfoExport } from "../../api/userManage"
-import { getAllRoles } from "../../api/roleManage"
+import { getAllRoles, searchRole } from "../../api/roleManage"
 import { exportExcel } from "../../utils/index"
 import { useAsync } from "../../utils/hooks"
 import useOperates from "../../store/operates"
@@ -199,10 +199,14 @@ const UserManage: FC = () => {
             setTotal(res.data.total))
         setOperateArr(judgePermissionItem(operates[0].item))
         isFirstIn
-            ? getAllRoles({}).then(res => {
+            ? searchRole({
+                pageNum: 0,
+                pageSize: 0,
+                roleName: ""
+            }).then(res => {
                   res &&
                       setRoleList(
-                          res.rows.map(e => {
+                          res.data.rows.map(e => {
                               return {
                                   value: e.roleName,
                                   label: e.roleName
@@ -312,7 +316,7 @@ const UserManage: FC = () => {
                         </div>
                         <div className={c("query-item")}>
                             <div className={c("label")}>角色：</div>
-                            <Select options={roleList} onSelect={e => setRoleName(e.target.value)}></Select>
+                            <Select placeholder="请选择角色" options={roleList} onSelect={e => setRoleName(e)}></Select>
                         </div>
                     </div>
                     <div className={c("query-reset")}>

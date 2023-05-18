@@ -76,7 +76,7 @@ type ResponseResult = {
     "/OneStandAndManyFacts/queryPLPersonInfo": QueryPopulationLibResult
     "/OneStandAndManyFacts/queryPLAddress": QueryAddressLibResult
     "/policeSituation/updateDisPatchSheet": ForceOperateResult
-    "/personAtLarge": searchPersonsAtLargeResult
+    "/library/selectRunningPerson": searchPersonsAtLargeResult
 }
 type RequestQuery = {
     "/serve/ask/delAskInfo": { id: string }
@@ -152,7 +152,7 @@ type RequestData = {
     "/OneStandAndManyFacts/queryPLPersonInfo": QueryPopulationLibData
     "/OneStandAndManyFacts/queryPLAddress": QueryAddressLibData
     "/policeSituation/updateDisPatchSheet": ForceOperateData
-    "/personAtLarge": searchPersonsAtLargeData
+    "/library/selectRunningPerson": searchPersonsAtLargeData
 }
 
 type RequestParams = {
@@ -915,7 +915,7 @@ interface UpdateUserInfoData {
 
 interface SearchUserData {
     account: string
-    roleName: string
+    roleName?: string
     unitName: string
     pageNum: number
     pageSize: number
@@ -1038,7 +1038,10 @@ interface LoginLog {
 }
 
 interface GetCaptchaResult {
-    data: string
+    data: {
+        phone: string
+        userNo: string
+    }
 }
 
 interface SearchOperateLogData {
@@ -1414,13 +1417,16 @@ interface ForceOperateData {
     status: "POLICE_END" | "POLICE_PRESENT"
 }
 
-interface searchPersonsAtLargeData {}
+interface searchPersonsAtLargeData {
+    pageNum: number
+    pageSize: number
+}
 
 interface searchPersonsAtLargeResult {
     success: Boolean
     data: {
-        RECORDS: PLRecord[]
-        total: number
+        runPerVos: PLRecord[]
+        size: number
     }
 }
 

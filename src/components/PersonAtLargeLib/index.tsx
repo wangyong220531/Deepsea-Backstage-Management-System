@@ -123,13 +123,17 @@ const PersonAtLargeLib: FC = () => {
         }
     ]
 
-    const [pageNum, setPageNum] = useState(0)
+    const [pageNum, setPageNum] = useState(1)
     const [pageSize, setPageSize] = useState(10)
     const [total, setTotal] = useState(0)
     const [tableData, setTableData] = useState<PLRecord[]>([])
 
     const search = async () => {
-        const res = await searchPersonsAtLarge({})
+        const res = await searchPersonsAtLarge({
+            pageNum,
+            pageSize
+        })
+        res && (setTableData(res.data.runPerVos), setTotal(res.data.size))
     }
 
     // const query = () => {
