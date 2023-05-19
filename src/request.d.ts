@@ -77,7 +77,7 @@ type ResponseResult = {
     "/OneStandAndManyFacts/queryPLAddress": QueryAddressLibResult
     "/policeSituation/updateDisPatchSheet": ForceOperateResult
     "/library/selectRunningPerson": searchPersonsAtLargeResult
-    "/searchDrugAddictors": SearchDrugAddictorsResult
+    "/library/selectDrugPerson": SearchDrugAddictorsResult
 }
 type RequestQuery = {
     "/serve/ask/delAskInfo": { id: string }
@@ -154,7 +154,7 @@ type RequestData = {
     "/OneStandAndManyFacts/queryPLAddress": QueryAddressLibData
     "/policeSituation/updateDisPatchSheet": ForceOperateData
     "/library/selectRunningPerson": searchPersonsAtLargeData
-    "/searchDrugAddictors": SearchDrugAddictorsData
+    "/library/selectDrugPerson": SearchDrugAddictorsData
 }
 
 type RequestParams = {
@@ -1563,7 +1563,7 @@ interface SearchDrugAddictorsData {
 interface SearchDrugAddictorsResult {
     success: Boolean
     data: {
-        list: DrugAddict[]
+        drugPerVos: DrugAddict[]
         size: number
     }
 }
