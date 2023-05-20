@@ -23,32 +23,32 @@ const Login: React.FC = () => {
     const operates = useOperates()
 
     const submit = async () => {
-        sessionStore.setState({token:"123"})
-        // const res = await login({
-        //     code: captcha,
-        //     userNo,
-        //     source: 1
-        // })
-        // if (res) {
-        //     sessionStore.setState({ token: res.data.token, userNo: userNo, userId: res.data.userId })
-        //     if (res.data.user === "superAdmin") {
-        //         sessionStore.setState({ userType: res.data.user })
-        //         return
-        //     }
-        //     if (res.data.user instanceof Array) {
-        //         sessionStore.setState({
-        //             menu: handlePermission(res.data.user)
-        //         })
-        //         operates[0].item = handleOperates(res.data.user)
-        //         return
-        //     }
-        //     if (!res.data.user) {
-        //         sessionStore.setState({
-        //             menu: [{ name: "首页", path: "home" }]
-        //         })
-        //         return
-        //     }
-        // }
+        // sessionStore.setState({token:"123"})
+        const res = await login({
+            code: captcha,
+            userNo,
+            source: 1
+        })
+        if (res) {
+            sessionStore.setState({ token: res.data.token, userNo: userNo, userId: res.data.userId })
+            if (res.data.user === "superAdmin") {
+                sessionStore.setState({ userType: res.data.user })
+                return
+            }
+            if (res.data.user instanceof Array) {
+                sessionStore.setState({
+                    menu: handlePermission(res.data.user)
+                })
+                operates[0].item = handleOperates(res.data.user)
+                return
+            }
+            if (!res.data.user) {
+                sessionStore.setState({
+                    menu: [{ name: "首页", path: "home" }]
+                })
+                return
+            }
+        }
     }
 
     const [captchaBtnDisable, setCaptchaBtnDisable] = useState(false)

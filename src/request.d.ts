@@ -1570,25 +1570,25 @@ interface SearchDrugAddictorsResult {
 
 interface DrugAddict {
     /**姓名*/
-    XM: string
+    xm: string
     /**公民身份号码*/
-    GMSFHM: string
+    gmsfhm: string
     /**吸毒编号*/
-    XDBH: string
+    xdbh: string
     /**现住地详址*/
-    XZDXZ: string
+    xzdxz: string
     /**备注*/
-    BZ: string
+    bz: string
     /**修改人姓名*/
-    XGRXM: string
+    xgrxm: string
     /**修改单位名称*/
-    XGDWMC: string
+    xgdwmc: string
     /**人员修改时间*/
-    XGSJ: string
+    xgsj: string
     /**填报人*/
-    DJR: string
+    djrxm: string
     /**填报单位名称*/
-    DJDWMC: string
+    djdwmc: string
     /**填报日期*/
-    DJSJ: string
+    djsj: string
 }
