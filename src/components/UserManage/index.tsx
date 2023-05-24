@@ -168,8 +168,6 @@ const UserManage: FC = () => {
     const changePage = (pageNum: number, pageSize: number) => {
         setPageNum(pageNum)
         setPageSize(pageSize)
-        setQueryAccount("")
-        setQueryUnit("")
     }
 
     const search = async () => {

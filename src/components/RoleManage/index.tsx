@@ -281,6 +281,7 @@ const RoleManage: React.FC = () => {
     const assignUserQuery = async () => {
         setModalPagenum(1)
         setModalPagesize(5)
+        userSearch()
     }
 
     const assignUserReset = () => {
