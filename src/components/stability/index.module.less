@@ -1,10 +1,12 @@
 .stability {
-    height: 100vh;
+    height: 100%;
     background-color: #03192e;
-
     .header {
         position: fixed;
+        z-index: 999;
         width: 100%;
+        height: 130px;
+        background-color: #03192e;
         .left-deco {
             position: absolute;
             left: 28%;
@@ -42,9 +44,14 @@
     .content {
         display: flex;
         flex-direction: column;
+        height: calc(100vh-200px);
+        overflow-y: scroll;
+        gap:20px;
         .category {
+            height: 350px;
             position: relative;
             .left-label {
+                position: relative;
                 .label-bg {
                     width: 500px;
                     height: 56px;
@@ -68,7 +75,7 @@
                 position: absolute;
                 top: 240px;
                 left: 100px;
-                width: 1700px;
+                width: 1900px;
                 overflow: hidden;
                 .wrapper {
                     margin-left: 20px;
