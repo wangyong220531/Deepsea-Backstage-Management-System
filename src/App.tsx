@@ -6,6 +6,7 @@ import { ReactNode } from "react"
 import routes from "./routes"
 import { useSession } from "./store"
 import NotFound from "./Pages/NotFound"
+import Stability from "./components/stability"
 
 const Auth: React.FC<{ children: ReactNode }> = props => {
     const { children } = props
@@ -61,6 +62,7 @@ const App: React.FC = () => {
                         </Route>
                     ))}
                 </Route>
+                <Route path="/stability" element={<Stability />} />
                 <Route path="/*" element={<NotFound />} />
             </Routes>
         </BrowserRouter>
