@@ -1,12 +1,7 @@
 import { FC } from "react"
 import TitleBg from "../../assets/Stability/titleBg.png"
 import BothSideDecor from "../../assets/Stability/bothSideDecor.png"
-import SubTitle from "../../assets/Stability/subTitleBg.png"
 import PortraitBorder from "../../assets/Stability/portraitBorder.png"
-import Batele from "../../assets/Stability/batele.webp"
-import Tatumu from "../../assets/Stability/tatumu.webp"
-import Mulei from "../../assets/Stability/mulei.webp"
-import Nongmei from "../../assets/Stability/nongmei.webp"
 import styles from "./index.module.less"
 import { nanoid } from "nanoid"
 import StabilitySecSection from "../StabilitySecSection"
@@ -41,10 +36,9 @@ import Img27 from "../../assets/Stability/TestImgs/DownLoadFile27.jpg"
 import Img28 from "../../assets/Stability/TestImgs/DownLoadFile28.jpg"
 import Img29 from "../../assets/Stability/TestImgs/DownLoadFile29.jpg"
 import Img30 from "../../assets/Stability/TestImgs/DownLoadFile30.jpg"
-import Img31 from "../../assets/Stability/TestImgs/DownLoadFile31.jpg"
-import Img32 from "../../assets/Stability/TestImgs/DownLoadFile32.jpg"
-import Img33 from "../../assets/Stability/TestImgs/DownLoadFile21.jpg"
-
+import SubTitleLeft from "../../assets/Stability/labelLeft.png"
+import SubTitleRight from "../../assets/Stability/labelRight.png"
+import SubTitleMid from "../../assets/Stability/labelMid.png"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : styles[className])).join(" ")
@@ -68,43 +62,43 @@ const stability: FC = () => {
             id: nanoid(),
             imgSrc: Img0,
             name: Mock.Random.cname(),
-            cameraName: "相机名城",
+            cameraName: "相机名称",
             time: "2023/05/21 21:02:45"
         },
         {
             id: nanoid(),
             imgSrc: Img1,
             name: Mock.Random.cname(),
-            cameraName: "相机名城",
+            cameraName: "相机名称",
             time: "2023/05/21 21:02:45"
         },
         {
             id: nanoid(),
             imgSrc: Img2,
             name: Mock.Random.cname(),
-            cameraName: "相机名城",
+            cameraName: "相机名称",
             time: "2023/05/21 21:02:45"
         },
         {
             id: nanoid(),
             imgSrc: Img3,
             name: Mock.Random.cname(),
-            cameraName: "相机名城",
+            cameraName: "相机名称",
             time: "2023/05/21 21:02:45"
         },
         {
             id: nanoid(),
             imgSrc: Img4,
             name: Mock.Random.cname(),
-            cameraName: "相机名城",
+            cameraName: "相机名称",
             time: "2023/05/21 21:02:45"
         },
-        { id: nanoid(), imgSrc: Img5, name: Mock.Random.cname(), cameraName: "相机名城", time: "2023/05/21 21:02:45" },
-        { id: nanoid(), imgSrc: Img6, name: Mock.Random.cname(), cameraName: "相机名城", time: "2023/05/21 21:02:45" },
-        { id: nanoid(), imgSrc: Img7, name: Mock.Random.cname(), cameraName: "相机名城", time: "2023/05/21 21:02:45" },
-        { id: nanoid(), imgSrc: Img8, name: Mock.Random.cname(), cameraName: "相机名城", time: "2023/05/21 21:02:45" },
-        { id: nanoid(), imgSrc: Img9, name: Mock.Random.cname(), cameraName: "相机名城", time: "2023/05/21 21:02:45" },
-        { id: nanoid(), imgSrc: Img10, name: Mock.Random.cname(), cameraName: "相机名城", time: "2023/05/21 21:02:45" }
+        { id: nanoid(), imgSrc: Img5, name: Mock.Random.cname(), cameraName: "相机名称", time: "2023/05/21 21:02:45" },
+        { id: nanoid(), imgSrc: Img6, name: Mock.Random.cname(), cameraName: "相机名称", time: "2023/05/21 21:02:45" },
+        { id: nanoid(), imgSrc: Img7, name: Mock.Random.cname(), cameraName: "相机名称", time: "2023/05/21 21:02:45" },
+        { id: nanoid(), imgSrc: Img8, name: Mock.Random.cname(), cameraName: "相机名称", time: "2023/05/21 21:02:45" },
+        { id: nanoid(), imgSrc: Img9, name: Mock.Random.cname(), cameraName: "相机名称", time: "2023/05/21 21:02:45" },
+        { id: nanoid(), imgSrc: Img10, name: Mock.Random.cname(), cameraName: "相机名称", time: "2023/05/21 21:02:45" }
     ]
 
     const portraitListSec: Portrait[] = [
@@ -112,41 +106,41 @@ const stability: FC = () => {
             id: nanoid(),
             imgSrc: Img11,
             name: Mock.Random.cname(),
-            cameraName: "相机名城",
+            cameraName: "相机名称",
             time: "2023/05/21 21:02:45"
         },
         {
             id: nanoid(),
             imgSrc: Img12,
             name: Mock.Random.cname(),
-            cameraName: "相机名城",
+            cameraName: "相机名称",
             time: "2023/05/21 21:02:45"
         },
         {
             id: nanoid(),
             imgSrc: Img14,
             name: Mock.Random.cname(),
-            cameraName: "相机名城",
+            cameraName: "相机名称",
             time: "2023/05/21 21:02:45"
         },
         {
             id: nanoid(),
             imgSrc: Img15,
             name: Mock.Random.cname(),
-            cameraName: "相机名城",
+            cameraName: "相机名称",
             time: "2023/05/21 21:02:45"
         },
         {
             id: nanoid(),
             imgSrc: Img16,
             name: Mock.Random.cname(),
-            cameraName: "相机名城",
+            cameraName: "相机名称",
             time: "2023/05/21 21:02:45"
         },
-        { id: nanoid(), imgSrc: Img17, name: Mock.Random.cname(), cameraName: "相机名城", time: "2023/05/21 21:02:45" },
-        { id: nanoid(), imgSrc: Img18, name: Mock.Random.cname(), cameraName: "相机名城", time: "2023/05/21 21:02:45" },
-        { id: nanoid(), imgSrc: Img19, name: Mock.Random.cname(), cameraName: "相机名城", time: "2023/05/21 21:02:45" },
-        { id: nanoid(), imgSrc: Img20, name: Mock.Random.cname(), cameraName: "相机名城", time: "2023/05/21 21:02:45" }
+        { id: nanoid(), imgSrc: Img17, name: Mock.Random.cname(), cameraName: "相机名称", time: "2023/05/21 21:02:45" },
+        { id: nanoid(), imgSrc: Img18, name: Mock.Random.cname(), cameraName: "相机名称", time: "2023/05/21 21:02:45" },
+        { id: nanoid(), imgSrc: Img19, name: Mock.Random.cname(), cameraName: "相机名称", time: "2023/05/21 21:02:45" },
+        { id: nanoid(), imgSrc: Img20, name: Mock.Random.cname(), cameraName: "相机名称", time: "2023/05/21 21:02:45" }
     ]
 
     const portraitListThir: Portrait[] = [
@@ -154,39 +148,39 @@ const stability: FC = () => {
             id: nanoid(),
             imgSrc: Img21,
             name: Mock.Random.cname(),
-            cameraName: "相机名城",
+            cameraName: "相机名称",
             time: "2023/05/21 21:02:45"
         },
         {
             id: nanoid(),
             imgSrc: Img22,
             name: Mock.Random.cname(),
-            cameraName: "相机名城",
+            cameraName: "相机名称",
             time: "2023/05/21 21:02:45"
         },
         {
             id: nanoid(),
             imgSrc: Img23,
             name: Mock.Random.cname(),
-            cameraName: "相机名城",
+            cameraName: "相机名称",
             time: "2023/05/21 21:02:45"
         },
         {
             id: nanoid(),
             imgSrc: Img24,
             name: Mock.Random.cname(),
-            cameraName: "相机名城",
+            cameraName: "相机名称",
             time: "2023/05/21 21:02:45"
         },
         {
             id: nanoid(),
             imgSrc: Img25,
             name: Mock.Random.cname(),
-            cameraName: "相机名城",
+            cameraName: "相机名称",
             time: "2023/05/21 21:02:45"
         },
-        { id: nanoid(), imgSrc: Img26, name: Mock.Random.cname(), cameraName: "相机名城", time: "2023/05/21 21:02:45" },
-        { id: nanoid(), imgSrc: Img27, name: Mock.Random.cname(), cameraName: "相机名城", time: "2023/05/21 21:02:45" }
+        { id: nanoid(), imgSrc: Img26, name: Mock.Random.cname(), cameraName: "相机名称", time: "2023/05/21 21:02:45" },
+        { id: nanoid(), imgSrc: Img27, name: Mock.Random.cname(), cameraName: "相机名称", time: "2023/05/21 21:02:45" }
     ]
 
     const portraitListFour: Portrait[] = [
@@ -194,21 +188,21 @@ const stability: FC = () => {
             id: nanoid(),
             imgSrc: Img28,
             name: Mock.Random.cname(),
-            cameraName: "相机名城",
+            cameraName: "相机名称",
             time: "2023/05/21 21:02:45"
         },
         {
             id: nanoid(),
             imgSrc: Img29,
             name: Mock.Random.cname(),
-            cameraName: "相机名城",
+            cameraName: "相机名称",
             time: "2023/05/21 21:02:45"
         },
         {
             id: nanoid(),
             imgSrc: Img30,
             name: Mock.Random.cname(),
-            cameraName: "相机名城",
+            cameraName: "相机名称",
             time: "2023/05/21 21:02:45"
         }
     ]
@@ -227,8 +221,12 @@ const stability: FC = () => {
                 <div className={c("first-section")}>
                     <div className={c("category")}>
                         <div className={c("left-label")}>
-                            <img src={SubTitle} alt="" className={c("label-bg")} />
-                            <div className={c("text")}>出城公共交通工具感知人员（11人）</div>
+                            <div className={c("sub-title")}>
+                                <img className={c("sub-left")} src={SubTitleLeft} alt="" />
+                                <img className={c("sub-mid")} src={SubTitleMid} alt="" />
+                                <img className={c("sub-right")} src={SubTitleRight} alt="" />
+                            </div>
+                            <div className={c("text")}>出称公共交通工具感知人员（11人）</div>
                         </div>
                         <div className={c("portrait-list")}>
                             {portraitList.map(e => {
@@ -250,7 +248,11 @@ const stability: FC = () => {
                     </div>
                     <div className={c("category")}>
                         <div className={c("left-label")}>
-                            <img src={SubTitle} alt="" className={c("label-bg")} />
+                            <div className={c("sub-title")}>
+                                <img className={c("sub-left")} src={SubTitleLeft} alt="" />
+                                <img className={c("sub-mid-sec")} src={SubTitleMid} alt="" />
+                                <img className={c("sub-right")} src={SubTitleRight} alt="" />
+                            </div>
                             <div className={c("text")}>24小时无轨迹人员（9人）</div>
                         </div>
                         <div className={c("portrait-list")}>
@@ -273,7 +275,11 @@ const stability: FC = () => {
                     </div>
                     <div className={c("category")}>
                         <div className={c("left-label")}>
-                            <img src={SubTitle} alt="" className={c("label-bg")} />
+                            <div className={c("sub-title")}>
+                                <img className={c("sub-left")} src={SubTitleLeft} alt="" />
+                                <img className={c("sub-mid-thir")} src={SubTitleMid} alt="" />
+                                <img className={c("sub-right")} src={SubTitleRight} alt="" />
+                            </div>
                             <div className={c("text")}>48小时无轨迹人员（7人）</div>
                         </div>
                         <div className={c("portrait-list")}>
@@ -296,7 +302,11 @@ const stability: FC = () => {
                     </div>
                     <div className={c("category")}>
                         <div className={c("left-label")}>
-                            <img src={SubTitle} alt="" className={c("label-bg")} />
+                            <div className={c("sub-title")}>
+                                <img className={c("sub-left")} src={SubTitleLeft} alt="" />
+                                <img className={c("sub-mid-four")} src={SubTitleMid} alt="" />
+                                <img className={c("sub-right")} src={SubTitleRight} alt="" />
+                            </div>
                             <div className={c("text")}>72小时无轨迹人员（3人）</div>
                         </div>
                         <div className={c("portrait-list")}>
@@ -319,7 +329,11 @@ const stability: FC = () => {
                     </div>
                     <div className={c("category")}>
                         <div className={c("left-label")}>
-                            <img src={SubTitle} alt="" className={c("label-bg")} />
+                            <div className={c("sub-title")}>
+                                <img className={c("sub-left")} src={SubTitleLeft} alt="" />
+                                <img className={c("sub-mid-fif")} src={SubTitleMid} alt="" />
+                                <img className={c("sub-right")} src={SubTitleRight} alt="" />
+                            </div>
                             <div className={c("text")}>7天无轨迹人员（0人）</div>
                         </div>
                         {/* <div className={c("portrait-list")}>
@@ -341,7 +355,7 @@ const stability: FC = () => {
                     </div> */}
                     </div>
                 </div>
-                {/* <StabilitySecSection/> */}
+                <StabilitySecSection />
             </div>
         </div>
     )

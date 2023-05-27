@@ -46,28 +46,48 @@
         flex-direction: column;
         height: calc(100vh-200px);
         overflow-y: scroll;
-        gap:20px;
+        gap: 20px;
         .category {
             height: 350px;
             position: relative;
             .left-label {
                 position: relative;
-                .label-bg {
-                    width: 500px;
-                    height: 56px;
+                .sub-title {
+                    display: flex;
+                    top: 172px;
+                    left: 50px;
                     position: absolute;
-                    top: 180px;
-                    left: 270px;
-                    transform: translateX(-50%) translateY(-50%);
+                    img {
+                        height: 50px;
+                    }
+                    .sub-left,
+                    .sub-right {
+                        width: 70px;
+                    }
+                    .sub-mid {
+                        width: 330px;
+                    }
+                    .sub-mid-sec {
+                        width: 230px;
+                    }
+                    .sub-mid-thir {
+                        width: 230px;
+                    }
+                    .sub-mid-four {
+                        width: 230px;
+                    }
+                    .sub-mid-fif {
+                        width: 190px;
+                    }
                 }
                 .text {
                     position: absolute;
                     top: 180px;
-                    left: 270px;
+                    left: 100px;
                     color: #ffffff;
                     font-size: 22px;
                     letter-spacing: 2px;
-                    transform: translateX(-50%) translateY(-50%);
+                    text-align: left;
                 }
             }
             .portrait-list {
