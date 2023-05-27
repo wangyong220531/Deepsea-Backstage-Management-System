@@ -54,7 +54,8 @@ const StabilitySecSection: FC = () => {
             <div className={c("content")}>
                 <div className={c("section")}>
                     <div className={c("title")}>
-                        <img src={People} alt="" />
+                        <img className={c("ppl-img")} src={People} alt="" />
+                        <div className={c("sub-title")}>置顶人员</div>
                     </div>
                 </div>
             </div>
