@@ -11,6 +11,7 @@
             border-radius: 20px;
             font-size: 16px;
             cursor: pointer;
+            font-family: "KaiTi";
         }
         .actived-tab {
             color: #ffffff;
@@ -25,8 +26,12 @@
         }
     }
     .content {
+        display: flex;
+        flex-direction: column;
+        gap: 240px;
         .section {
             margin: 20px 0 0 40px;
+            position: relative;
             .title {
                 display: flex;
                 align-items: center;
@@ -39,11 +44,79 @@
                     color: #4ea1ff;
                     font-size: 20px;
                 }
-                .see-his-tracks{
+                .see-this-level-tracks {
                     color: #70b609;
                     font-weight: 600;
                     font-size: 14px;
                     cursor: pointer;
+                }
+                .more {
+                    left: 1830px;
+                    color: #4ea1ff;
+                    font-size: 12px;
+                    cursor: pointer;
+                    position: absolute;
+                }
+            }
+            .portrait-list {
+                display: flex;
+                position: absolute;
+                top: 50px;
+                left: 40px;
+                width: 1840px;
+                overflow: hidden;
+                .wrapper {
+                    margin-left: 20px;
+                    cursor: pointer;
+                    .border {
+                        width: 146px;
+                        height: 216px;
+                    }
+                    .img {
+                        width: 128px;
+                        height: 128px;
+                        margin-left: -137px;
+                        top: 10px;
+                        position: absolute;
+                    }
+                    .name {
+                        color: #0291fb;
+                        font-weight: 600;
+                        font-size: 14px;
+                        position: absolute;
+                        margin-top: -74px;
+                        margin-left: 72px;
+                        transform: translateX(-50%);
+                    }
+                    .desc {
+                        position: absolute;
+                        width: 126px;
+                        height: 32px;
+                        background-color: #57668d;
+                        margin-top: -52px;
+                        margin-left: 2px;
+                        color: #ffffff;
+                        font-size: 10px;
+                        padding: 4px 8px;
+                        .time {
+                            font-size: 10px;
+                        }
+                    }
+                }
+            }
+            .this-level-tracks-detail {
+                margin-top: 260px;
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                .single-tracks-title {
+                    display: flex;
+                    gap: 16px;
+                    align-items: center;
+                    .name {
+                        color: white;
+                        font-size: 20px;
+                    }
                 }
             }
         }

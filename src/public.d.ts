@@ -9,3 +9,11 @@ interface Page {
     pageNum: number
     pageSize: number
 }
+
+interface Portrait {
+    id: string
+    imgSrc: string
+    name: String
+    cameraName: String
+    time: String
+}
