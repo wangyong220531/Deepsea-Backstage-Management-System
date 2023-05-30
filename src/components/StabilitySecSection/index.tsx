@@ -1042,24 +1042,24 @@ const StabilitySecSection: FC = () => {
                                         <img src={Arrow} alt="" />
                                         <div className={c("name")}>{e.name}</div>
                                     </div>
-                                </div>
-                            )
-                        })}
-                        <div className={c("portrait-list")}>
-                        {ToppersList.map(e => {
-                            return (
-                                <div className={c("wrapper")} key={e.id}>
-                                    <img src={PortraitBorder} alt="" className={c("border")} />
-                                    <img src={e.imgSrc} alt="" className={c("img")} />
-                                    <div className={c("name")}>{e.name}</div>
-                                    <div className={c("desc")}>
-                                        <div className={c("camera-name")}>{e.cameraName}</div>
-                                        <div className={c("time")}>{e.time}</div>
+                                    <div className={c("single-tracks-gallery")}>
+                                        {ToppersList.map(e => {
+                                            return (
+                                                <div className={c("wrapper")} key={e.id}>
+                                                    <img src={PortraitBorder} alt="" className={c("border")} />
+                                                    <img src={e.imgSrc} alt="" className={c("img")} />
+                                                    <div className={c("name")}>{e.name}</div>
+                                                    <div className={c("desc")}>
+                                                        <div className={c("camera-name")}>{e.cameraName}</div>
+                                                        <div className={c("time")}>{e.time}</div>
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
                                     </div>
                                 </div>
                             )
                         })}
-                    </div>
                     </div>
                 </div>
                 <div className={c("section")}>
