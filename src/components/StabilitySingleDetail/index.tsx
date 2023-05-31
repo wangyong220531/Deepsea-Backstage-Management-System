@@ -122,14 +122,26 @@ const StabilitySingleDetail: FC<StabilitySingleDetailProps> = props => {
                     {portraitComparisonList.map(e => {
                         return (
                             <div key={e.id} className={c("comparison-portrait")}>
-                                <div className={c("comparison-portrait-head")}></div>
+                                <div className={c("tag")}>对比中</div>
                                 <img src={e.imgSrc} alt="" className={c("comparison-portrait-img")} />
-                                <div className={c("comparison-portrait-rate")}>{e.rate}%</div>
+                                <div className={c("comparison-portrait-rate-wrapper")}>
+                                    <div className={c("comparison-portrait-rate")}>{e.rate}%</div>
+                                </div>
                                 <div className={c("comparison-portrait-address")}>{e.address}</div>
                                 <div className={c("comparison-portrait-time")}>{e.time}</div>
                             </div>
                         )
                     })}
+                </div>
+            </div>
+            <div className={c("perception-track")}>
+                <div className={c("time-line-title")}>
+                    <div className={c("time-line-title-bg")}>
+                        <img src={SubTitleLeft} alt="" className={c("time-line-title-bg-left")} />
+                        <img src={SubTitleMid} alt="" className={c("time-line-title-bg-mid")} />
+                        <img src={SubTitleRight} alt="" className={c("time-line-title-bg-right")} />
+                    </div>
+                    <div className={c("time-line-title-content")}>时间轴</div>
                 </div>
             </div>
         </div>

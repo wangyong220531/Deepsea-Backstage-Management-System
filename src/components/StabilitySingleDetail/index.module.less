@@ -1,11 +1,12 @@
 .stability-single-detail {
-    height: 100%;
+    height: 100vh;
     background-color: #03192e;
     .time-line {
         position: absolute;
         left: 120px;
         top: 400px;
         .time-line-title {
+            position: relative;
             .time-line-title-bg {
                 .time-line-title-bg-left,
                 .time-line-title-bg-mid,
@@ -26,12 +27,67 @@
                 letter-spacing: 4px;
                 position: absolute;
                 top: 50%;
-                left: 50%;
+                left: 90px;
                 transform: translateX(-50%) translateY(-60%);
             }
         }
         .portraits-comparison-list {
+            margin: 18px 0 0 50px;
             display: flex;
+            gap: 10px;
+            .comparison-portrait {
+                background-color: #57668d;
+                border-radius: 4px;
+                color: white;
+                font-size: 12px;
+                display: flex;
+                flex-direction: column;
+                position: relative;
+                cursor: pointer;
+                .tag {
+                    align-self: flex-end;
+                    padding: 4px 10px;
+                }
+                .comparison-portrait-rate-wrapper {
+                    background-color: #2e374c;
+                    .comparison-portrait-rate {
+                        margin-left: 64%;
+                        padding: 4px 10px;
+                    }
+                }
+                .comparison-portrait-address,
+                .comparison-portrait-time {
+                    padding: 4px 10px;
+                }
+            }
+        }
+    }
+    .perception-track {
+        .time-line-title {
+            position: relative;
+            .time-line-title-bg {
+                .time-line-title-bg-left,
+                .time-line-title-bg-mid,
+                .time-line-title-bg-right {
+                    height: 50px;
+                }
+                .time-line-title-bg-left,
+                .time-line-title-bg-right {
+                    width: 80px;
+                }
+                .time-line-title-bg-mid {
+                    width: 30px;
+                }
+            }
+            .time-line-title-content {
+                color: white;
+                font-size: 20px;
+                letter-spacing: 4px;
+                position: absolute;
+                top: 50%;
+                left: 90px;
+                transform: translateX(-50%) translateY(-60%);
+            }
         }
     }
 }
