@@ -141,7 +141,24 @@ const StabilitySingleDetail: FC<StabilitySingleDetailProps> = props => {
                         <img src={SubTitleMid} alt="" className={c("time-line-title-bg-mid")} />
                         <img src={SubTitleRight} alt="" className={c("time-line-title-bg-right")} />
                     </div>
-                    <div className={c("time-line-title-content")}>时间轴</div>
+                    <div className={c("time-line-title-content")}>感知轨迹</div>
+                </div>
+                <div className={c("tabs")}>
+                    <button className={c("tab")}>按时间</button>
+                    <button className={c("tab")}>按地点</button>
+                </div>
+                <div className={c("perception-track-content")}>
+                    <div className={c("section")}>
+                        <div className={c("section-time")}>2023年5月20日</div>
+                        <div className={c("section-face")}>
+                            <div className={c("section-face-label")}>人脸感知</div>
+                            <div className={c("section-face-img-list")}></div>
+                        </div>
+                        <div className={c("section-vehicle")}>
+                            <div className={c("section-face-label")}>车辆感知</div>
+                            <div className={c("section-face-img-list")}></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
