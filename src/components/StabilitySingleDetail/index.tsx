@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, useState } from "react"
 import styles from "./index.module.less"
 import StabilityHeader from "../StabilityHeader"
 import StabilityDetailInfoCard from "../StabilityDetailInfoCard"
@@ -24,6 +24,9 @@ interface ComparisonPortrait {
 
 const StabilitySingleDetail: FC<StabilitySingleDetailProps> = props => {
     const {} = props
+    
+
+    const [tabActived, setTabActived] = useState<0 | 1>(0)
 
     const portraitComparisonList: ComparisonPortrait[] = [
         {
