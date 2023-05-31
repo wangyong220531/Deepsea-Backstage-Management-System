@@ -997,8 +997,31 @@ const StabilitySecSection: FC = () => {
         }
     ]
 
+    const [trackLevel, setTrackLevel] = useState<-1 | 0 | 1 | 2 | 3 | 4>(-1)
+
     const tabClick = (e: Tab) => {
         setActivedTab(e.no)
+        console.log(e.no);
+        
+    }
+
+    const seeThisLevelTrack = (e: Number) => {
+        if (e === 0) {
+            trackLevel === 0 ? setTrackLevel(-1) : setTrackLevel(0)
+            return
+        }
+        if (e === 1) {
+            setTrackLevel(1)
+            return
+        }
+        if (e === 2) {
+            setTrackLevel(0)
+            return
+        }
+        if (e === 3) {
+            setTrackLevel(3)
+            return
+        }
     }
 
     return (
@@ -1017,7 +1040,9 @@ const StabilitySecSection: FC = () => {
                     <div className={c("title")}>
                         <img className={c("ppl-img")} src={People} alt="" />
                         <div className={c("sub-title")}>置顶人员（5人）</div>
-                        <div className={c("see-this-level-tracks")}>查看本级人员轨迹</div>
+                        <div className={c("see-this-level-tracks")} onClick={() => seeThisLevelTrack(0)}>
+                            查看本级人员轨迹
+                        </div>
                     </div>
                     <div className={c("portrait-list")}>
                         {ToppersList.map(e => {
@@ -1034,33 +1059,35 @@ const StabilitySecSection: FC = () => {
                             )
                         })}
                     </div>
-                    <div className={c("this-level-tracks-detail")}>
-                        {ToppersDetail.map(e => {
-                            return (
-                                <div>
-                                    <div className={c("single-tracks-title")}>
-                                        <img src={Arrow} alt="" />
-                                        <div className={c("name")}>{e.name}</div>
-                                    </div>
-                                    <div className={c("single-tracks-gallery")}>
-                                        {ToppersList.map(e => {
-                                            return (
-                                                <div className={c("wrapper")} key={e.id}>
-                                                    <img src={PortraitBorder} alt="" className={c("border")} />
-                                                    <img src={e.imgSrc} alt="" className={c("img")} />
-                                                    <div className={c("name")}>{e.name}</div>
-                                                    <div className={c("desc")}>
-                                                        <div className={c("camera-name")}>{e.cameraName}</div>
-                                                        <div className={c("time")}>{e.time}</div>
+                    {trackLevel === 0 && (
+                        <div className={c("this-level-tracks-detail")}>
+                            {ToppersDetail.map(e => {
+                                return (
+                                    <div>
+                                        <div className={c("single-tracks-title")}>
+                                            <img src={Arrow} alt="" />
+                                            <div className={c("name")}>{e.name}</div>
+                                        </div>
+                                        <div className={c("single-tracks-gallery")}>
+                                            {e.hisTracks.map(a => {
+                                                return (
+                                                    <div className={c("wrapper")} key={e.id}>
+                                                        <img src={PortraitBorder} alt="" className={c("border")} />
+                                                        <img src={a.imgSrc} alt="" className={c("single-track-img")} />
+                                                        <div className={c("name")}>{e.name}</div>
+                                                        <div className={c("desc")}>
+                                                            <div className={c("camera-name")}>{a.cameraName}</div>
+                                                            <div className={c("time")}>{a.time}</div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            )
-                                        })}
+                                                )
+                                            })}
+                                        </div>
                                     </div>
-                                </div>
-                            )
-                        })}
-                    </div>
+                                )
+                            })}
+                        </div>
+                    )}
                 </div>
                 <div className={c("section")}>
                     <div className={c("title")}>
