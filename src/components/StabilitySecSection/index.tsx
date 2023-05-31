@@ -41,7 +41,7 @@ function c(...classNameList: (string | undefined | null | boolean)[]) {
 }
 
 interface Tab {
-    no: number
+    no: -1 | 0 | 1 | 2 | 3
     text: string
 }
 
@@ -52,26 +52,25 @@ interface ThisLevelTracks {
 }
 
 const StabilitySecSection: FC = () => {
-    const [activedTab, setActivedTab] = useState(0)
     const tabList: Tab[] = [
         {
-            no: 0,
+            no: -1,
             text: "全部"
         },
         {
-            no: 1,
+            no: 0,
             text: "置顶人员"
         },
         {
-            no: 2,
+            no: 1,
             text: "一级人员"
         },
         {
-            no: 3,
+            no: 2,
             text: "二级人员"
         },
         {
-            no: 4,
+            no: 3,
             text: "三级人员"
         }
     ]
@@ -997,17 +996,36 @@ const StabilitySecSection: FC = () => {
         }
     ]
 
+    const [activedTab, setActivedTab] = useState<-1 | 0 | 1 | 2 | 3>(-1)
     const [trackLevel, setTrackLevel] = useState<-1 | 0 | 1 | 2 | 3 | 4>(-1)
 
     const tabClick = (e: Tab) => {
         setActivedTab(e.no)
-        console.log(e.no);
-        
+        if (e.no === -1) {
+            setTrackLevel(-1)
+            return
+        }
+        if (e.no === 0) {
+            setTrackLevel(0)
+            return
+        }
+        if (e.no === 1) {
+            setTrackLevel(1)
+            return
+        }
+        if (e.no === 2) {
+            setTrackLevel(0)
+            return
+        }
+        if (e.no === 3) {
+            setTrackLevel(3)
+            return
+        }
     }
 
     const seeThisLevelTrack = (e: Number) => {
         if (e === 0) {
-            trackLevel === 0 ? setTrackLevel(-1) : setTrackLevel(0)
+            trackLevel === 0 ? (setTrackLevel(-1), setActivedTab(-1)) : (setTrackLevel(0), setActivedTab(0))
             return
         }
         if (e === 1) {
@@ -1063,7 +1081,7 @@ const StabilitySecSection: FC = () => {
                         <div className={c("this-level-tracks-detail")}>
                             {ToppersDetail.map(e => {
                                 return (
-                                    <div>
+                                    <div key={e.id}>
                                         <div className={c("single-tracks-title")}>
                                             <img src={Arrow} alt="" />
                                             <div className={c("name")}>{e.name}</div>
@@ -1071,7 +1089,7 @@ const StabilitySecSection: FC = () => {
                                         <div className={c("single-tracks-gallery")}>
                                             {e.hisTracks.map(a => {
                                                 return (
-                                                    <div className={c("wrapper")} key={e.id}>
+                                                    <div className={c("wrapper")} key={a.id}>
                                                         <img src={PortraitBorder} alt="" className={c("border")} />
                                                         <img src={a.imgSrc} alt="" className={c("single-track-img")} />
                                                         <div className={c("name")}>{e.name}</div>
