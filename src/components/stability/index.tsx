@@ -4,7 +4,7 @@ import styles from "./index.module.less"
 import { nanoid } from "nanoid"
 import StabilitySecSection from "../StabilitySecSection"
 import Mock from "mockjs"
-import Img0 from "../../assets/Stability/TestImgs/DownLoadFile1.jpg"
+import Img0 from "../../assets/Stability/TestImgs/DownLoadFile122.jpg"
 import Img1 from "../../assets/Stability/TestImgs/DownLoadFile2.jpg"
 import Img2 from "../../assets/Stability/TestImgs/DownLoadFile3.jpg"
 import Img3 from "../../assets/Stability/TestImgs/DownLoadFile4.jpg"
@@ -38,6 +38,8 @@ import SubTitleLeft from "../../assets/Stability/labelLeft.png"
 import SubTitleRight from "../../assets/Stability/labelRight.png"
 import SubTitleMid from "../../assets/Stability/labelMid.png"
 import StabilityHeader from "../StabilityHeader"
+import { useNavigate } from "react-router-dom"
+import Menu from "../../assets/Stability/menu.png"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : styles[className])).join(" ")
@@ -194,9 +196,20 @@ const stability: FC = () => {
         }
     ]
 
+    const navigate = useNavigate()
+
+    const toDetail = () => {
+        navigate("/stabilityDetail", { replace: true })
+    }
+
+    const toTable = () => {
+        navigate("/stabilityTable", { replace: true })
+    }
+
     return (
         <div className={c("stability")}>
             <StabilityHeader />
+            <img src={Menu} alt="" className={c("menu-icon")} onClick={toTable} />
             <div className={c("content")}>
                 <div className={c("first-section")}>
                     <div className={c("category")}>
@@ -214,7 +227,7 @@ const stability: FC = () => {
                                     <>
                                         <div className={c("wrapper")} key={e.id}>
                                             <img src={PortraitBorder} alt="" className={c("border")} />
-                                            <img src={e.imgSrc} alt="" className={c("img")} />
+                                            <img src={e.imgSrc} alt="" className={c("img")} onClick={toDetail} />
                                             <div className={c("name")}>{e.name}</div>
                                             <div className={c("desc")}>
                                                 <div className={c("camera-name")}>{e.cameraName}</div>
@@ -241,7 +254,7 @@ const stability: FC = () => {
                                     <>
                                         <div className={c("wrapper")} key={e.id}>
                                             <img src={PortraitBorder} alt="" className={c("border")} />
-                                            <img src={e.imgSrc} alt="" className={c("img")} />
+                                            <img src={e.imgSrc} alt="" className={c("img")} onClick={toDetail} />
                                             <div className={c("name")}>{e.name}</div>
                                             <div className={c("desc")}>
                                                 <div className={c("camera-name")}>{e.cameraName}</div>
@@ -268,7 +281,7 @@ const stability: FC = () => {
                                     <>
                                         <div className={c("wrapper")} key={e.id}>
                                             <img src={PortraitBorder} alt="" className={c("border")} />
-                                            <img src={e.imgSrc} alt="" className={c("img")} />
+                                            <img src={e.imgSrc} alt="" className={c("img")} onClick={toDetail} />
                                             <div className={c("name")}>{e.name}</div>
                                             <div className={c("desc")}>
                                                 <div className={c("camera-name")}>{e.cameraName}</div>
@@ -295,7 +308,7 @@ const stability: FC = () => {
                                     <>
                                         <div className={c("wrapper")} key={e.id}>
                                             <img src={PortraitBorder} alt="" className={c("border")} />
-                                            <img src={e.imgSrc} alt="" className={c("img")} />
+                                            <img src={e.imgSrc} alt="" className={c("img")} onClick={toDetail} />
                                             <div className={c("name")}>{e.name}</div>
                                             <div className={c("desc")}>
                                                 <div className={c("camera-name")}>{e.cameraName}</div>
