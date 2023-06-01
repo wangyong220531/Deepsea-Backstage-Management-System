@@ -37,8 +37,9 @@
                 grid-template-columns: 1fr 1fr;
                 column-gap: 20px;
                 grid-template-rows: 1fr 1fr 1fr;
-                font-size: 12px;
-                .item {
+                font-size: 14px;
+                .item,
+                .item-last {
                     display: flex;
                     gap: 10px;
                     .label {
@@ -46,6 +47,10 @@
                         text-align: justify;
                         text-align-last: justify;
                         font-weight: 600;
+                    }
+                    .detail {
+                        width: 200px;
+                        overflow-x: hidden;
                     }
                 }
             }

@@ -5,6 +5,7 @@ import mockjs from "mockjs"
 import PersonDetailTop from "../../assets/Stability/personalDetailTop.png"
 import PersonDetailMid from "../../assets/Stability/personalDetailMid.png"
 import PersonDetailBtm from "../../assets/Stability/personalDetailBtm.png"
+import { Tooltip } from "antd"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : styles[className])).join(" ")
@@ -40,7 +41,9 @@ const StabilityDetailInfoCard: FC<StabilityDetailInfoCard> = props => {
                         <div className={c("item")}>
                             <div className={c("label")}>住址</div>
                             <div>：</div>
-                            <div className={c("detail")}>中南世纪城15栋二单元1102室</div>
+                            <Tooltip title="中南世纪城15栋二单元1102室">
+                                <div className={c("detail")}>中南世纪城15栋二单元1102室</div>
+                            </Tooltip>
                         </div>
                         <div className={c("item")}>
                             <div className={c("label")}>管控民警</div>
@@ -57,11 +60,13 @@ const StabilityDetailInfoCard: FC<StabilityDetailInfoCard> = props => {
                             <div>：</div>
                             <div className={c("detail")}>黄码派出所</div>
                         </div>
-                    </div>
-                    <div className={c("claim")}>
-                        <div className={c("claim-label")}>诉求</div>
-                        <div>：</div>
-                        <div className={c("claim-content")}>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</div>
+                        <div className={c("item-last")}>
+                            <div className={c("label")}>诉求</div>
+                            <div>：</div>
+                            <Tooltip title="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+                                <div className={c("detail")}>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</div>
+                            </Tooltip>
+                        </div>
                     </div>
                 </div>
             </div>
