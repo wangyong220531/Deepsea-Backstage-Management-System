@@ -1,6 +1,20 @@
 .stabilityTable {
     height: 100vh;
     background-color: #03192e;
+    :global {
+        .ant-table {
+            margin: 20px 40px 0 40px;
+            .ant-table-content {
+                width: 1960px;
+            }
+            .ant-table-cell {
+                background-color: #03192e;
+                color: white;
+                font-weight: 200;
+                border: 1px solid #386fa9;
+            }
+        }
+    }
     .back {
         position: absolute;
         top: 140px;
@@ -8,5 +22,70 @@
         width: 40px;
         height: 40px;
         cursor: pointer;
+    }
+    .table-container {
+        position: absolute;
+        top: 160px;
+        .search {
+            color: white;
+            margin-left: 40px;
+            display: flex;
+            gap: 20px;
+            .inputs {
+                display: flex;
+                gap: 20px;
+                .item {
+                    display: flex;
+                    align-items: center;
+                    :global {
+                        .ant-input {
+                            width: 300px;
+                            background: transparent;
+                            color: white;
+                        }
+                        .ant-input::placeholder {
+                            color: rgb(143, 144, 145);
+                            font-size: 10px;
+                        }
+                    }
+                }
+            }
+            .btns {
+                display: flex;
+                gap: 10px;
+            }
+        }
+        .opertate-btns {
+            display: flex;
+            gap: 16px;
+            margin-left: 50%;
+            transform: translateX(-30%);
+            .item {
+                cursor: pointer;
+            }
+            .edit {
+                color: #f59a23;
+            }
+            .delete {
+                color: #cb1023;
+            }
+            .to-top {
+                color: #4ea1ff;
+            }
+        }
+    }
+}
+
+:global {
+    :where(.css-dev-only-do-not-override-w8mnev).ant-table-wrapper .ant-table-tbody > tr.ant-table-row:hover > th,
+    :where(.css-dev-only-do-not-override-w8mnev).ant-table-wrapper .ant-table-tbody > tr.ant-table-row:hover > td,
+    :where(.css-dev-only-do-not-override-w8mnev).ant-table-wrapper .ant-table-tbody > tr > th.ant-table-cell-row-hover > td.ant-table-cell-row-hover {
+        background: #03192e !important;
+    }
+    :where(.css-dev-only-do-not-override-w8mnev).ant-table-wrapper .ant-table-thead >tr>th, :where(.css-dev-only-do-not-override-w8mnev).ant-table-wrapper .ant-table-thead >tr>td {
+        background-color: #123458 !important;
+    }
+    :where(.css-dev-only-do-not-override-w8mnev).ant-table-wrapper .ant-table-thead >tr>th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before, :where(.css-dev-only-do-not-override-w8mnev).ant-table-wrapper .ant-table-thead >tr>td:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before{
+        display: none;
     }
 }

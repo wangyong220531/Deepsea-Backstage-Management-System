@@ -7,7 +7,7 @@ import routes from "./routes"
 import { useSession } from "./store"
 import NotFound from "./Pages/NotFound"
 import Stability from "./components/Stability"
-import StabilityDetail from "./components/StabilityTable"
+import StabilityDetail from "./components/StabilitySingleDetail"
 import StabilityTable from "./components/StabilityTable"
 
 const Auth: React.FC<{ children: ReactNode }> = props => {
