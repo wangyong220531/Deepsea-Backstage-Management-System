@@ -33,11 +33,11 @@ const StabilityDetailInfoCard: FC<StabilityDetailInfoCard> = props => {
                             <div>：</div>
                             <div className={c("detail")}>320826200008262518</div>
                         </div>
-                        <div className={c("item")}>
+                        {/* <div className={c("item")}>
                             <div className={c("label")}>手机号码</div>
                             <div>：</div>
                             <div className={c("detail")}>199453726974</div>
-                        </div>
+                        </div> */}
                         <div className={c("item")}>
                             <div className={c("label")}>住址</div>
                             <div>：</div>

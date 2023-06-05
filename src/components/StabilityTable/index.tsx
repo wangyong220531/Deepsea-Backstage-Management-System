@@ -3,7 +3,7 @@ import styles from "./index.module.less"
 import StabilityHeader from "../StabilityHeader"
 import { useNavigate } from "react-router-dom"
 import Back from "../../assets/Stability/back.png"
-import { Button, Input, Table } from "antd"
+import { Button, Input, Select, Table } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import { nanoid } from "nanoid"
 import { useAsync } from "../../utils/hooks"
@@ -22,7 +22,9 @@ interface TableHeader {
     idNumber: string
     domicile: string
     currentAddress: string
-    type: string
+    controlLevel: "一级" | "二级" | "三级"
+    controlPolice: string
+    policeStation: string
     operate?: ReactNode
 }
 
@@ -67,9 +69,21 @@ const StabilityTable: FC<StabilityTableProps> = props => {
             align: "center"
         },
         {
-            key: "type",
-            dataIndex: "type",
-            title: "涉稳类型",
+            key: "controlLevel",
+            dataIndex: "controlLevel",
+            title: "管控等级",
+            align: "center"
+        },
+        {
+            key: "controlPolice",
+            dataIndex: "controlPolice",
+            title: "管控民警",
+            align: "center"
+        },
+        {
+            key: "policeStation",
+            dataIndex: "policeStation",
+            title: "派出所",
             align: "center"
         },
         {
@@ -90,6 +104,21 @@ const StabilityTable: FC<StabilityTableProps> = props => {
         }
     ]
 
+    const chargeLevelList: OptionType[] = [
+        {
+            label: "一级",
+            value: "一级"
+        },
+        {
+            label: "二级",
+            value: "二级"
+        },
+        {
+            label: "三级",
+            value: "三级"
+        }
+    ]
+
     const [total, setTotal] = useState(0)
     const [pageNum, setPageNum] = useState(1)
     const [pageSize, setPageSize] = useState(10)
@@ -106,7 +135,9 @@ const StabilityTable: FC<StabilityTableProps> = props => {
                 idNumber: "3208122000011072516",
                 domicile: "镇江",
                 currentAddress: "淮安",
-                type: "涉恐人员"
+                controlLevel: "二级",
+                controlPolice: "卜方浩",
+                policeStation: "北京路派出所"
             }
         ])
     }
@@ -134,6 +165,14 @@ const StabilityTable: FC<StabilityTableProps> = props => {
                             <div className={c("prefix")}>身份证号：</div>
                             <Input placeholder="请输入身份证号" />
                         </div>
+                        {/* <div className={c("item")}>
+                            <div className={c("prefix")}>管控等级：</div>
+                            <Select placeholder="请选择管控等级" options={chargeLevelList}/>
+                        </div>
+                        <div className={c("item")}>
+                            <div className={c("prefix")}>派出所：</div>
+                            <Select placeholder="请选择派出所" options={chargeLevelList}/>
+                        </div> */}
                     </div>
                     <div className={c("btns")}>
                         <Button type="primary">查询</Button>
