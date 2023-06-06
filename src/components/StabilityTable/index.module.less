@@ -66,6 +66,10 @@
                 gap: 10px;
             }
         }
+        .avatar {
+            width: 50px;
+            border-radius: 4px;
+        }
         .opertate-btns {
             display: flex;
             gap: 16px;
@@ -100,5 +104,38 @@
     :where(.css-dev-only-do-not-override-w8mnev).ant-table-wrapper .ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before,
     :where(.css-dev-only-do-not-override-w8mnev).ant-table-wrapper .ant-table-thead > tr > td:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
         display: none;
+    }
+    .ant-modal-content,
+    .ant-modal-header,
+    .ant-select-selector {
+        background-color: #03192e !important;
+    }
+    .ant-modal-content {
+        border: 1px solid rgb(1, 108, 215) !important;
+    }
+    .anticon-close {
+        color: white;
+    }
+    .ant-form-item-control-input-content {
+        .ant-input {
+            color: white !important;
+            background-color: #03192e !important;
+        }
+        .ant-input::placeholder {
+            color: rgb(143, 144, 145);
+            font-size: 10px;
+        }
+    }
+    .ant-select-selector {
+        color: white !important;
+        .ant-select-selection-placeholder {
+            color: rgb(143, 144, 145);
+            font-size: 10px;
+        }
+    }
+    .ant-modal-title,
+    .ant-form-item-label > label,
+    .ant-upload {
+        color: white !important;
     }
 }

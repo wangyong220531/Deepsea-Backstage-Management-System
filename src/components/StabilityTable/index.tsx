@@ -9,6 +9,7 @@ import { nanoid } from "nanoid"
 import { useAsync } from "../../utils/hooks"
 import { RcFile, UploadChangeParam, UploadFile, UploadProps } from "antd/es/upload"
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons"
+import ImgTest from "../../assets/Stability/TestImgs/DownLoadFile166.jpg"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : styles[className])).join(" ")
@@ -18,6 +19,7 @@ export interface StabilityTableProps {}
 
 interface TableHeader {
     id: string
+    img: string
     name: string
     sex: "男" | "女"
     age: number
@@ -34,6 +36,15 @@ const StabilityTable: FC<StabilityTableProps> = props => {
     const {} = props
 
     const columns: ColumnsType<TableHeader> = [
+        {
+            key: "img",
+            dataIndex: "img",
+            title: "照片",
+            align: "center",
+            render: (_, e) => {
+                return <img src={e.img} className={c("avatar")} />
+            }
+        },
         {
             key: "name",
             dataIndex: "name",
@@ -140,6 +151,7 @@ const StabilityTable: FC<StabilityTableProps> = props => {
         setTableData([
             {
                 id: nanoid(),
+                img: ImgTest,
                 name: "菜徐腾",
                 sex: "男",
                 age: 22,
@@ -147,7 +159,7 @@ const StabilityTable: FC<StabilityTableProps> = props => {
                 domicile: "镇江",
                 currentAddress: "淮安",
                 controlLevel: "二级",
-                controlPolice: "王撒子勇",
+                controlPolice: "卜方浩",
                 policeStation: "北京路派出所"
             }
         ])
@@ -163,11 +175,23 @@ const StabilityTable: FC<StabilityTableProps> = props => {
 
     const add = () => {
         modalTitle !== "新增" ? setModalTitle("新增") : null
+        formData.resetFields()
         setModalOpen(true)
     }
 
     const edit = (e: TableHeader) => {
-        console.log(e)
+        modalTitle !== "编辑" ? setModalTitle("编辑") : null
+        formData.setFieldsValue({
+            portrait: e.img,
+            name: e.name,
+            identityId: e.idNumber,
+            hjd: e.domicile,
+            xzz: e.currentAddress,
+            controlLevel: e.controlLevel,
+            controlPcs: e.policeStation,
+            controlMP: e.controlPolice
+        })
+        setModalOpen(true)
     }
 
     const modalConfirm = () => {
