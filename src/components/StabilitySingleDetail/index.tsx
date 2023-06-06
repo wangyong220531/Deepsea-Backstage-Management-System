@@ -11,6 +11,9 @@ import Lafa from "../../assets/Stability/lafa.webp"
 import Back from "../../assets/Stability/back.png"
 import { useNavigate } from "react-router-dom"
 import People from "../../assets/Stability/people.png"
+import TimelineUp from "../../assets/Stability/timeLineUp.png"
+import TimelineDown from "../../assets/Stability/timeLineDown.png"
+import { Tooltip } from "antd"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : styles[className])).join(" ")
@@ -53,68 +56,18 @@ interface LocationCategory {
     timeList: TimeSection[]
 }
 
+interface TimelineNode {
+    id: string
+    address: string
+    time: string
+}
+
 const StabilitySingleDetail: FC<StabilitySingleDetailProps> = props => {
     const {} = props
 
     const [tabActived, setTabActived] = useState<0 | 1>(0)
 
     const portraitComparisonList: ComparisonPortrait[] = [
-        {
-            id: nanoid(),
-            imgSrc: PotraitTest,
-            rate: "88.1",
-            address: "珠海路001",
-            time: "2023-05-23 15:22:36"
-        },
-        {
-            id: nanoid(),
-            imgSrc: PotraitTest,
-            rate: "88.1",
-            address: "珠海路001",
-            time: "2023-05-23 15:22:36"
-        },
-        {
-            id: nanoid(),
-            imgSrc: PotraitTest,
-            rate: "88.1",
-            address: "珠海路001",
-            time: "2023-05-23 15:22:36"
-        },
-        {
-            id: nanoid(),
-            imgSrc: PotraitTest,
-            rate: "88.1",
-            address: "珠海路001",
-            time: "2023-05-23 15:22:36"
-        },
-        {
-            id: nanoid(),
-            imgSrc: PotraitTest,
-            rate: "88.1",
-            address: "珠海路001",
-            time: "2023-05-23 15:22:36"
-        },
-        {
-            id: nanoid(),
-            imgSrc: PotraitTest,
-            rate: "88.1",
-            address: "珠海路001",
-            time: "2023-05-23 15:22:36"
-        },
-        {
-            id: nanoid(),
-            imgSrc: PotraitTest,
-            rate: "88.1",
-            address: "珠海路001",
-            time: "2023-05-23 15:22:36"
-        },
-        {
-            id: nanoid(),
-            imgSrc: PotraitTest,
-            rate: "88.1",
-            address: "珠海路001",
-            time: "2023-05-23 15:22:36"
-        },
         {
             id: nanoid(),
             imgSrc: PotraitTest,
@@ -1617,6 +1570,59 @@ const StabilitySingleDetail: FC<StabilitySingleDetailProps> = props => {
         }
     ]
 
+    const timeNodeList: TimelineNode[] = [
+        {
+            id: nanoid(),
+            address: "淮安市清江浦区XX街道XX小区",
+            time: "2023-06-06 12:00:03"
+        },
+        {
+            id: nanoid(),
+            address: "淮安市清江浦区XX街道XX小区",
+            time: "2023-06-06 12:00:03"
+        },
+        {
+            id: nanoid(),
+            address: "淮安市清江浦区XX街道XX小区",
+            time: "2023-06-06 12:00:03"
+        },
+        {
+            id: nanoid(),
+            address: "淮安市清江浦区XX街道XX小区",
+            time: "2023-06-06 12:00:03"
+        },
+        {
+            id: nanoid(),
+            address: "淮安市清江浦区XX街道XX小区",
+            time: "2023-06-06 12:00:03"
+        },
+        {
+            id: nanoid(),
+            address: "淮安市清江浦区XX街道XX小区",
+            time: "2023-06-06 12:00:03"
+        },
+        {
+            id: nanoid(),
+            address: "淮安市清江浦区XX街道XX小区",
+            time: "2023-06-06 12:00:03"
+        },
+        {
+            id: nanoid(),
+            address: "淮安市清江浦区XX街道XX小区",
+            time: "2023-06-06 12:00:03"
+        },
+        {
+            id: nanoid(),
+            address: "淮安市清江浦区XX街道XX小区",
+            time: "2023-06-06 12:00:03"
+        },
+        {
+            id: nanoid(),
+            address: "淮安市清江浦区XX街道XX小区",
+            time: "2023-06-06 12:00:03"
+        }
+    ]
+
     const navigate = useNavigate()
 
     const tabClick = (e: 0 | 1) => {
@@ -1641,6 +1647,32 @@ const StabilitySingleDetail: FC<StabilitySingleDetailProps> = props => {
                             <img src={SubTitleRight} alt="" className={c("time-line-title-bg-right")} />
                         </div>
                         <div className={c("time-line-title-content")}>时间轴</div>
+                    </div>
+                    <div className={c("timeline")}>
+                        {timeNodeList.map((e, index) => {
+                            return (
+                                <div key={e.id} className={c("timeline-node")}>
+                                    {index % 2 === 0 && (
+                                        <div className={c("timeline-node-item-down")}>
+                                            <img src={TimelineDown} alt="" className={c("node-img", "node-img-down")} />
+                                            <div className={c("timeline-node-item-desc")}>
+                                                <div className={c("timeline-node-item-desc-address")}>{e.address}</div>
+                                                <div className={c("timeline-node-item-desc-time")}>{e.time}</div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {index % 2 === 1 && (
+                                        <div className={c("timeline-node-item-up")}>
+                                            <div className={c("timeline-node-item-desc")}>
+                                                <div className={c("timeline-node-item-desc-address")}>{e.address}</div>
+                                                <div className={c("timeline-node-item-desc-time")}>{e.time}</div>
+                                            </div>
+                                            <img src={TimelineUp} alt="" className={c("node-img", "node-img-up")} />
+                                        </div>
+                                    )}
+                                </div>
+                            )
+                        })}
                     </div>
                     <div className={c("portraits-comparison-list")}>
                         {portraitComparisonList.map(e => {

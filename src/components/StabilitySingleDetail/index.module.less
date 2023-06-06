@@ -44,8 +44,36 @@
                     transform: translateX(-50%) translateY(-60%);
                 }
             }
+            .timeline {
+                margin: 28px 0 0 138px;
+                display: flex;
+                .timeline-node {
+                    .timeline-node-item-down,
+                    .timeline-node-item-up {
+                        .timeline-node-item-desc {
+                            color: white;
+                            font-size: 12px;
+                            font-weight: 200;
+                            text-align: center;
+                            .timeline-node-item-desc-address {
+                                width: 160px;
+                                overflow-x: hidden;
+                            }
+                        }
+                        .node-img {
+                            width: 160px;
+                        }
+                        .node-img-down {
+                            margin-top: 28px;
+                        }
+                    }
+                    .timeline-node-item-down {
+                        margin-top: 48px;
+                    }
+                }
+            }
             .portraits-comparison-list {
-                margin: 28px 0 0 50px;
+                margin: 28px 0 0 150px;
                 display: flex;
                 gap: 10px;
                 width: 1738px;
@@ -80,7 +108,7 @@
         .perception-track {
             position: absolute;
             left: 120px;
-            top: 800px;
+            top: 1020px;
             .time-line-title {
                 position: relative;
                 .time-line-title-bg {
