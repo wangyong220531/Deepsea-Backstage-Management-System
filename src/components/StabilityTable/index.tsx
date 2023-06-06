@@ -175,14 +175,15 @@ const StabilityTable: FC<StabilityTableProps> = props => {
 
     const add = () => {
         modalTitle !== "新增" ? setModalTitle("新增") : null
+        setImageUrl("")
         formData.resetFields()
         setModalOpen(true)
     }
 
     const edit = (e: TableHeader) => {
         modalTitle !== "编辑" ? setModalTitle("编辑") : null
+        setImageUrl(e.img)
         formData.setFieldsValue({
-            portrait: e.img,
             name: e.name,
             identityId: e.idNumber,
             hjd: e.domicile,
@@ -281,8 +282,8 @@ const StabilityTable: FC<StabilityTableProps> = props => {
             <Modal title={modalTitle} open={modalOpen} onOk={modalConfirm} onCancel={modalCancel}>
                 <Form labelCol={{ span: 4 }} form={formData}>
                     <Form.Item label="照片" name="portrait">
-                        <Upload name="avatar" listType="picture-card" className="avatar-uploader" showUploadList={false} action="https://www.mocky.io/v2/5cc8019d300000980a055e76" beforeUpload={beforeUpload} onChange={handleChange}>
-                            {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: "100%" }} /> : uploadButton}
+                        <Upload name="portrait" listType="picture-card" className="avatar-uploader" showUploadList={false} action="https://www.mocky.io/v2/5cc8019d300000980a055e76" beforeUpload={beforeUpload} onChange={handleChange}>
+                            {imageUrl ? <img src={imageUrl} alt="portrait" style={{ width: "100%" }} /> : uploadButton}
                         </Upload>
                     </Form.Item>
                     <Form.Item label="姓名" name="name">
