@@ -1,8 +1,8 @@
 .stability-detail-info-card {
     position: absolute;
     left: 50%;
-    top: 250px;
-    width: 824px;
+    top: 300px;
+    width: 924px;
     transform: translateX(-50%) translateY(-50%);
     .info-bg {
         .card-top,
@@ -11,42 +11,48 @@
             width: 100%;
         }
         .card-mid {
-            height: 110px;
+            height: 160px;
         }
     }
     .info-detail {
         position: absolute;
         width: 700px;
         top: 50%;
-        left: 50%;
+        left: 46%;
         transform: translateX(-50%) translateY(-50%);
         display: flex;
         gap: 30px;
         color: #0291fb;
         .info-portrait {
-            height: 120px;
+            height: 160px;
         }
         .details {
             .name {
-                font-size: 20px;
+                font-size: 26px;
                 font-weight: 600;
             }
             .second-line-items {
-                margin-top: 16px;
+                margin-top: 24px;
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                column-gap: 20px;
+                column-gap: 10px;
                 grid-template-rows: 1fr 1fr 1fr;
                 font-size: 14px;
+                row-gap: 20px;
                 .item,
                 .item-last {
                     display: flex;
                     gap: 10px;
-                    .label {
-                        width: 60px;
-                        text-align: justify;
-                        text-align-last: justify;
-                        font-weight: 600;
+                    .label-box {
+                        display: flex;
+                        gap: 0;
+                        color: white;
+                        .label {
+                            width: 70px;
+                            text-align: justify;
+                            text-align-last: justify;
+                            letter-spacing: 2px;
+                        }
                     }
                     .detail {
                         width: 190px;

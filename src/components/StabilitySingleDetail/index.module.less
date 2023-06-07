@@ -1,6 +1,37 @@
 .stability-single-detail {
     height: 2100px;
     background-color: #03192e;
+    .breadcrumb-box {
+        position: fixed;
+        left: 20px;
+        top: 30px;
+        display: flex;
+        z-index: 2;
+        .breadcrumb-item,
+        .breadcrumb-item-zero {
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .breadcrumb-item-zero {
+            margin-right: 10px;
+        }
+    }
+    .top-right-box {
+        cursor: pointer;
+        position: fixed;
+        top: 26px;
+        right: 30px;
+        z-index: 2;
+        display: flex;
+        color: #ffffff;
+        align-items: center;
+        gap: 10px;
+        .home-icon {
+            width: 32px;
+        }
+    }
     .back {
         position: absolute;
         top: 140px;
@@ -17,7 +48,7 @@
         .time-line {
             position: absolute;
             left: 120px;
-            top: 400px;
+            top: 480px;
             .time-line-title {
                 position: relative;
                 .time-line-title-bg {
@@ -45,7 +76,7 @@
                 }
             }
             .timeline {
-                margin: 28px 0 0 138px;
+                margin: 28px 0 0 135px;
                 display: flex;
                 .timeline-node {
                     .timeline-node-item-down,

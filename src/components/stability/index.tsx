@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, useEffect, useState } from "react"
 import PortraitBorder from "../../assets/Stability/portraitBorder.png"
 import styles from "./index.module.less"
 import { nanoid } from "nanoid"
@@ -38,8 +38,9 @@ import SubTitleLeft from "../../assets/Stability/labelLeft.png"
 import SubTitleRight from "../../assets/Stability/labelRight.png"
 import SubTitleMid from "../../assets/Stability/labelMid.png"
 import StabilityHeader from "../StabilityHeader"
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import Menu from "../../assets/Stability/menu.png"
+import Edit from "../../assets/Stability/edit.png"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : styles[className])).join(" ")
@@ -197,6 +198,15 @@ const stability: FC = () => {
     ]
 
     const navigate = useNavigate()
+    const location = useLocation()
+
+    const [breadcrumbs, setBreadcrumbs] = useState("")
+
+    useEffect(() => {
+        if (location.pathname === "/stability") {
+            setBreadcrumbs("主页")
+        }
+    }, [])
 
     const toDetail = () => {
         navigate("/stabilityDetail", { replace: true })
@@ -209,7 +219,12 @@ const stability: FC = () => {
     return (
         <div className={c("stability")}>
             <StabilityHeader />
-            <img src={Menu} alt="" className={c("menu-icon")} onClick={toTable} />
+            <div className={c("breadcrumbs")}>{breadcrumbs}</div>
+            <div className={c("top-right-box")}>
+                <img src={Edit} alt="" className={c("edit-icon")} onClick={toTable} />
+                <div className={c("role")}>民警082846</div>
+                <div className={c("name")}>卜方浩</div>
+            </div>
             <div className={c("content")}>
                 <div className={c("first-section")}>
                     <div className={c("category")}>

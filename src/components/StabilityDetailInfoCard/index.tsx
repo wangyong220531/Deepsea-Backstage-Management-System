@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, useEffect, useState } from "react"
 import styles from "./index.module.less"
 import Portrait from "../../assets/Stability/TestImgs/DownLoadFile122.jpg"
 import mockjs from "mockjs"
@@ -29,8 +29,10 @@ const StabilityDetailInfoCard: FC<StabilityDetailInfoCard> = props => {
                     <div className={c("name")}>{mockjs.Random.cname()}</div>
                     <div className={c("second-line-items")}>
                         <div className={c("item")}>
-                            <div className={c("label")}>身份证</div>
-                            <div>：</div>
+                            <div className={c("label-box")}>
+                                <div className={c("label")}>身份证</div>
+                                <div>：</div>
+                            </div>
                             <div className={c("detail")}>320826200008262518</div>
                         </div>
                         {/* <div className={c("item")}>
@@ -39,30 +41,40 @@ const StabilityDetailInfoCard: FC<StabilityDetailInfoCard> = props => {
                             <div className={c("detail")}>199453726974</div>
                         </div> */}
                         <div className={c("item")}>
-                            <div className={c("label")}>住址</div>
-                            <div>：</div>
+                            <div className={c("label-box")}>
+                                <div className={c("label")}>住址</div>
+                                <div>：</div>
+                            </div>
                             <Tooltip title="中南世纪城15栋二单元1102室">
                                 <div className={c("detail")}>中南世纪城15栋二单元1102室</div>
                             </Tooltip>
                         </div>
                         <div className={c("item")}>
-                            <div className={c("label")}>管控民警</div>
-                            <div>：</div>
+                            <div className={c("label-box")}>
+                                <div className={c("label")}>管控民警</div>
+                                <div>：</div>
+                            </div>
                             <div className={c("detail")}>{mockjs.Random.cname()}</div>
                         </div>
                         <div className={c("item")}>
-                            <div className={c("label")}>管控等级</div>
-                            <div>：</div>
+                            <div className={c("label-box")}>
+                                <div className={c("label")}>管控等级</div>
+                                <div>：</div>
+                            </div>
                             <div className={c("detail")}>二级</div>
                         </div>
                         <div className={c("item")}>
-                            <div className={c("label")}>管控单位</div>
-                            <div>：</div>
+                            <div className={c("label-box")}>
+                                <div className={c("label")}>管控单位</div>
+                                <div>：</div>
+                            </div>
                             <div className={c("detail")}>黄码派出所</div>
                         </div>
                         <div className={c("item-last")}>
-                            <div className={c("label")}>诉求</div>
-                            <div>：</div>
+                            <div className={c("label-box")}>
+                                <div className={c("label")}>诉求</div>
+                                <div>：</div>
+                            </div>
                             <Tooltip title="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
                                 <div className={c("detail")}>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</div>
                             </Tooltip>

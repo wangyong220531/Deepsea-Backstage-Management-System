@@ -1,4 +1,4 @@
-import { FC, useState } from "react"
+import { FC, useEffect, useState } from "react"
 import styles from "./index.module.less"
 import StabilityHeader from "../StabilityHeader"
 import StabilityDetailInfoCard from "../StabilityDetailInfoCard"
@@ -9,11 +9,12 @@ import { nanoid } from "nanoid"
 import PotraitTest from "../../assets/Stability/TestImgs/DownLoadFile122.jpg"
 import Lafa from "../../assets/Stability/lafa.webp"
 import Back from "../../assets/Stability/back.png"
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import People from "../../assets/Stability/people.png"
 import TimelineUp from "../../assets/Stability/timeLineUp.png"
 import TimelineDown from "../../assets/Stability/timeLineDown.png"
 import { Tooltip } from "antd"
+import Home from "../../assets/Stability/home.png"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : styles[className])).join(" ")
@@ -1625,6 +1626,16 @@ const StabilitySingleDetail: FC<StabilitySingleDetailProps> = props => {
 
     const navigate = useNavigate()
 
+    const location = useLocation()
+
+    const [breadcrumb, setBreadcrumb] = useState<string[]>([])
+
+    useEffect(() => {
+        if (location.pathname === "/stabilityDetail") {
+            setBreadcrumb(["主页", "人员详情"])
+        }
+    }, [])
+
     const tabClick = (e: 0 | 1) => {
         e === 1 ? setTabActived(1) : setTabActived(0)
     }
@@ -1633,10 +1644,28 @@ const StabilitySingleDetail: FC<StabilitySingleDetailProps> = props => {
         navigate("/stability", { replace: true })
     }
 
+    const breadcrumbClick = (e: string) => {
+        e === "主页" ? back() : null
+    }
+
     return (
         <div className={c("stability-single-detail")}>
             <StabilityHeader />
             <StabilityDetailInfoCard />
+            <div className={c("top-right-box")}>
+                <img src={Home} alt="" className={c("home-icon")} onClick={back} />
+                <div className={c("role")}>民警082846</div>
+                <div className={c("name")}>卜方浩</div>
+            </div>
+            <div className={c("breadcrumb-box")}>
+                {breadcrumb.map((e, index) => {
+                    return (
+                        <div key={e} className={index !== 0 ? c("breadcrumb-item") : c("breadcrumb-item-zero")} onClick={() => breadcrumbClick(e)}>
+                            {index !== 0 ? `> ${e}` : `${e}`}
+                        </div>
+                    )
+                })}
+            </div>
             <img src={Back} alt="" className={c("back")} onClick={back} />
             <div className={c("content")}>
                 <div className={c("time-line")}>

@@ -10,6 +10,7 @@ import { useAsync } from "../../utils/hooks"
 import { RcFile, UploadChangeParam, UploadFile, UploadProps } from "antd/es/upload"
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons"
 import ImgTest from "../../assets/Stability/TestImgs/DownLoadFile166.jpg"
+import Home from "../../assets/Stability/home.png"
 
 function c(...classNameList: (string | undefined | null | boolean)[]) {
     return (classNameList.filter(item => typeof item === "string") as string[]).map(className => (className.startsWith("_") ? className.slice(1) : styles[className])).join(" ")
@@ -244,7 +245,12 @@ const StabilityTable: FC<StabilityTableProps> = props => {
     return (
         <div className={c("stabilityTable")}>
             <StabilityHeader />
-            <img src={Back} alt="" className={c("back")} onClick={back} />
+            <div className={c("top-right-box")}>
+                <img src={Home} alt="" className={c("home-icon")} onClick={back} />
+                <div className={c("role")}>民警082846</div>
+                <div className={c("name")}>卜方浩</div>
+            </div>
+            {/* <img src={Back} alt="" className={c("back")} onClick={back} /> */}
             <div className={c("table-container")}>
                 <div className={c("search")}>
                     <div className={c("inputs")}>
